@@ -50,7 +50,7 @@ describe('Public area service', () => {
 
       const publicAreaRepositoryCreateSpay = jest
         .spyOn(publicAreaRepository, 'create')
-        .mockReturnValue(createdPublicAreaEntity);
+        .mockReturnValue();
 
       const result = await publicAreaService.CreatePublicArea(
         createPublicAreaData,
