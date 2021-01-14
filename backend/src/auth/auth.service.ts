@@ -3,7 +3,8 @@ import * as argon2 from 'argon2';
 import { User } from 'src/user/user.entity';
 import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
-
+import { CreateUserDto } from '../user/dto/create-user.dto';
+import { UserRole } from '../user/user-role';
 
 @Injectable()
 export class AuthService {
@@ -29,5 +30,15 @@ export class AuthService {
   async signin(user: User) {
     const payload = { email: user.email, sub: user.id };
     return this.jwtService.sign(payload);
+  }
+
+  async signup(createUserDto: CreateUserDto) {
+    const { address, ...userDto } = createUserDto;
+    const user = await this.userService.createUser({
+      createUserDto,
+      role: UserRole.USER,
+    });
+    const token = await this.signin(user);
+    return token;
   }
 }

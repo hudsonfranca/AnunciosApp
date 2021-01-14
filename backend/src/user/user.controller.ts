@@ -8,20 +8,29 @@ import {
   Patch,
   Post,
   Query,
+  Request,
+  UnauthorizedException,
+  UseGuards,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UserRole } from './user-role';
 import { UserService } from './user.service';
 import { FindOneParams } from './dto/find-one.dto';
 import { FindOneByEmail } from './dto/find-one-by-email.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { deleteUserAtributes } from '../utils';
+import { Role } from '../auth/decorators/roles.decorator';
+import { UserRole } from './user-role';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../auth/guards/roles.guard';
+
 
 @Controller('user')
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class UserController {
   constructor(private userService: UserService) {}
 
   @Post()
+  @Role(UserRole.ADMIN)
   async create(@Body() createUserDto: CreateUserDto) {
     const user = await this.userService.createUser({
       createUserDto,
@@ -32,10 +41,15 @@ export class UserController {
   }
 
   @Patch(':id')
+  @Role(UserRole.ADMIN)
   async update(
+    @Request() req,
     @Param() { id }: FindOneParams,
     @Body() updateUserDto: UpdateUserDto,
   ) {
+    if (id !== req.user.id) {
+      throw new UnauthorizedException();
+    }
     if (!id) {
       throw new BadRequestException('id is required.');
     }
@@ -51,6 +65,7 @@ export class UserController {
   }
 
   @Get(':email')
+  @Role(UserRole.ADMIN)
   async show(@Param() { email }: FindOneByEmail) {
     if (!email) {
       throw new BadRequestException('email is required.');
@@ -61,6 +76,7 @@ export class UserController {
   }
 
   @Delete(':id')
+  @Role(UserRole.ADMIN)
   async delete(@Param() { id }: FindOneParams) {
     if (!id) {
       throw new BadRequestException('id is required.');
@@ -70,6 +86,7 @@ export class UserController {
   }
 
   @Get()
+  @Role(UserRole.ADMIN)
   async index(@Query('offset') offset: number, @Query('limit') limit: number) {
     const users = await this.userService.findAllUsers({ limit, offset });
     return users;

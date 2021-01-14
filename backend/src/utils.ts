@@ -16,6 +16,7 @@ export const userSelectAtributes = [
   'user.id',
   'user.name',
   'user.email',
+  'user.role',
   'user.phoneNumber',
   'address.id',
   'address.city',

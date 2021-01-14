@@ -4,17 +4,18 @@ import {
   UseGuards,
   Res,
   Request,
-  Get,
-  Req,
+  Body,
 } from '@nestjs/common';
-import { Request as expressReq, Response } from 'express';
+import { Response } from 'express';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { LocalAuthGuard } from './guards/local-auth.guard';
+import { CreateUserDto } from '../user/dto/create-user.dto';
 
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
+
   @UseGuards(LocalAuthGuard)
   @Post('signin')
   async signin(@Request() req, @Res({ passthrough: true }) res: Response) {
@@ -27,9 +28,25 @@ export class AuthController {
     return { success: true, token: token };
   }
 
+  @Post('signup')
+  async signup(
+    @Body() createUserDto: CreateUserDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const token = await this.authService.signup(createUserDto);
+
+    res.cookie('access_token', token, {
+      maxAge: 900000,
+      httpOnly: true,
+      secure: false,
+    });
+    return { success: true, token: token };
+  }
+
   @UseGuards(JwtAuthGuard)
-  @Get('profile')
-  getProfile(@Req() req: expressReq) {
-    return req.user;
+  @Post('logout')
+  logout(@Res({ passthrough: true }) res: Response) {
+    res.cookie('access_token', '');
+    return { success: true };
   }
 }
