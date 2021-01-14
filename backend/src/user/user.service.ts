@@ -13,6 +13,7 @@ import { User } from './user.entity';
 import { Address } from '../address/address.entity';
 import { UserRole } from './user-role';
 import * as argon2 from 'argon2';
+import { deleteUserAtributes, userSelectAtributes } from '../utils';
 
 interface createUserParams {
   createUserDto: CreateUserDto;
@@ -23,19 +24,6 @@ interface updateUserParams {
   updateUserDto: UpdateUserDto;
   id: string;
 }
-
-const userSelectAtributes = [
-  'user.id',
-  'user.name',
-  'user.email',
-  'user.phoneNumber',
-  'address.id',
-  'address.city',
-  'address.number',
-  'address.street',
-  'address.zip',
-  'address.uf',
-];
 
 @Injectable()
 export class UserService {
@@ -55,12 +43,10 @@ export class UserService {
       throw new BadRequestException(' role is required.');
     }
 
-    const { name, email, password, phoneNumber } = createUserDto;
-
-    const addressDto = createUserDto.address;
+    const { name, email, password, phoneNumber, address } = createUserDto;
 
     const addressEntity = this.addressRepository.create({
-      ...addressDto,
+      ...address,
     });
 
     const hashPassword = await argon2.hash(password);
@@ -78,7 +64,7 @@ export class UserService {
 
     try {
       const savedUser = await this.userRepository.save(userEntity);
-      return this.deleteAtrrbutes(savedUser);
+      return deleteUserAtributes(savedUser);
     } catch (error) {
       if (error.code.toString() === '23505') {
         throw new ConflictException(`${userEntity.email} is already in use`);
@@ -121,22 +107,23 @@ export class UserService {
     if (updatedUser.affected > 0) {
       const userEntity = await this.userRepository.findOne(user.id);
 
-      return this.deleteAtrrbutes(userEntity);
+      return deleteUserAtributes(userEntity);
     } else {
       throw new NotFoundException(`public area does not exist`);
     }
   }
 
-  async finUserById(id: string) {
-    if (!id) {
-      throw new BadRequestException('id is required.');
+  async finOne(email: string) {
+    if (!email) {
+      throw new BadRequestException('email is required.');
     }
-    const user = await this.userRepository.findOne(id);
+
+    const user = await this.userRepository.findOne({ email });
     if (!user) {
       throw new NotFoundException('No user area found');
     }
 
-    return this.deleteAtrrbutes(user);
+    return user;
   }
 
   async findAllUsers(params: { limit: number; offset: number }) {
@@ -166,17 +153,5 @@ export class UserService {
     } catch (error) {
       throw new InternalServerErrorException('could not delete the user.');
     }
-  }
-
-  private deleteAtrrbutes(user: User) {
-    const newUser = user;
-    delete newUser.confirmationToken;
-    delete newUser.password;
-    delete newUser.recoverToken;
-    delete newUser.updatedAt;
-    delete newUser.createdAt;
-    delete newUser.address.createdAt;
-    delete newUser.address.updatedAt;
-    return newUser;
   }
 }

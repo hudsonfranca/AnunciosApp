@@ -13,9 +13,9 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UserRole } from './user-role';
 import { UserService } from './user.service';
 import { FindOneParams } from './dto/find-one.dto';
-
-
+import { FindOneByEmail } from './dto/find-one-by-email.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { deleteUserAtributes } from '../utils';
 
 @Controller('user')
 export class UserController {
@@ -50,13 +50,14 @@ export class UserController {
     return updatedUser;
   }
 
-  @Get(':id')
-  async show(@Param() { id }: FindOneParams) {
-    if (!id) {
-      throw new BadRequestException('id is required.');
+  @Get(':email')
+  async show(@Param() { email }: FindOneByEmail) {
+    if (!email) {
+      throw new BadRequestException('email is required.');
     }
-    const user = await this.userService.finUserById(id);
-    return user;
+    const user = await this.userService.finOne(email);
+
+    return deleteUserAtributes(user);
   }
 
   @Delete(':id')
