@@ -14,7 +14,7 @@ export class AuthService {
   ) {}
 
   async validateUser(email: string, password: string) {
-    const user = await this.userService.finOne(email);
+    const user = await this.userService.finOneByEmail(email);
 
     try {
       if (user && (await argon2.verify(user.password, password))) {
@@ -33,7 +33,6 @@ export class AuthService {
   }
 
   async signup(createUserDto: CreateUserDto) {
-    const { address, ...userDto } = createUserDto;
     const user = await this.userService.createUser({
       createUserDto,
       role: UserRole.USER,

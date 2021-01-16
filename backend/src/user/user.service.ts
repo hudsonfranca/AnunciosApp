@@ -74,6 +74,19 @@ export class UserService {
     }
   }
 
+  async finOneById(id: string) {
+    if (!id) {
+      throw new BadRequestException('id is required.');
+    }
+
+    const user = await this.userRepository.findOne(id);
+    if (!user) {
+      throw new NotFoundException('No user area found');
+    }
+
+    return user;
+  }
+
   async updateUser(params: updateUserParams) {
     const {
       id,
@@ -86,11 +99,7 @@ export class UserService {
       },
     } = params;
 
-    const user = await this.userRepository.findOne(id);
-
-    if (!user) {
-      throw new NotFoundException('user does not exist');
-    }
+    const user = await this.finOneById(id);
 
     user.name = name ? name : user.name;
     user.status = status ? status : user.status;
@@ -109,11 +118,11 @@ export class UserService {
 
       return deleteUserAtributes(userEntity);
     } else {
-      throw new NotFoundException(`public area does not exist`);
+      throw new NotFoundException(`no users found`);
     }
   }
 
-  async finOne(email: string) {
+  async finOneByEmail(email: string) {
     if (!email) {
       throw new BadRequestException('email is required.');
     }
@@ -128,24 +137,30 @@ export class UserService {
 
   async findAllUsers(params: { limit: number; offset: number }) {
     const { limit, offset } = params;
-    const users = await this.userRepository
-      .createQueryBuilder('user')
+
+    const userQuery = await this.userRepository.createQueryBuilder('user');
+
+    const count = await userQuery.getCount();
+
+    const users = await userQuery
       .select(userSelectAtributes)
-      .leftJoinAndSelect('user.address', 'address')
+      .leftJoin('user.address', 'address')
       .skip(offset)
       .take(limit)
       .getMany();
-    return users;
+
+    if (!users) {
+      throw new NotFoundException('No user area found');
+    }
+
+    return { count, users };
   }
 
   async deleteUser(id: string) {
     if (!id) {
       throw new BadRequestException('id is required.');
     }
-    const user = await this.userRepository.findOne(id);
-    if (!user) {
-      throw new NotFoundException('No user area found');
-    }
+    const user = await this.finOneById(id);
 
     try {
       await this.userRepository.delete(user.id);

@@ -23,7 +23,6 @@ import { UserRole } from './user-role';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 
-
 @Controller('user')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class UserController {
@@ -70,7 +69,7 @@ export class UserController {
     if (!email) {
       throw new BadRequestException('email is required.');
     }
-    const user = await this.userService.finOne(email);
+    const user = await this.userService.finOneByEmail(email);
 
     return deleteUserAtributes(user);
   }

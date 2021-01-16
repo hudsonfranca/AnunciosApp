@@ -6,8 +6,10 @@ import {
   UpdateDateColumn,
   OneToOne,
   JoinColumn,
+  OneToMany,
 } from 'typeorm';
 import { Address } from '../address/address.entity';
+import { Adverts } from '../adverts/adverts.entity';
 
 @Entity()
 export class User {
@@ -38,15 +40,23 @@ export class User {
   @Column({ nullable: false, type: 'varchar', length: 9 })
   phoneNumber: string;
 
-  @OneToOne(() => Address, { cascade: true, eager: true, onDelete: 'SET NULL' })
-  @JoinColumn()
-  address: Address;
-
   @CreateDateColumn()
   createdAt: Date;
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @OneToOne(() => Address, {
+    cascade: true,
+    eager: true,
+    onDelete: 'SET NULL',
+    onUpdate: 'CASCADE',
+  })
+  @JoinColumn()
+  address: Address;
+
+  @OneToMany(() => Adverts, (adverts) => adverts.user, { cascade: true })
+  adverts: Adverts[];
 
   public static of(params: Partial<User>): User {
     const user = new User();
