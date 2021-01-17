@@ -10,5 +10,6 @@ import { UserModule } from '../user/user.module';
   controllers: [AdvertsController],
   providers: [AdvertsService],
   imports: [TypeOrmModule.forFeature([Adverts]), CategoryModule, UserModule],
+  exports: [AdvertsService],
 })
 export class AdvertsModule {}

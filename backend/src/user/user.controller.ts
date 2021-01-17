@@ -24,12 +24,12 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 
 @Controller('user')
-@UseGuards(JwtAuthGuard, RolesGuard)
+// @UseGuards(JwtAuthGuard, RolesGuard)
 export class UserController {
   constructor(private userService: UserService) {}
 
   @Post()
-  @Role(UserRole.ADMIN)
+  // @Role(UserRole.ADMIN)
   async create(@Body() createUserDto: CreateUserDto) {
     const user = await this.userService.createUser({
       createUserDto,

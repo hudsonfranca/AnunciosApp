@@ -7,6 +7,7 @@ import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { AdvertsModule } from './adverts/adverts.module';
 import { CategoryModule } from './category/category.module';
+import { AdvertsPhotosModule } from './adverts-photos/adverts-photos.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { CategoryModule } from './category/category.module';
     AuthModule,
     AdvertsModule,
     CategoryModule,
+    AdvertsPhotosModule,
   ],
   controllers: [],
   providers: [],

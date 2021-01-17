@@ -64,6 +64,7 @@ export class AdvertsService {
       .select(advertsSelectAtributes)
       .leftJoin('adverts.categories', 'category')
       .leftJoin('adverts.user', 'user')
+      .leftJoin('adverts.advertsPhotos', 'adverts_photos')
       .getOne();
     if (!adverts) {
       throw new NotFoundException('no adverts found');
@@ -85,6 +86,7 @@ export class AdvertsService {
       .select(advertsSelectAtributes)
       .leftJoin('adverts.categories', 'category')
       .leftJoin('adverts.user', 'user')
+      .leftJoin('adverts.advertsPhotos', 'adverts_photos')
       .skip(offset)
       .take(limit)
       .getMany();

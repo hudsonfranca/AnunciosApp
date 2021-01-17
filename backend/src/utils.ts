@@ -62,4 +62,11 @@ export const advertsSelectAtributes = [
   'user.phoneNumber',
   'category.id',
   'category.name',
+  'adverts_photos.id',
+  'adverts_photos.originalname',
+  'adverts_photos.encoding',
+  'adverts_photos.mimetype',
+  'adverts_photos.destination',
+  'adverts_photos.filename',
+  'adverts_photos.path',
 ];

@@ -7,9 +7,11 @@ import {
   ManyToMany,
   JoinTable,
   ManyToOne,
+  OneToMany,
 } from 'typeorm';
 import { Category } from '../category/category.entity';
 import { User } from '../user/user.entity';
+import { AdvertsPhotos } from '../adverts-photos/adverts-photos.entity';
 
 @Entity()
 export class Adverts {
@@ -41,6 +43,11 @@ export class Adverts {
     onUpdate: 'CASCADE',
   })
   user: User;
+
+  @OneToMany(() => AdvertsPhotos, (advertsPhotos) => advertsPhotos.adverts, {
+    cascade: true,
+  })
+  advertsPhotos: AdvertsPhotos[];
 
   public static of(params: Partial<Adverts>): Adverts {
     const adverts = new Adverts();
