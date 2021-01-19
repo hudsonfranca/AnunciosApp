@@ -18,7 +18,7 @@ import { UpdateAdvertsDto } from './dto/update-adverts.dto';
 import { FindOneParams } from './dto/find-one.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
-import { Role } from 'src/auth/decorators/roles.decorator';
+import { Roles } from 'src/auth/decorators/roles.decorator';
 import { UserRole } from 'src/user/user-role';
 
 @Controller('adverts')
@@ -27,7 +27,7 @@ export class AdvertsController {
   constructor(private advertsService: AdvertsService) {}
 
   @Post()
-  @Role(UserRole.USER)
+  @Roles(UserRole.USER, UserRole.VERIFIED_EMAIL)
   async create(@Body() createAdvertsDto: CreateAdvertsDto, @Request() req) {
     const adverts = await this.advertsService.createAdverts({
       createAdvertsDto,
@@ -37,7 +37,7 @@ export class AdvertsController {
   }
 
   @Get(':id')
-  @Role(UserRole.USER)
+  @Roles(UserRole.USER, UserRole.VERIFIED_EMAIL)
   async show(@Param() { id }: FindOneParams, @Request() req) {
     if (!id) {
       throw new BadRequestException('id is required.');
@@ -52,7 +52,7 @@ export class AdvertsController {
   }
 
   @Get()
-  @Role(UserRole.USER)
+  @Roles(UserRole.USER, UserRole.VERIFIED_EMAIL)
   async index(@Query('offset') offset: number, @Query('limit') limit: number) {
     const adverts = await this.advertsService.findManyAdverts({
       limit,
@@ -62,7 +62,7 @@ export class AdvertsController {
   }
 
   @Patch(':id')
-  @Role(UserRole.USER)
+  @Roles(UserRole.USER, UserRole.VERIFIED_EMAIL)
   async update(
     @Request() req,
     @Param() { id }: FindOneParams,
@@ -90,7 +90,7 @@ export class AdvertsController {
   }
 
   @Delete(':id')
-  @Role(UserRole.USER)
+  @Roles(UserRole.USER, UserRole.VERIFIED_EMAIL)
   async delete(@Param() { id }: FindOneParams, @Request() req) {
     const adverts = await this.advertsService.finOneById(id);
 

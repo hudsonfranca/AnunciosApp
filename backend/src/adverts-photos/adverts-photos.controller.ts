@@ -13,7 +13,7 @@ import { AdvertsId } from './dto/adverts-id.dto';
 import { AdvertsPhotosService } from './adverts-photos.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
-import { Role } from 'src/auth/decorators/roles.decorator';
+import { Roles } from 'src/auth/decorators/roles.decorator';
 import { UserRole } from 'src/user/user-role';
 import { AdvertsService } from '../adverts/adverts.service';
 
@@ -38,7 +38,7 @@ export class AdvertsPhotosController {
 
   @Post('adverts/:advertsId')
   @UseInterceptors(FileInterceptor('file', { dest: './uploads' }))
-  @Role(UserRole.USER)
+  @Roles(UserRole.USER, UserRole.VERIFIED_EMAIL)
   async create(
     @Param() { advertsId }: AdvertsId,
     @UploadedFile() file: File,

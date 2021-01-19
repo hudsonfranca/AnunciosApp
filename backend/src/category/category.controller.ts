@@ -17,7 +17,7 @@ import { UpdateCategoryDto } from './dto/update-category.dto';
 import { UserRole } from '../user/user-role';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
-import { Role } from '../auth/decorators/roles.decorator';
+import { Roles } from '../auth/decorators/roles.decorator';
 
 @Controller('category')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -25,7 +25,7 @@ export class CategoryController {
   constructor(private categoryService: CategoryService) {}
 
   @Post()
-  @Role(UserRole.ADMIN)
+  @Roles(UserRole.ADMIN, UserRole.VERIFIED_EMAIL)
   async create(@Body() createCategoryDto: CreateCategoryDto) {
     const category = await this.categoryService.createCategory(
       createCategoryDto,
@@ -35,7 +35,7 @@ export class CategoryController {
   }
 
   @Get()
-  @Role(UserRole.ADMIN)
+  @Roles(UserRole.ADMIN, UserRole.VERIFIED_EMAIL)
   async index(@Query('offset') offset: number, @Query('limit') limit: number) {
     const categories = await this.categoryService.findManyCategories({
       limit,
@@ -45,14 +45,14 @@ export class CategoryController {
   }
 
   @Get(':id')
-  @Role(UserRole.ADMIN)
+  @Roles(UserRole.ADMIN, UserRole.VERIFIED_EMAIL)
   async show(@Param() { id }: FindOneParams) {
     const categories = await this.categoryService.findOneById(id);
     return categories;
   }
 
   @Patch(':id')
-  @Role(UserRole.ADMIN)
+  @Roles(UserRole.ADMIN, UserRole.VERIFIED_EMAIL)
   async update(
     @Request() req,
     @Param() { id }: FindOneParams,
@@ -66,7 +66,7 @@ export class CategoryController {
   }
 
   @Delete(':id')
-  @Role(UserRole.ADMIN)
+  @Roles(UserRole.ADMIN, UserRole.VERIFIED_EMAIL)
   async delete(@Param() { id }: FindOneParams) {
     const result = await this.categoryService.deleteCategory(id);
     return result;

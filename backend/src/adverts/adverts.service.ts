@@ -38,7 +38,7 @@ export class AdvertsService {
       categories.push(category);
     });
 
-    const user = await this.userService.finOneById(userId);
+    const user = await this.userService.findOne({ id: userId });
 
     const advertsEntity = this.advertsRepository.create(adverts);
 

@@ -5,6 +5,8 @@ import {
   Res,
   Request,
   Body,
+  Param,
+  Patch,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { AuthService } from './auth.service';
@@ -48,5 +50,11 @@ export class AuthController {
   logout(@Res({ passthrough: true }) res: Response) {
     res.cookie('access_token', '');
     return { success: true };
+  }
+
+  @Patch('confirm-email/:token')
+  async confirmEmail(@Param('token') token: string) {
+    await this.authService.confirmEmail(token);
+    return { message: 'Email has been validated' };
   }
 }

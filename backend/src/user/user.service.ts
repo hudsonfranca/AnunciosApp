@@ -14,10 +14,12 @@ import { Address } from '../address/address.entity';
 import { UserRole } from './user-role';
 import * as argon2 from 'argon2';
 import { deleteUserAtributes, userSelectAtributes } from '../utils';
+import * as crypto from 'crypto';
+import { Roles } from 'src/auth/decorators/roles.decorator';
 
 interface createUserParams {
   createUserDto: CreateUserDto;
-  role: UserRole;
+  roles: UserRole[];
 }
 
 interface updateUserParams {
@@ -33,13 +35,13 @@ export class UserService {
   ) {}
 
   async createUser(params: createUserParams): Promise<User> {
-    const { createUserDto, role } = params;
+    const { createUserDto, roles } = params;
 
     if (!createUserDto) {
       throw new BadRequestException(' createUserDto is required.');
     }
 
-    if (!role) {
+    if (!roles) {
       throw new BadRequestException(' role is required.');
     }
 
@@ -50,16 +52,19 @@ export class UserService {
     });
 
     const hashPassword = await argon2.hash(password);
+    const confirmationToken = crypto.randomBytes(32).toString('hex');
+    const recoverToken = crypto.randomBytes(32).toString('hex');
 
     const userEntity = this.userRepository.create({
       name,
       email,
       phoneNumber,
-      role,
+      roles,
       status: true,
-      confirmationToken: '2212121212',
+      confirmationToken,
       password: hashPassword,
       address: addressEntity,
+      recoverToken,
     });
 
     try {
@@ -74,12 +79,12 @@ export class UserService {
     }
   }
 
-  async finOneById(id: string) {
-    if (!id) {
-      throw new BadRequestException('id is required.');
+  async findOne(param: Partial<User>) {
+    if (!param) {
+      throw new BadRequestException('param is required.');
     }
 
-    const user = await this.userRepository.findOne(id);
+    const user = await this.userRepository.findOne({ where: param });
     if (!user) {
       throw new NotFoundException('No user area found');
     }
@@ -99,7 +104,7 @@ export class UserService {
       },
     } = params;
 
-    const user = await this.finOneById(id);
+    const user = await this.findOne({ id });
 
     user.name = name ? name : user.name;
     user.status = status ? status : user.status;
@@ -120,19 +125,6 @@ export class UserService {
     } else {
       throw new NotFoundException(`no users found`);
     }
-  }
-
-  async finOneByEmail(email: string) {
-    if (!email) {
-      throw new BadRequestException('email is required.');
-    }
-
-    const user = await this.userRepository.findOne({ email });
-    if (!user) {
-      throw new NotFoundException('No user area found');
-    }
-
-    return user;
   }
 
   async findAllUsers(params: { limit: number; offset: number }) {
@@ -160,13 +152,26 @@ export class UserService {
     if (!id) {
       throw new BadRequestException('id is required.');
     }
-    const user = await this.finOneById(id);
+    const user = await this.findOne({ id });
 
     try {
       await this.userRepository.delete(user.id);
       return { message: `user successfully removed` };
     } catch (error) {
       throw new InternalServerErrorException('could not delete the user.');
+    }
+  }
+
+  async confirmEmail(confirmationToken: string): Promise<void> {
+    const user = await this.findOne({ confirmationToken });
+    user.roles = [...user.roles, UserRole.VERIFIED_EMAIL];
+    try {
+      await this.userRepository.save(user);
+      return;
+    } catch (error) {
+      throw new InternalServerErrorException(
+        'confirmationToken cannot be updated.',
+      );
     }
   }
 }

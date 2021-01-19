@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 import { Address } from '../address/address.entity';
 import { Adverts } from '../adverts/adverts.entity';
+import { UserRole } from './user-role';
 
 @Entity()
 export class User {
@@ -22,8 +23,8 @@ export class User {
   @Column({ nullable: false, type: 'varchar', length: 200 })
   name: string;
 
-  @Column({ nullable: false, type: 'varchar', length: 20 })
-  role: string;
+  @Column('text', { nullable: false, array: true, default: '{}' })
+  roles: UserRole[];
 
   @Column({ nullable: false, default: true })
   status: boolean;

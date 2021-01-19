@@ -1,12 +1,11 @@
 import { User } from './user/user.entity';
 import { Category } from './category/category.entity';
 import { Adverts } from './adverts/adverts.entity';
+import { ISendMailOptions } from '@nestjs-modules/mailer';
 
 export const deleteUserAtributes = (user: User) => {
   const newUser = user;
-  delete newUser.confirmationToken;
   delete newUser.password;
-  delete newUser.recoverToken;
   delete newUser.updatedAt;
   delete newUser.createdAt;
   delete newUser.address.createdAt;
@@ -40,7 +39,7 @@ export const userSelectAtributes = [
   'user.id',
   'user.name',
   'user.email',
-  'user.role',
+  'user.roles',
   'user.phoneNumber',
   'address.id',
   'address.city',
@@ -58,7 +57,7 @@ export const advertsSelectAtributes = [
   'user.id',
   'user.name',
   'user.email',
-  'user.role',
+  'user.roles',
   'user.phoneNumber',
   'category.id',
   'category.name',

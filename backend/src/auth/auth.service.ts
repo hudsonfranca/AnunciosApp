@@ -5,16 +5,19 @@ import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from '../user/dto/create-user.dto';
 import { UserRole } from '../user/user-role';
+import { MailerService } from '@nestjs-modules/mailer';
+import { keys } from '../keys';
 
 @Injectable()
 export class AuthService {
   constructor(
     private userService: UserService,
     private jwtService: JwtService,
+    private mailerService: MailerService,
   ) {}
 
   async validateUser(email: string, password: string) {
-    const user = await this.userService.finOneByEmail(email);
+    const user = await this.userService.findOne({ email });
 
     try {
       if (user && (await argon2.verify(user.password, password))) {
@@ -35,9 +38,32 @@ export class AuthService {
   async signup(createUserDto: CreateUserDto) {
     const user = await this.userService.createUser({
       createUserDto,
-      role: UserRole.USER,
+      roles: [UserRole.USER],
     });
+
+    const email = {
+      to: user.email,
+      from: keys.emailAddress,
+      subject: 'Email de confirmação',
+      template: 'email-confirmation',
+      context: {
+        token: user.confirmationToken,
+      },
+    };
+
+    try {
+      await this.mailerService.sendMail(email);
+    } catch (error) {
+      throw new InternalServerErrorException(
+        'confirmation email cannot be sent',
+      );
+    }
+
     const token = await this.signin(user);
     return token;
+  }
+
+  async confirmEmail(confirmationToken: string) {
+    return await this.userService.confirmEmail(confirmationToken);
   }
 }
