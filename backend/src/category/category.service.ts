@@ -10,7 +10,7 @@ import { Repository } from 'typeorm';
 import { Category } from './category.entity';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
-import { deleteCategoryAtributes } from '../utils';
+import { deleteCategoryAtributes } from '../utils/utils';
 
 @Injectable()
 export class CategoryService {

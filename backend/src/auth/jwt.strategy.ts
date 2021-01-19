@@ -4,7 +4,7 @@ import { Injectable } from '@nestjs/common';
 import { keys } from '../keys';
 import { Request } from 'express';
 import { UserService } from '../user/user.service';
-import { deleteUserAtributes } from '../utils';
+import { deleteUserAtributes } from '../utils/utils';
 
 const cookieExtractor = function (req: Request) {
   let token = null;

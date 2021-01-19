@@ -13,9 +13,10 @@ import { User } from './user.entity';
 import { Address } from '../address/address.entity';
 import { UserRole } from './user-role';
 import * as argon2 from 'argon2';
-import { deleteUserAtributes, userSelectAtributes } from '../utils';
+import { deleteUserAtributes, userSelectAtributes } from '../utils/utils';
 import * as crypto from 'crypto';
-import { Roles } from 'src/auth/decorators/roles.decorator';
+import { SendEmail } from '../utils/SendEmail';
+
 
 interface createUserParams {
   createUserDto: CreateUserDto;
@@ -32,6 +33,7 @@ export class UserService {
   constructor(
     @InjectRepository(User) private userRepository: Repository<User>,
     @InjectRepository(Address) private addressRepository: Repository<Address>,
+    private sendEmail: SendEmail,
   ) {}
 
   async createUser(params: createUserParams): Promise<User> {
@@ -53,7 +55,6 @@ export class UserService {
 
     const hashPassword = await argon2.hash(password);
     const confirmationToken = crypto.randomBytes(32).toString('hex');
-    const recoverToken = crypto.randomBytes(32).toString('hex');
 
     const userEntity = this.userRepository.create({
       name,
@@ -64,19 +65,10 @@ export class UserService {
       confirmationToken,
       password: hashPassword,
       address: addressEntity,
-      recoverToken,
     });
 
-    try {
-      const savedUser = await this.userRepository.save(userEntity);
-      return deleteUserAtributes(savedUser);
-    } catch (error) {
-      if (error.code.toString() === '23505') {
-        throw new ConflictException(`${userEntity.email} is already in use`);
-      } else {
-        throw new InternalServerErrorException('Could not save user.');
-      }
-    }
+    const savedUser = await this.saveUser(userEntity);
+    return deleteUserAtributes(savedUser);
   }
 
   async findOne(param: Partial<User>) {
@@ -165,13 +157,33 @@ export class UserService {
   async confirmEmail(confirmationToken: string): Promise<void> {
     const user = await this.findOne({ confirmationToken });
     user.roles = [...user.roles, UserRole.VERIFIED_EMAIL];
+
+    await this.saveUser(user);
+    return;
+  }
+
+  async saveUser(user: User) {
     try {
-      await this.userRepository.save(user);
-      return;
+      const savedUser = await this.userRepository.save(user);
+      return savedUser;
     } catch (error) {
-      throw new InternalServerErrorException(
-        'confirmationToken cannot be updated.',
-      );
+      if (error.code.toString() === '23505') {
+        throw new ConflictException(`email is already in use`);
+      } else {
+        throw new InternalServerErrorException('Could not save user.');
+      }
     }
+  }
+
+  async changePassword(params: { id: string; password: string }) {
+    const { id, password } = params;
+    const user = await this.findOne({ id });
+
+    const hashPassword = await argon2.hash(password);
+
+    user.password = hashPassword;
+    user.recoverToken = null;
+
+    await this.saveUser(user);
   }
 }

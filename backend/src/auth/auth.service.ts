@@ -1,19 +1,24 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import * as argon2 from 'argon2';
 import { User } from 'src/user/user.entity';
 import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from '../user/dto/create-user.dto';
 import { UserRole } from '../user/user-role';
-import { MailerService } from '@nestjs-modules/mailer';
-import { keys } from '../keys';
+import { SendEmail } from '../utils/SendEmail';
+import { randomBytes } from 'crypto';
+import { ChangePasswordDto } from './dto/change-password.dto';
 
 @Injectable()
 export class AuthService {
   constructor(
     private userService: UserService,
     private jwtService: JwtService,
-    private mailerService: MailerService,
+    private sendEmail: SendEmail,
   ) {}
 
   async validateUser(email: string, password: string) {
@@ -42,8 +47,6 @@ export class AuthService {
     });
 
     const email = {
-      to: user.email,
-      from: keys.emailAddress,
       subject: 'Email de confirmação',
       template: 'email-confirmation',
       context: {
@@ -51,13 +54,7 @@ export class AuthService {
       },
     };
 
-    try {
-      await this.mailerService.sendMail(email);
-    } catch (error) {
-      throw new InternalServerErrorException(
-        'confirmation email cannot be sent',
-      );
-    }
+    await this.sendEmail.send({ ...email, user });
 
     const token = await this.signin(user);
     return token;
@@ -65,5 +62,40 @@ export class AuthService {
 
   async confirmEmail(confirmationToken: string) {
     return await this.userService.confirmEmail(confirmationToken);
+  }
+
+  async sendPasswordRecoveryEmail(email: string) {
+    const user = await this.userService.findOne({ email });
+
+    user.recoverToken = randomBytes(32).toString('hex');
+
+    const savedUser = await this.userService.saveUser(user);
+
+    await this.sendEmail.send({
+      subject: 'Recuperação de senha',
+      template: 'recover-password',
+      context: {
+        token: savedUser.recoverToken,
+      },
+      user: savedUser,
+    });
+  }
+
+  async resetPassword(params: {
+    recoverToken: string;
+    changePasswordDto: ChangePasswordDto;
+  }) {
+    const {
+      recoverToken,
+      changePasswordDto: { password, passwordConfirmation },
+    } = params;
+
+    if (password !== passwordConfirmation) {
+      throw new UnprocessableEntityException('Password must match');
+    }
+
+    const user = await this.userService.findOne({ recoverToken });
+
+    await this.userService.changePassword({ id: user.id, password });
   }
 }

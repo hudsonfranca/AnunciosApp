@@ -4,7 +4,6 @@ import {
   Controller,
   Delete,
   Get,
-  InternalServerErrorException,
   Param,
   Patch,
   Post,
@@ -21,16 +20,12 @@ import { Roles } from '../auth/decorators/roles.decorator';
 import { UserRole } from './user-role';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
-import { MailerService } from '@nestjs-modules/mailer';
-import { keys } from 'src/keys';
+import { SendEmail } from '../utils/SendEmail';
 
 @Controller('user')
-@UseGuards(JwtAuthGuard, RolesGuard)
+// @UseGuards(JwtAuthGuard, RolesGuard)
 export class UserController {
-  constructor(
-    private userService: UserService,
-    private mailerService: MailerService,
-  ) {}
+  constructor(private userService: UserService, private sendEmail: SendEmail) {}
 
   @Post()
   @Roles(UserRole.ADMIN, UserRole.VERIFIED_EMAIL)
@@ -41,8 +36,6 @@ export class UserController {
     });
 
     const email = {
-      to: user.email,
-      from: keys.emailAddress,
       subject: 'Email de confirmação',
       template: 'email-confirmation',
       context: {
@@ -50,13 +43,7 @@ export class UserController {
       },
     };
 
-    try {
-      await this.mailerService.sendMail(email);
-    } catch (error) {
-      throw new InternalServerErrorException(
-        'confirmation email cannot be sent',
-      );
-    }
+    await this.sendEmail.send({ ...email, user });
 
     delete user.recoverToken;
     delete user.confirmationToken;

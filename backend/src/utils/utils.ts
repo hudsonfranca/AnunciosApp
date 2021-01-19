@@ -1,7 +1,6 @@
-import { User } from './user/user.entity';
-import { Category } from './category/category.entity';
-import { Adverts } from './adverts/adverts.entity';
-import { ISendMailOptions } from '@nestjs-modules/mailer';
+import { User } from '../user/user.entity';
+import { Category } from '../category/category.entity';
+import { Adverts } from '../adverts/adverts.entity';
 
 export const deleteUserAtributes = (user: User) => {
   const newUser = user;

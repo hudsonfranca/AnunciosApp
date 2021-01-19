@@ -13,6 +13,7 @@ import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { CreateUserDto } from '../user/dto/create-user.dto';
+import { ChangePasswordDto } from './dto/change-password.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -56,5 +57,27 @@ export class AuthController {
   async confirmEmail(@Param('token') token: string) {
     await this.authService.confirmEmail(token);
     return { message: 'Email has been validated' };
+  }
+
+  @Post('recovery-email')
+  async sendPasswordRecoveryEmail(@Body('email') email: string) {
+    await this.authService.sendPasswordRecoveryEmail(email);
+
+    return {
+      message: 'password recovery email sent successfully',
+    };
+  }
+
+  @Patch('reset-password/:token')
+  async resetPassword(
+    @Param('token') token: string,
+    @Body() changePasswordDto: ChangePasswordDto,
+  ) {
+    await this.authService.resetPassword({
+      recoverToken: token,
+      changePasswordDto,
+    });
+
+    return { message: 'password reset successfully' };
   }
 }

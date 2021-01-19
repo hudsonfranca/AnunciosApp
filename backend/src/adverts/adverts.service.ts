@@ -12,7 +12,7 @@ import { UpdateAdvertsDto } from './dto/update-adverts.dto';
 import { UserService } from '../user/user.service';
 import { CategoryService } from '../category/category.service';
 import { Category } from 'src/category/category.entity';
-import { deleteAdvertsAtributes, advertsSelectAtributes } from '../utils';
+import { deleteAdvertsAtributes, advertsSelectAtributes } from '../utils/utils';
 
 @Injectable()
 export class AdvertsService {
