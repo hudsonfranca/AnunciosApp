@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ConflictException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -13,11 +14,16 @@ import { UserService } from '../user/user.service';
 import { CategoryService } from '../category/category.service';
 import { Category } from 'src/category/category.entity';
 import { deleteAdvertsAtributes, advertsSelectAtributes } from '../utils/utils';
+import { FindAdvertsQueryDto } from './dto/find-adverts-query.dto';
+import { FindAdvertsByUserQueryDto } from './dto/find-adverts-by-user-query.dto';
+
+import { Address } from '../address/address.entity';
 
 @Injectable()
 export class AdvertsService {
   constructor(
     @InjectRepository(Adverts) private advertsRepository: Repository<Adverts>,
+    @InjectRepository(Address) private addressRepository: Repository<Address>,
     private userService: UserService,
     private categoryService: CategoryService,
   ) {}
@@ -27,11 +33,13 @@ export class AdvertsService {
     userId: string;
   }) {
     const {
-      createAdvertsDto: { categoryIds, ...adverts },
+      createAdvertsDto: { categoryIds, address, ...adverts },
       userId,
     } = params;
 
     const categories: Category[] = [];
+
+    const addressEntity = this.addressRepository.create({ ...address });
 
     categoryIds.map(async (id) => {
       const category = await this.categoryService.findOneById(id);
@@ -41,6 +49,7 @@ export class AdvertsService {
     const user = await this.userService.findOne({ id: userId });
 
     const advertsEntity = this.advertsRepository.create(adverts);
+    advertsEntity.address = addressEntity;
 
     advertsEntity.categories = categories;
     advertsEntity.user = user;
@@ -48,13 +57,56 @@ export class AdvertsService {
     try {
       const savedAdverts = await this.advertsRepository.save(advertsEntity);
 
-      return deleteAdvertsAtributes(savedAdverts);
+      return this.findOneById(savedAdverts.id);
     } catch (error) {
       throw new InternalServerErrorException('adverts could not be saved.');
     }
   }
 
-  async finOneById(id: string) {
+  async findOneByUser(queryDto: FindAdvertsByUserQueryDto, userId: string) {
+    queryDto.page = queryDto.page < 1 ? 1 : queryDto.page;
+    queryDto.limit = queryDto.limit > 100 ? 100 : queryDto.limit;
+
+    const { categoryId, price, name } = queryDto;
+
+    const query = await this.advertsRepository.createQueryBuilder('adverts');
+
+    query
+      .select(advertsSelectAtributes)
+      .leftJoin('adverts.categories', 'category')
+      .leftJoin('adverts.address', 'address')
+      .leftJoin('adverts.user', 'user')
+      .leftJoin('adverts.advertsPhotos', 'adverts_photos');
+
+    query.where('user.id = :userId', { userId });
+
+    if (name) {
+      query.andWhere('adverts.name ILIKE :name', { name: `%${name}%` });
+    }
+
+    if (price) {
+      query.andWhere('adverts.price = :price', { price });
+    }
+
+    if (categoryId) {
+      query.andWhere('category.id = :categoryId', { categoryId });
+    }
+
+    query.skip((queryDto.page - 1) * queryDto.limit);
+    query.take(queryDto.limit);
+
+    query.orderBy(queryDto.sort ? JSON.stringify(queryDto.sort) : undefined);
+
+    const [adverts, count] = await query.getManyAndCount();
+
+    if (adverts.length === 0) {
+      throw new NotFoundException('no adverts found');
+    }
+
+    return { count, adverts };
+  }
+
+  async findOneById(id: string) {
     if (!id) {
       throw new BadRequestException('id is required.');
     }
@@ -63,6 +115,7 @@ export class AdvertsService {
       .createQueryBuilder('adverts')
       .select(advertsSelectAtributes)
       .leftJoin('adverts.categories', 'category')
+      .leftJoin('adverts.address', 'address')
       .leftJoin('adverts.user', 'user')
       .leftJoin('adverts.advertsPhotos', 'adverts_photos')
       .getOne();
@@ -73,25 +126,47 @@ export class AdvertsService {
     return adverts;
   }
 
-  async findManyAdverts(params: { limit: number; offset: number }) {
-    const { limit, offset } = params;
+  async findAdverts(queryDto: FindAdvertsQueryDto) {
+    queryDto.page = queryDto.page < 1 ? 1 : queryDto.page;
+    queryDto.limit = queryDto.limit > 100 ? 100 : queryDto.limit;
 
-    const advertsQuery = await this.advertsRepository.createQueryBuilder(
-      'adverts',
-    );
+    const { city, categoryId, uf, price, name } = queryDto;
 
-    const count = await advertsQuery.getCount();
+    const query = await this.advertsRepository.createQueryBuilder('adverts');
 
-    const adverts = await advertsQuery
+    query
       .select(advertsSelectAtributes)
       .leftJoin('adverts.categories', 'category')
+      .leftJoin('adverts.address', 'address')
       .leftJoin('adverts.user', 'user')
-      .leftJoin('adverts.advertsPhotos', 'adverts_photos')
-      .skip(offset)
-      .take(limit)
-      .getMany();
+      .leftJoin('adverts.advertsPhotos', 'adverts_photos');
 
-    if (!adverts) {
+    query.where('adverts.name ILIKE :name', { name: `%${name}%` });
+
+    if (price) {
+      query.andWhere('adverts.price = :price', { price });
+    }
+
+    if (city) {
+      query.andWhere('address.city ILIKE :city', { city: `%${city}%` });
+    }
+
+    if (uf) {
+      query.andWhere('address.uf ILIKE :uf', { uf: `%${uf}%` });
+    }
+
+    if (categoryId) {
+      query.andWhere('category.id = :categoryId', { categoryId });
+    }
+
+    query.skip((queryDto.page - 1) * queryDto.limit);
+    query.take(queryDto.limit);
+
+    query.orderBy(queryDto.sort ? JSON.stringify(queryDto.sort) : undefined);
+
+    const [adverts, count] = await query.getManyAndCount();
+
+    if (adverts.length === 0) {
       throw new NotFoundException('no adverts found');
     }
 
@@ -104,29 +179,34 @@ export class AdvertsService {
   }) {
     const {
       id,
-      updateAdvertsDto: { name, price, description },
+      updateAdvertsDto: { name, price, description, address },
     } = params;
 
     const adverts = await this.advertsRepository.findOne(id);
     if (!adverts) {
       throw new NotFoundException('no adverts found');
     }
+    const addressEntity = this.addressRepository.create({ ...address });
 
     adverts.description = description;
     adverts.name = name;
     adverts.price = price;
+    adverts.address = addressEntity;
 
-    const updatedAdverts = await this.advertsRepository.update(
-      { id: adverts.id },
-      adverts,
-    );
+    const updatedAdverts = await this.saveAdverts(adverts);
+    return this.findOneById(updatedAdverts.id);
+  }
 
-    if (updatedAdverts.affected > 0) {
-      const advertsEntity = await this.advertsRepository.findOne(adverts.id);
-
-      return deleteAdvertsAtributes(advertsEntity);
-    } else {
-      throw new NotFoundException('no adverts found');
+  async saveAdverts(adverts: Adverts) {
+    try {
+      const savedAdverts = await this.advertsRepository.save(adverts);
+      return savedAdverts;
+    } catch (error) {
+      if (error.code.toString() === '23505') {
+        throw new ConflictException(`email is already in use`);
+      } else {
+        throw new InternalServerErrorException('Could not save Adverts.');
+      }
     }
   }
 
@@ -135,7 +215,7 @@ export class AdvertsService {
       throw new BadRequestException('id is required.');
     }
 
-    const adverts = await this.finOneById(id);
+    const adverts = await this.findOneById(id);
 
     try {
       await this.advertsRepository.delete(adverts.id);

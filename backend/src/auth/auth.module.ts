@@ -16,7 +16,7 @@ import { SendEmail } from '../utils/SendEmail';
     PassportModule,
     JwtModule.register({
       secret: keys.jwtKey,
-      signOptions: { expiresIn: '60s' },
+      signOptions: { expiresIn: '86400s' },
     }),
   ],
   controllers: [AuthController],

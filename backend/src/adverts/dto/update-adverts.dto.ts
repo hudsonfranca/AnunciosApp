@@ -4,7 +4,12 @@ import {
   Length,
   IsDefined,
   IsDecimal,
+  IsNotEmptyObject,
+  ValidateNested,
+  IsObject,
 } from 'class-validator';
+import { CreateAddressDto } from './create-address.dto';
+import { Type } from 'class-transformer';
 
 export class UpdateAdvertsDto {
   @IsString()
@@ -21,4 +26,11 @@ export class UpdateAdvertsDto {
   @IsNotEmpty()
   @IsDefined()
   description: string;
+
+  @IsDefined()
+  @IsNotEmptyObject()
+  @IsObject()
+  @ValidateNested()
+  @Type(() => CreateAddressDto)
+  address: CreateAddressDto;
 }

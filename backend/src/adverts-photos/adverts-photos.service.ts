@@ -18,7 +18,7 @@ export class AdvertsPhotosService {
     delete file.size;
     delete file.fieldname;
 
-    const adverts = await this.advertsService.finOneById(advertsId);
+    const adverts = await this.advertsService.findOneById(advertsId);
 
     const advertsPhoto = this.advertsPhotosRepository.create(file);
 

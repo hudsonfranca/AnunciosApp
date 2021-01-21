@@ -8,10 +8,13 @@ import {
   JoinTable,
   ManyToOne,
   OneToMany,
+  OneToOne,
+  JoinColumn,
 } from 'typeorm';
 import { Category } from '../category/category.entity';
 import { User } from '../user/user.entity';
 import { AdvertsPhotos } from '../adverts-photos/adverts-photos.entity';
+import { Address } from 'src/address/address.entity';
 
 @Entity()
 export class Adverts {
@@ -21,7 +24,7 @@ export class Adverts {
   @Column({ nullable: false, type: 'varchar', length: 200 })
   name: string;
 
-  @Column({ nullable: false, type: 'decimal', precision: 5, scale: 2 })
+  @Column('decimal', { nullable: false, precision: 5, scale: 2 })
   price: number;
 
   @Column({ nullable: false, type: 'varchar' })
@@ -46,8 +49,14 @@ export class Adverts {
 
   @OneToMany(() => AdvertsPhotos, (advertsPhotos) => advertsPhotos.adverts, {
     cascade: true,
+    onUpdate: 'CASCADE',
+    onDelete: 'SET NULL',
   })
   advertsPhotos: AdvertsPhotos[];
+
+  @OneToOne(() => Address, { cascade: true })
+  @JoinColumn()
+  address: Address;
 
   public static of(params: Partial<Adverts>): Adverts {
     const adverts = new Adverts();

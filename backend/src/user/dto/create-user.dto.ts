@@ -3,7 +3,6 @@ import {
   IsNotEmpty,
   Length,
   IsEmail,
-  IsInt,
   IsDefined,
   IsNotEmptyObject,
   IsObject,

@@ -20,13 +20,15 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { UserRole } from 'src/user/user-role';
+import { FindAdvertsQueryDto } from './dto/find-adverts-query.dto';
+import { FindAdvertsByUserQueryDto } from './dto/find-adverts-by-user-query.dto';
 
 @Controller('adverts')
-@UseGuards(JwtAuthGuard, RolesGuard)
 export class AdvertsController {
   constructor(private advertsService: AdvertsService) {}
 
   @Post()
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.USER, UserRole.VERIFIED_EMAIL)
   async create(@Body() createAdvertsDto: CreateAdvertsDto, @Request() req) {
     const adverts = await this.advertsService.createAdverts({
@@ -37,12 +39,13 @@ export class AdvertsController {
   }
 
   @Get(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.USER, UserRole.VERIFIED_EMAIL)
   async show(@Param() { id }: FindOneParams, @Request() req) {
     if (!id) {
       throw new BadRequestException('id is required.');
     }
-    const adverts = await this.advertsService.finOneById(id);
+    const adverts = await this.advertsService.findOneById(id);
 
     if (adverts.user.id !== req.user.id) {
       throw new UnauthorizedException();
@@ -51,17 +54,26 @@ export class AdvertsController {
     return adverts;
   }
 
-  @Get()
+  @Get('user/my-adverts')
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.USER, UserRole.VERIFIED_EMAIL)
-  async index(@Query('offset') offset: number, @Query('limit') limit: number) {
-    const adverts = await this.advertsService.findManyAdverts({
-      limit,
-      offset,
-    });
+  async advertsByUser(
+    @Query() query: FindAdvertsByUserQueryDto,
+    @Request() req,
+  ) {
+    const adverts = await this.advertsService.findOneByUser(query, req.user.id);
+
+    return adverts;
+  }
+
+  @Get()
+  async index(@Query() query: FindAdvertsQueryDto) {
+    const adverts = await this.advertsService.findAdverts(query);
     return adverts;
   }
 
   @Patch(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.USER, UserRole.VERIFIED_EMAIL)
   async update(
     @Request() req,
@@ -72,7 +84,7 @@ export class AdvertsController {
       throw new BadRequestException('id is required.');
     }
 
-    const adverts = await this.advertsService.finOneById(id);
+    const adverts = await this.advertsService.findOneById(id);
 
     if (adverts.user.id !== req.user.id) {
       throw new UnauthorizedException();
@@ -90,9 +102,10 @@ export class AdvertsController {
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.USER, UserRole.VERIFIED_EMAIL)
   async delete(@Param() { id }: FindOneParams, @Request() req) {
-    const adverts = await this.advertsService.finOneById(id);
+    const adverts = await this.advertsService.findOneById(id);
 
     if (adverts.user.id !== req.user.id) {
       throw new UnauthorizedException();

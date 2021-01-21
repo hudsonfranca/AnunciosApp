@@ -67,4 +67,10 @@ export const advertsSelectAtributes = [
   'adverts_photos.destination',
   'adverts_photos.filename',
   'adverts_photos.path',
+  'address.id',
+  'address.city',
+  'address.number',
+  'address.street',
+  'address.zip',
+  'address.uf',
 ];

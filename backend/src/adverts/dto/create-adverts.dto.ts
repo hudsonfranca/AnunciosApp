@@ -2,10 +2,13 @@ import {
   IsString,
   IsNotEmpty,
   Length,
-  IsUUID,
   IsDefined,
-  IsDecimal,
+  IsNotEmptyObject,
+  IsObject,
+  ValidateNested,
 } from 'class-validator';
+import { Type } from 'class-transformer';
+import { CreateAddressDto } from './create-address.dto';
 
 export class CreateAdvertsDto {
   @IsString()
@@ -16,15 +19,20 @@ export class CreateAdvertsDto {
 
   @IsNotEmpty()
   @IsDefined()
-  @IsDecimal()
   price: number;
 
   @IsNotEmpty()
   @IsDefined()
   description: string;
 
-  @IsUUID('4', { each: true })
   @IsNotEmpty()
   @IsDefined()
   categoryIds: string[];
+
+  @IsDefined()
+  @IsNotEmptyObject()
+  @IsObject()
+  @ValidateNested()
+  @Type(() => CreateAddressDto)
+  address: CreateAddressDto;
 }
