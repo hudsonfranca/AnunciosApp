@@ -22,7 +22,7 @@ export class CategoryService {
   async createCategory(createCategoryDto: CreateCategoryDto) {
     const { name } = createCategoryDto;
     if (!name) {
-      throw new BadRequestException(' name is required.');
+      throw new BadRequestException('name is required.');
     }
 
     const categoryEntity = this.categoryRepository.create({ name });
@@ -110,9 +110,9 @@ export class CategoryService {
     );
 
     if (updatedCategory.affected > 0) {
-      const categoryEntity = await this.categoryRepository.findOne(category.id);
+      const categoryEntity = await this.findOneById(category.id);
 
-      return deleteCategoryAtributes(categoryEntity);
+      return categoryEntity;
     } else {
       throw new NotFoundException(`category does not exist`);
     }

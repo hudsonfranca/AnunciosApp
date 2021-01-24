@@ -14,7 +14,7 @@ import {
 import { Category } from '../category/category.entity';
 import { User } from '../user/user.entity';
 import { AdvertsPhotos } from '../adverts-photos/adverts-photos.entity';
-import { Address } from 'src/address/address.entity';
+import { Address } from '../address/address.entity';
 
 @Entity()
 export class Adverts {

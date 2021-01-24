@@ -7,6 +7,7 @@ import {
   IsNotEmptyObject,
   IsObject,
   ValidateNested,
+  IsBoolean,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { CreateAddressDto } from './create-address.dto';
@@ -34,6 +35,11 @@ export class CreateUserDto {
   @Length(8, 8)
   @IsDefined()
   password: string;
+
+  @IsDefined()
+  @IsNotEmpty()
+  @IsBoolean()
+  status: boolean;
 
   @IsString()
   @IsNotEmpty()

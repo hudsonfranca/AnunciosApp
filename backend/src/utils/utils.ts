@@ -74,3 +74,5 @@ export const advertsSelectAtributes = [
   'address.zip',
   'address.uf',
 ];
+
+

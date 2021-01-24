@@ -12,11 +12,10 @@ import { CreateAdvertsDto } from './dto/create-adverts.dto';
 import { UpdateAdvertsDto } from './dto/update-adverts.dto';
 import { UserService } from '../user/user.service';
 import { CategoryService } from '../category/category.service';
-import { Category } from 'src/category/category.entity';
-import { deleteAdvertsAtributes, advertsSelectAtributes } from '../utils/utils';
+import { Category } from '../category/category.entity';
+import { advertsSelectAtributes } from '../utils/utils';
 import { FindAdvertsQueryDto } from './dto/find-adverts-query.dto';
 import { FindAdvertsByUserQueryDto } from './dto/find-adverts-by-user-query.dto';
-
 import { Address } from '../address/address.entity';
 
 @Injectable()
@@ -57,7 +56,7 @@ export class AdvertsService {
     try {
       const savedAdverts = await this.advertsRepository.save(advertsEntity);
 
-      return this.findOneById(savedAdverts.id);
+      return await this.findOneById(savedAdverts.id);
     } catch (error) {
       throw new InternalServerErrorException('adverts could not be saved.');
     }
@@ -103,7 +102,7 @@ export class AdvertsService {
       throw new NotFoundException('no adverts found');
     }
 
-    return { count, adverts };
+    return [count, adverts];
   }
 
   async findOneById(id: string) {
@@ -118,6 +117,7 @@ export class AdvertsService {
       .leftJoin('adverts.address', 'address')
       .leftJoin('adverts.user', 'user')
       .leftJoin('adverts.advertsPhotos', 'adverts_photos')
+      .where('adverts.id = :id', { id })
       .getOne();
     if (!adverts) {
       throw new NotFoundException('no adverts found');
@@ -170,7 +170,7 @@ export class AdvertsService {
       throw new NotFoundException('no adverts found');
     }
 
-    return { count, adverts };
+    return [count, adverts];
   }
 
   async updateAdverts(params: {

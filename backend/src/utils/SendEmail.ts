@@ -1,7 +1,7 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ISendMailOptions, MailerService } from '@nestjs-modules/mailer';
 import { User } from '../user/user.entity';
-import { keys } from 'src/keys';
+import { keys } from '../keys';
 
 @Injectable()
 export class SendEmail {
