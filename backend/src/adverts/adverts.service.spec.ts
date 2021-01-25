@@ -240,7 +240,7 @@ describe('AdvertsService', () => {
     };
 
     const result = await advertsService.findAdverts(queryDto);
-    expect(result).toEqual([1, savedAdverts]);
+    expect(result).toEqual({ count: 1, adverts: savedAdverts });
   });
 
   describe('updateAdverts', () => {
@@ -338,7 +338,7 @@ describe('AdvertsService', () => {
       }
     });
 
-    it('', async () => {
+    it('must delete an adverts', async () => {
       const advertsServiceFindOneByIdsSpy = jest
         .spyOn(advertsService, 'findOneById')
         .mockResolvedValue(savedAdverts);

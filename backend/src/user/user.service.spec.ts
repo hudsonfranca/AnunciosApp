@@ -10,6 +10,8 @@ import * as crypto from 'crypto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { SendEmail } from '../utils/SendEmail';
 import { MailerService } from '@nestjs-modules/mailer';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { FindUserQueryDto } from './dto/find-user-query.dto';
 
 const mockAddressRepository = () => ({
   create: jest.fn().mockReturnValue(addressEntity),
@@ -48,8 +50,10 @@ const savedUser = User.of({
   email: 'admin@gmail.com',
   password: '12345678',
   phoneNumber: '123456789',
+  roles: [UserRole.ADMIN],
   status: false,
   address: savedAddress,
+  recoverToken: crypto.randomBytes(32).toString('hex'),
   createdAt: new Date(),
   updatedAt: new Date(),
 });
@@ -164,6 +168,139 @@ describe('UserService', () => {
       expect(addressRepository.create).toHaveBeenCalledWith(
         createUserDto.address,
       );
+    });
+  });
+
+  describe('updateUser', () => {
+    it('must update the user', async () => {
+      const updateUserDto: UpdateUserDto = {
+        name: 'ADMIN',
+        email: 'admh@gmail.com',
+        phoneNumber: '111111111',
+        status: false,
+        address: {
+          zip: '12323454',
+          city: 'São Paulo',
+          number: 35,
+          street: 'Rua são João',
+          uf: 'RJ',
+        },
+      };
+
+      const id = '2e35f06a-f398-4aa9-b6c0-3c26a61cf3de';
+
+      const userServiceFindOneSpy = jest
+        .spyOn(userService, 'findOne')
+        .mockResolvedValue(savedUser);
+
+      const userRepositoryUpdateSpy = jest
+        .spyOn(userRepository, 'update')
+        .mockResolvedValue({ raw: '', affected: 1, generatedMaps: [] });
+
+      await userService.updateUser({ id, updateUserDto });
+
+      expect(userServiceFindOneSpy).toHaveBeenLastCalledWith({
+        id: savedUser.id,
+      });
+      expect(userRepositoryUpdateSpy).toHaveBeenLastCalledWith(
+        { id },
+        savedUser,
+      );
+    });
+  });
+
+  describe('findAllUsers', () => {
+    it('', async () => {
+      const queryDto: FindUserQueryDto = {
+        limit: 10,
+        page: 1,
+      };
+
+      const result = await userService.findAllUsers(queryDto);
+
+      expect(result).toEqual({ count: 1, users: savedUser });
+    });
+  });
+
+  describe('deleteUser', () => {
+    it('should throw an error if the id was not provided', async () => {
+      try {
+        await userService.deleteUser('');
+      } catch (error) {
+        expect(error).toBeInstanceOf(BadRequestException);
+        expect(error.message).toBe('id is required.');
+      }
+    });
+
+    it('must delete a user', async () => {
+      const userServiceFindOneSpy = jest
+        .spyOn(userService, 'findOne')
+        .mockResolvedValue(savedUser);
+
+      const userRepositoryDeleteSpy = jest
+        .spyOn(userRepository, 'delete')
+        .mockResolvedValue({ raw: [], affected: 1 });
+
+      const id = '2e35f06a-f398-4aa9-b6c0-3c26a61cf3de';
+
+      expect(await userService.deleteUser(id)).toEqual({
+        message: `user successfully removed`,
+      });
+
+      expect(userRepositoryDeleteSpy).toHaveBeenCalledWith(id);
+      expect(userServiceFindOneSpy).toHaveBeenCalledWith({ id });
+    });
+  });
+
+  describe('confirmEmail', () => {
+    it('must call userRepository methods', async () => {
+      const userServiceFindOneSpy = jest
+        .spyOn(userService, 'findOne')
+        .mockResolvedValue(savedUser);
+
+      const userServiceSaveUserSpy = jest
+        .spyOn(userService, 'saveUser')
+        .mockResolvedValue(savedUser);
+
+      const confirmationToken = 'cee67c14acb1c3520dcc11a29';
+
+      await userService.confirmEmail(confirmationToken);
+
+      expect(userServiceFindOneSpy).toHaveBeenCalledWith({ confirmationToken });
+      expect(userServiceSaveUserSpy).toHaveBeenCalledWith(savedUser);
+    });
+  });
+
+  describe('saveUser', () => {
+    it('must save a user', async () => {
+      const userRepositorySaveSpy = jest
+        .spyOn(userRepository, 'save')
+        .mockResolvedValue(savedUser);
+
+      const result = await userService.saveUser(createdUser);
+
+      expect(result).toBe(savedUser);
+      expect(userRepositorySaveSpy).toHaveBeenLastCalledWith(createdUser);
+    });
+  });
+
+  describe('changePassword', () => {
+    it('must change the user password', async () => {
+      const userServiceFindOneSpy = jest
+        .spyOn(userService, 'findOne')
+        .mockResolvedValue(savedUser);
+
+      const userServiceSaveUserSpy = jest
+        .spyOn(userService, 'saveUser')
+        .mockResolvedValue(savedUser);
+
+      const id = '2e35f06a-f398-4aa9-b6c0-3c26a61cf3de';
+      const password = '12345678';
+
+      await userService.changePassword({ id, password });
+
+      expect(userServiceFindOneSpy).toHaveBeenCalledWith({ id });
+      expect(userServiceSaveUserSpy).toHaveBeenCalledWith(savedUser);
     });
   });
 });

@@ -6,6 +6,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { UpdateCategoryDto } from './dto/update-category.dto';
+import { FindCategoryQueryDto } from './dto/find-category-query.dto';
 
 const createdCategory = Category.of({
   name: 'electronics',
@@ -179,7 +180,7 @@ describe('CategoryService', () => {
   });
 
   describe('updateCategory', () => {
-    it('', async () => {
+    it('must update data for a category', async () => {
       const updateCategoryDto: UpdateCategoryDto = {
         name: 'electronics',
       };
@@ -200,30 +201,43 @@ describe('CategoryService', () => {
 
       expect(result).toEqual(categoryEntity);
     });
+
+    it('should throw an error if no categories are updated', async () => {
+      const updateCategoryDto: UpdateCategoryDto = {
+        name: 'electronics',
+      };
+      const id = 'c897a2a8-a4ec-43ea-82d6-72fc812def1d';
+
+      const categoryServiceFindOneByIdSpy = jest
+        .spyOn(categoryService, 'findOneById')
+        .mockResolvedValue(savedCategory);
+
+      const categoryRepositoryUpdateSpy = jest
+        .spyOn(categoryRepository, 'update')
+        .mockResolvedValue({ raw: [], affected: 0, generatedMaps: [] });
+
+      try {
+        await categoryService.updateCategory({
+          id,
+          updateCategoryDto,
+        });
+      } catch (error) {
+        expect(error).toBeInstanceOf(NotFoundException);
+        expect(error.message).toBe('category does not exist');
+      }
+    });
   });
 
-  it('should throw an error if no categories are updated', async () => {
-    const updateCategoryDto: UpdateCategoryDto = {
-      name: 'electronics',
-    };
-    const id = 'c897a2a8-a4ec-43ea-82d6-72fc812def1d';
+  describe('findManyCategories', () => {
+    it('must return all categories', async () => {
+      const queryDto: FindCategoryQueryDto = {
+        limit: 10,
+        page: 1,
+      };
 
-    const categoryServiceFindOneByIdSpy = jest
-      .spyOn(categoryService, 'findOneById')
-      .mockResolvedValue(savedCategory);
+      const result = await categoryService.findManyCategories(queryDto);
 
-    const categoryRepositoryUpdateSpy = jest
-      .spyOn(categoryRepository, 'update')
-      .mockResolvedValue({ raw: [], affected: 0, generatedMaps: [] });
-
-    try {
-      await categoryService.updateCategory({
-        id,
-        updateCategoryDto,
-      });
-    } catch (error) {
-      expect(error).toBeInstanceOf(NotFoundException);
-      expect(error.message).toBe('category does not exist');
-    }
+      expect(result).toEqual({ count: 1, categories: savedCategory });
+    });
   });
 });

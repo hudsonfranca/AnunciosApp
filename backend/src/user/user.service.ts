@@ -111,7 +111,7 @@ export class UserService {
     const updatedUser = await this.userRepository.update({ id: user.id }, user);
 
     if (updatedUser.affected > 0) {
-      const userEntity = await this.userRepository.findOne(user.id);
+      const userEntity = await this.findOne({ id });
 
       return deleteUserAtributes(userEntity);
     } else {
