@@ -18,6 +18,7 @@ import { UserRole } from '../user/user-role';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
+import { FindCategoryQueryDto } from './dto/find-category-query.dto';
 
 @Controller('category')
 // @UseGuards(JwtAuthGuard, RolesGuard)
@@ -36,11 +37,8 @@ export class CategoryController {
 
   @Get()
   @Roles(UserRole.ADMIN, UserRole.VERIFIED_EMAIL)
-  async index(@Query('offset') offset: number, @Query('limit') limit: number) {
-    const categories = await this.categoryService.findManyCategories({
-      limit,
-      offset,
-    });
+  async index(@Query() query: FindCategoryQueryDto) {
+    const categories = await this.categoryService.findManyCategories(query);
     return categories;
   }
 

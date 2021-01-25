@@ -11,6 +11,7 @@ import { Category } from './category.entity';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { deleteCategoryAtributes } from '../utils/utils';
+import { FindCategoryQueryDto } from './dto/find-category-query.dto';
 
 @Injectable()
 export class CategoryService {
@@ -54,26 +55,26 @@ export class CategoryService {
     return category;
   }
 
-  async findManyCategories(params: { limit: number; offset: number }) {
-    const { limit, offset } = params;
+  async findManyCategories(queryDto: FindCategoryQueryDto) {
+    queryDto.page = queryDto.page < 1 ? 1 : queryDto.page;
+    queryDto.limit = queryDto.limit > 100 ? 100 : queryDto.limit;
 
-    const categoryQuery = await this.categoryRepository.createQueryBuilder(
+    const categoryQuery = this.categoryRepository.createQueryBuilder(
       'categories',
     );
 
-    const count = await categoryQuery.getCount();
-
-    const categories = await categoryQuery
+    const [categories, count] = await categoryQuery
       .select(['categories.id', 'categories.name'])
-      .skip(offset)
-      .take(limit)
-      .getMany();
+      .skip((queryDto.page - 1) * queryDto.limit)
+      .take(queryDto.limit)
+      .orderBy(queryDto.sort ? JSON.stringify(queryDto.sort) : undefined)
+      .getManyAndCount();
 
     if (!categories) {
       throw new NotFoundException('no categories found');
     }
 
-    return { count, categories };
+    return { count: count, categories: categories };
   }
 
   async deleteCategory(id: string) {
