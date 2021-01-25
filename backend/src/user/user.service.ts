@@ -16,7 +16,7 @@ import * as argon2 from 'argon2';
 import { deleteUserAtributes, userSelectAtributes } from '../utils/utils';
 import * as crypto from 'crypto';
 import { SendEmail } from '../utils/SendEmail';
-
+import { FindUserQueryDto } from './dto/find-user-query.dto';
 
 interface createUserParams {
   createUserDto: CreateUserDto;
@@ -40,7 +40,7 @@ export class UserService {
     const { createUserDto, roles } = params;
 
     if (!createUserDto) {
-      throw new BadRequestException(' createUserDto is required.');
+      throw new BadRequestException('createUserDto is required.');
     }
 
     if (!roles) {
@@ -81,7 +81,7 @@ export class UserService {
       throw new NotFoundException('No user area found');
     }
 
-    return user;
+    return deleteUserAtributes(user);
   }
 
   async updateUser(params: updateUserParams) {
@@ -119,25 +119,25 @@ export class UserService {
     }
   }
 
-  async findAllUsers(params: { limit: number; offset: number }) {
-    const { limit, offset } = params;
+  async findAllUsers(queryDto: FindUserQueryDto) {
+    queryDto.page = queryDto.page < 1 ? 1 : queryDto.page;
+    queryDto.limit = queryDto.limit > 100 ? 100 : queryDto.limit;
 
-    const userQuery = await this.userRepository.createQueryBuilder('user');
+    const userQuery = this.userRepository.createQueryBuilder('user');
 
-    const count = await userQuery.getCount();
-
-    const users = await userQuery
+    const [users, count] = await userQuery
       .select(userSelectAtributes)
       .leftJoin('user.address', 'address')
-      .skip(offset)
-      .take(limit)
-      .getMany();
+      .skip((queryDto.page - 1) * queryDto.limit)
+      .take(queryDto.limit)
+      .orderBy(queryDto.sort ? JSON.stringify(queryDto.sort) : undefined)
+      .getManyAndCount();
 
     if (!users) {
       throw new NotFoundException('No user area found');
     }
 
-    return { count, users };
+    return { count: count, users: users };
   }
 
   async deleteUser(id: string) {

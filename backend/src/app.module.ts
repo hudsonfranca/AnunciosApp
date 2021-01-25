@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { PublicAreaModule } from './public-area/public-area.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeOrmConfig } from './config/typeorm.config';
 import { AddressModule } from './address/address.module';
@@ -11,10 +10,8 @@ import { AdvertsPhotosModule } from './adverts-photos/adverts-photos.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { mailerConfig } from './config/meiler.config';
 
-
 @Module({
   imports: [
-    PublicAreaModule,
     TypeOrmModule.forRoot(typeOrmConfig),
     AddressModule,
     UserModule,

@@ -21,6 +21,7 @@ import { UserRole } from './user-role';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { SendEmail } from '../utils/SendEmail';
+import { FindAdvertsQueryDto } from 'src/adverts/dto/find-adverts-query.dto';
 
 @Controller('user')
 // @UseGuards(JwtAuthGuard, RolesGuard)
@@ -83,7 +84,7 @@ export class UserController {
     }
     const user = await this.userService.findOne({ id });
 
-    return user.roles;
+    return user;
   }
 
   @Delete(':id')
@@ -98,8 +99,8 @@ export class UserController {
 
   @Get()
   @Roles(UserRole.ADMIN, UserRole.VERIFIED_EMAIL)
-  async index(@Query('offset') offset: number, @Query('limit') limit: number) {
-    const users = await this.userService.findAllUsers({ limit, offset });
+  async index(@Query() query: FindAdvertsQueryDto) {
+    const users = await this.userService.findAllUsers(query);
     return users;
   }
 }
