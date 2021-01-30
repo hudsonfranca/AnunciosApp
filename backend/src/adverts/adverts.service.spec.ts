@@ -27,10 +27,11 @@ const FakeCategoryService = () => ({
 
 const userEntity = User.of({
   id: '2e35f06a-f398-4aa9-b6c0-3c26a61cf3de',
-  name: 'Admin hg',
+  first_name: 'Admin',
+  last_name: 'Adm',
   email: 'admin@gmail.com',
   password: '12345678',
-  phoneNumber: '123456789',
+  phone_number: '123456789',
   status: false,
   createdAt: new Date(),
   updatedAt: new Date(),
@@ -45,7 +46,8 @@ const addressEntity = Address.of({
   city: 'Sao Paulo',
   number: 28,
   street: 'Rua A',
-  uf: 'SP',
+  state: 'SP',
+  neighborhood: 'Rua A',
 });
 
 const advertsEntity = Adverts.of({
@@ -61,6 +63,7 @@ const savedAdverts = Adverts.of({
   description: 'description',
   createdAt: new Date(),
   updatedAt: new Date(),
+  address: addressEntity,
 });
 
 const mockAddressRepository = () => ({
@@ -153,7 +156,8 @@ describe('AdvertsService', () => {
         city: 'Sao Paulo',
         number: 28,
         street: 'Rua A',
-        uf: 'SP',
+        state: 'SP',
+        neighborhood: 'Rua A',
       },
     };
 
@@ -179,7 +183,8 @@ describe('AdvertsService', () => {
       city: 'Sao Paulo',
       number: 28,
       street: 'Rua A',
-      uf: 'SP',
+      state: 'SP',
+      neighborhood: 'Rua A',
     });
     expect(categoryService.findOneById).toHaveBeenCalledWith(categoryId);
     expect(userService.findOne).toHaveBeenCalledWith({ id: userId });
@@ -251,7 +256,8 @@ describe('AdvertsService', () => {
           city: 'Sao Paulo',
           number: 28,
           street: 'Rua A',
-          uf: 'SP',
+          state: 'SP',
+          neighborhood: 'Rua A',
         },
         description: 'gfgfgfgfg',
         price: 300.9,
@@ -279,7 +285,8 @@ describe('AdvertsService', () => {
           city: 'Sao Paulo',
           number: 28,
           street: 'Rua A',
-          uf: 'SP',
+          state: 'SP',
+          neighborhood: 'Rua A',
         },
         description: 'gfgfgfgfg',
         price: 300.9,
@@ -303,13 +310,7 @@ describe('AdvertsService', () => {
       expect(await advertsService.updateAdverts({ updateAdvertsDto, id })).toBe(
         savedAdverts,
       );
-      expect(addressRepository.create).toBeCalledWith({
-        zip: '11905000',
-        city: 'Sao Paulo',
-        number: 28,
-        street: 'Rua A',
-        uf: 'SP',
-      });
+
       expect(advertsRepositoryFindOneSpy).toBeCalledWith(id);
     });
   });

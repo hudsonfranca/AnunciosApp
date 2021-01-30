@@ -36,20 +36,22 @@ const savedAddress = Address.of({
 });
 
 const createdUser = User.of({
-  name: 'Admin hg',
+  first_name: 'Admin',
+  last_name:'Adm',
   email: 'admin@gmail.com',
   password: '12345678',
-  phoneNumber: '123456789',
+  phone_number: '123456789',
   status: false,
   confirmationToken: crypto.randomBytes(32).toString('hex'),
 });
 
 const savedUser = User.of({
   id: '2e35f06a-f398-4aa9-b6c0-3c26a61cf3de',
-  name: 'Admin hg',
+  first_name: 'Admin',
+  last_name:'Adm',
   email: 'admin@gmail.com',
   password: '12345678',
-  phoneNumber: '123456789',
+  phone_number: '123456789',
   roles: [UserRole.ADMIN],
   status: false,
   address: savedAddress,
@@ -83,11 +85,12 @@ const mockUserRepository = () => ({
 });
 
 const createUserDto: CreateUserDto = {
-  name: 'Admin hg',
+  first_name: 'Admin',
+  last_name:'Adm',
   email: 'blade.hudson.email@gmail.com',
   password: '12345678',
   passwordConfirmation: '12345678',
-  phoneNumber: '123456789',
+  phone_number: '123456789',
   status: false,
   address: {
     zip: '29905540',
@@ -174,9 +177,10 @@ describe('UserService', () => {
   describe('updateUser', () => {
     it('must update the user', async () => {
       const updateUserDto: UpdateUserDto = {
-        name: 'ADMIN',
+        first_name: 'Admin',
+        last_name:'Adm',
         email: 'admh@gmail.com',
-        phoneNumber: '111111111',
+        phone_number: '111111111',
         status: false,
         address: {
           zip: '12323454',

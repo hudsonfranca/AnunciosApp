@@ -22,6 +22,7 @@ export class AuthService {
   ) {}
 
   async validateUser(email: string, password: string) {
+  
     const user = await this.userService.findOne({ email });
 
     try {
@@ -31,6 +32,7 @@ export class AuthService {
         return null;
       }
     } catch (error) {
+      throw new Error(error)
       throw new InternalServerErrorException('Could not authenticate user');
     }
   }

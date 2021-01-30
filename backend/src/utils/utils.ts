@@ -36,16 +36,18 @@ export const deleteCategoryAtributes = (category: Category) => {
 
 export const userSelectAtributes = [
   'user.id',
-  'user.name',
+  'user.first_name',
+  'user.last_name',
   'user.email',
   'user.roles',
-  'user.phoneNumber',
+  'user.phone_number',
   'address.id',
   'address.city',
   'address.number',
   'address.street',
   'address.zip',
-  'address.uf',
+  'address.state',
+  'address.neighborhood',
 ];
 
 export const advertsSelectAtributes = [
@@ -54,10 +56,11 @@ export const advertsSelectAtributes = [
   'adverts.price',
   'adverts.description',
   'user.id',
-  'user.name',
+  'user.first_name',
+  'user.last_name',
   'user.email',
   'user.roles',
-  'user.phoneNumber',
+  'user.phone_number',
   'category.id',
   'category.name',
   'adverts_photos.id',
@@ -72,7 +75,9 @@ export const advertsSelectAtributes = [
   'address.number',
   'address.street',
   'address.zip',
-  'address.uf',
+  'address.state',
+  'address.neighborhood',
+
 ];
 
 

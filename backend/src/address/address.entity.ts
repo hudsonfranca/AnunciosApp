@@ -24,7 +24,10 @@ export class Address {
   city: string;
 
   @Column({ nullable: false, type: 'varchar', length: 2 })
-  uf: string;
+  state: string;
+
+  @Column({ nullable: false, type: 'varchar', length: 200 })
+  neighborhood:string
 
   @CreateDateColumn()
   createdAt: Date;

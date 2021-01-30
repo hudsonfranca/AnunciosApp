@@ -179,19 +179,28 @@ export class AdvertsService {
   }) {
     const {
       id,
-      updateAdvertsDto: { name, price, description, address },
+      updateAdvertsDto: {
+        name,
+        price,
+        description,
+        address: { city, neighborhood, number, state, street, zip },
+      },
     } = params;
 
-    const adverts = await this.advertsRepository.findOne(id);
-    if (!adverts) {
-      throw new NotFoundException('no adverts found');
-    }
-    const addressEntity = this.addressRepository.create({ ...address });
+    const adverts = await this.findOneById(id);
+   
 
-    adverts.description = description;
-    adverts.name = name;
-    adverts.price = price;
-    adverts.address = addressEntity;
+    adverts.description = description ? description : adverts.description;
+    adverts.name = name ? name : adverts.description;
+    adverts.price = price ? price : adverts.price;
+    adverts.address.city = city ? city : adverts.address.city;
+    adverts.address.number = number ? number : adverts.address.number;
+    adverts.address.street = street ? street : adverts.address.street;
+    adverts.address.zip = zip ? zip : adverts.address.zip;
+    adverts.address.state = state ? state : adverts.address.state;
+    adverts.address.neighborhood = neighborhood
+      ? neighborhood
+      : adverts.address.neighborhood;
 
     const updatedAdverts = await this.saveAdverts(adverts);
     return this.findOneById(updatedAdverts.id);

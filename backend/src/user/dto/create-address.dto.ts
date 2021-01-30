@@ -19,6 +19,12 @@ export class CreateAddressDto {
   @IsDefined()
   street: string;
 
+  @IsString()
+  @IsNotEmpty()
+  @Length(1, 200)
+  @IsDefined()
+  neighborhood:string;
+
   @IsInt()
   @IsNotEmpty()
   @IsDefined()
@@ -34,5 +40,5 @@ export class CreateAddressDto {
   @IsNotEmpty()
   @Length(2, 2)
   @IsDefined()
-  uf: string;
+  state: string;
 }

@@ -17,3 +17,6 @@ spec:
         image: hudsonfranca/anuncios-frontend
         ports:
         - containerPort: 3000
+        env:
+          - name: BACKEND_SERVICE
+            value: backend-cluster-ip-service

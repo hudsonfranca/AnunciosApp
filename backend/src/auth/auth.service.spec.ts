@@ -14,10 +14,11 @@ import { UnprocessableEntityException } from '@nestjs/common';
 const userEntity = async () => {
   return User.of({
     id: '2e35f06a-f398-4aa9-b6c0-3c26a61cf3de',
-    name: 'Admin hg',
+    first_name: 'Admin',
+    last_name:'Adm',
     email: 'admin@gmail.com',
     password: await argon2.hash('12345678'),
-    phoneNumber: '123456789',
+    phone_number: '123456789',
     confirmationToken: crypto.randomBytes(32).toString('hex'),
     status: false,
     createdAt: new Date('2021-01-23T21:15:16.629Z'),
@@ -134,11 +135,12 @@ describe('AuthService', () => {
   describe('signup', () => {
     it('must create a user and send an email', async () => {
       const createUserDto: CreateUserDto = {
-        name: 'Hudson',
+        first_name: 'Hudson',
+        last_name:'hu',
         email: 'hudsonsilvares@gmail.com',
         password: '12345678',
         passwordConfirmation: '12345678',
-        phoneNumber: '123456789',
+        phone_number: '123456789',
         status: false,
         address: {
           zip: '29905540',

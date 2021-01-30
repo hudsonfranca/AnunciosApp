@@ -20,7 +20,6 @@ export class UpdateAdvertsDto {
 
   @IsNotEmpty()
   @IsDefined()
-  @IsDecimal()
   price: number;
 
   @IsNotEmpty()

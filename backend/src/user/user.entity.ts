@@ -21,7 +21,10 @@ export class User {
   email: string;
 
   @Column({ nullable: false, type: 'varchar', length: 200 })
-  name: string;
+  first_name: string;
+
+  @Column({ nullable: false, type: 'varchar', length: 200 })
+  last_name: string;
 
   @Column('text', { nullable: false, array: true, default: '{}' })
   roles: UserRole[];
@@ -29,7 +32,7 @@ export class User {
   @Column({ nullable: false, default: true })
   status: boolean;
 
-  @Column({ nullable: false })
+  @Column({ nullable: false})
   password: string;
 
   @Column({ nullable: true, type: 'varchar', length: 64 })
@@ -39,7 +42,7 @@ export class User {
   recoverToken: string;
 
   @Column({ nullable: false, type: 'varchar', length: 9 })
-  phoneNumber: string;
+  phone_number: string;
 
   @CreateDateColumn()
   createdAt: Date;

@@ -13,6 +13,7 @@ const cookieExtractor = function (req: Request) {
     const cookie = req.headers.cookie.split('=');
     token = cookie[1];
   }
+  
   return token;
 };
 

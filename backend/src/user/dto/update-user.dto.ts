@@ -22,13 +22,19 @@ export class UpdateUserDto {
   @IsDefined()
   @IsString()
   @Length(9, 9)
-  phoneNumber: string;
+  phone_number: string;
 
   @IsString()
   @IsNotEmpty()
   @Length(1, 200)
   @IsDefined()
-  name: string;
+  first_name: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @Length(1, 200)
+  @IsDefined()
+  last_name: string;
 
   @IsBoolean()
   @IsNotEmpty()

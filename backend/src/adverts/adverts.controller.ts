@@ -29,7 +29,7 @@ export class AdvertsController {
 
   @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.USER, UserRole.VERIFIED_EMAIL)
+  @Roles(UserRole.VERIFIED_EMAIL)
   async create(@Body() createAdvertsDto: CreateAdvertsDto, @Request() req) {
     const adverts = await this.advertsService.createAdverts({
       createAdvertsDto,
@@ -74,7 +74,7 @@ export class AdvertsController {
 
   @Patch(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.USER, UserRole.VERIFIED_EMAIL)
+  @Roles( UserRole.VERIFIED_EMAIL)
   async update(
     @Request() req,
     @Param() { id }: FindOneParams,

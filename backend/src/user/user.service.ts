@@ -47,7 +47,7 @@ export class UserService {
       throw new BadRequestException(' role is required.');
     }
 
-    const { name, email, password, phoneNumber, address } = createUserDto;
+    const { first_name,last_name, email, password, phone_number, address } = createUserDto;
 
     const addressEntity = this.addressRepository.create({
       ...address,
@@ -57,9 +57,10 @@ export class UserService {
     const confirmationToken = crypto.randomBytes(32).toString('hex');
 
     const userEntity = this.userRepository.create({
-      name,
+      first_name,
+      last_name,
       email,
-      phoneNumber,
+      phone_number,
       roles,
       status: true,
       confirmationToken,
@@ -81,16 +82,17 @@ export class UserService {
       throw new NotFoundException('No user area found');
     }
 
-    return deleteUserAtributes(user);
+    return user;
   }
 
   async updateUser(params: updateUserParams) {
     const {
       id,
       updateUserDto: {
-        address: { zip, uf, street, number, city },
-        name,
-        phoneNumber,
+        address: { zip, state, neighborhood,street, number, city },
+        first_name,
+        last_name,
+        phone_number,
         status,
         email,
       },
@@ -98,15 +100,18 @@ export class UserService {
 
     const user = await this.findOne({ id });
 
-    user.name = name ? name : user.name;
+    user.first_name = first_name ? first_name : user.first_name;
+    user.last_name = last_name ? last_name : user.last_name;
     user.status = status ? status : user.status;
     user.email = email ? email : user.email;
-    user.phoneNumber = phoneNumber ? phoneNumber : user.phoneNumber;
+    user.phone_number = phone_number ? phone_number : user.phone_number;
     user.address.city = city ? city : user.address.city;
     user.address.number = number ? number : user.address.number;
     user.address.street = street ? street : user.address.street;
     user.address.zip = zip ? zip : user.address.zip;
-    user.address.uf = uf ? uf : user.address.uf;
+    user.address.state = state ? state : user.address.state;
+    user.address.neighborhood = neighborhood ? neighborhood : user.address.neighborhood;
+
 
     const updatedUser = await this.userRepository.update({ id: user.id }, user);
 
@@ -155,8 +160,11 @@ export class UserService {
   }
 
   async confirmEmail(confirmationToken: string): Promise<void> {
+
     const user = await this.findOne({ confirmationToken });
     user.roles = [...user.roles, UserRole.VERIFIED_EMAIL];
+
+    user.confirmationToken = null;
 
     await this.saveUser(user);
     return;

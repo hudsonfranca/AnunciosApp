@@ -8,6 +8,7 @@ import {
   IsObject,
   ValidateNested,
   IsBoolean,
+  Min,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { CreateAddressDto } from './create-address.dto';
@@ -22,17 +23,23 @@ export class CreateUserDto {
   @IsDefined()
   @IsString()
   @Length(9, 9)
-  phoneNumber: string;
+  phone_number: string;
 
   @IsString()
   @IsNotEmpty()
   @Length(1, 200)
   @IsDefined()
-  name: string;
+  first_name: string;
 
   @IsString()
   @IsNotEmpty()
-  @Length(8, 8)
+  @Length(1, 200)
+  @IsDefined()
+  last_name: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @Length(8)
   @IsDefined()
   password: string;
 
@@ -43,7 +50,7 @@ export class CreateUserDto {
 
   @IsString()
   @IsNotEmpty()
-  @Length(8, 8)
+  @Length(8)
   @IsDefined()
   passwordConfirmation: string;
 

@@ -22,9 +22,10 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { SendEmail } from '../utils/SendEmail';
 import { FindAdvertsQueryDto } from 'src/adverts/dto/find-adverts-query.dto';
+import { deleteUserAtributes } from 'src/utils/utils';
 
 @Controller('user')
-// @UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class UserController {
   constructor(private userService: UserService, private sendEmail: SendEmail) {}
 
@@ -84,7 +85,7 @@ export class UserController {
     }
     const user = await this.userService.findOne({ id });
 
-    return user;
+    return deleteUserAtributes(user);
   }
 
   @Delete(':id')
