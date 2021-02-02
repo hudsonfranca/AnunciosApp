@@ -32,7 +32,7 @@ export class AuthService {
         return null;
       }
     } catch (error) {
-      throw new Error(error)
+   
       throw new InternalServerErrorException('Could not authenticate user');
     }
   }

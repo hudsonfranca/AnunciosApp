@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react'
+import React, { useCallback } from 'react'
 import { useRouter } from 'next/router'
 import {
   Container,
@@ -13,11 +13,7 @@ import {
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import { Form, Button, Col } from 'react-bootstrap'
-import api from '../services/api'
-import InputMask from 'react-input-mask'
-import signupImg from '../assets/signup.jpg'
 import Link from 'next/link'
-import { useFetch } from '../hooks/useFetch'
 import axios from 'axios'
 
 const validationSchema = Yup.object({

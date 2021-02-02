@@ -15,7 +15,9 @@ export default createGlobalStyle`
   text-rendering: optimizeSpeed;
   line-height: 1.5;
   overflow-x:hidden;
+
   }
+/*
 
   /* Box sizing rules */
 *,
