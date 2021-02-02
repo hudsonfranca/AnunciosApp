@@ -43,10 +43,6 @@ export class CreateUserDto {
   @IsDefined()
   password: string;
 
-  @IsDefined()
-  @IsNotEmpty()
-  @IsBoolean()
-  status: boolean;
 
   @IsString()
   @IsNotEmpty()

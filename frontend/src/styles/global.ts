@@ -11,6 +11,10 @@ export default createGlobalStyle`
     background: ${props => props.theme.colors.background};
     /* color: ${props => props.theme.colors.text}; */
     font: 400 16px Roboto, sans-serif;
+
+  text-rendering: optimizeSpeed;
+  line-height: 1.5;
+  overflow-x:hidden;
   }
 
   /* Box sizing rules */
@@ -46,11 +50,7 @@ html:focus-within {
 }
 
 /* Set core body defaults */
-body {
-  min-height: 100vh;
-  text-rendering: optimizeSpeed;
-  line-height: 1.5;
-}
+
 
 /* A elements that don't have a class get default styles */
 a:not([class]) {

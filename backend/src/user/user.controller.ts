@@ -25,7 +25,7 @@ import { FindAdvertsQueryDto } from 'src/adverts/dto/find-adverts-query.dto';
 import { deleteUserAtributes } from 'src/utils/utils';
 
 @Controller('user')
-@UseGuards(JwtAuthGuard, RolesGuard)
+// @UseGuards(JwtAuthGuard, RolesGuard)
 export class UserController {
   constructor(private userService: UserService, private sendEmail: SendEmail) {}
 

@@ -7,6 +7,7 @@ import {
   Body,
   Param,
   Patch,
+  Get,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { AuthService } from './auth.service';
@@ -29,6 +30,12 @@ export class AuthController {
       secure: false,
     });
     return { success: true, token: token };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('current-user')
+  async currentUser(@Request() req){
+      return req.user;
   }
 
   @Post('signup')

@@ -100,4 +100,6 @@ export class AuthService {
 
     await this.userService.changePassword({ id: user.id, password });
   }
+
+ 
 }

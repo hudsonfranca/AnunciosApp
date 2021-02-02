@@ -22,7 +22,8 @@ const addressEntity = Address.of({
   city: 'Sao Paulo',
   number: 28,
   street: 'Rua A',
-  uf: 'SP',
+  state: 'SP',
+  neighborhood:"Bairro A"
 });
 const savedAddress = Address.of({
   id: 'c52772d8-2051-414d-9b3e-11f72792c88b',
@@ -30,7 +31,8 @@ const savedAddress = Address.of({
   city: 'Sao Paulo',
   number: 28,
   street: 'Rua A',
-  uf: 'SP',
+  state: 'SP',
+  neighborhood:"Bairro A",
   createdAt: new Date(),
   updatedAt: new Date(),
 });
@@ -91,13 +93,14 @@ const createUserDto: CreateUserDto = {
   password: '12345678',
   passwordConfirmation: '12345678',
   phone_number: '123456789',
-  status: false,
+ 
   address: {
     zip: '29905540',
     city: 'Linhares',
     number: 28,
     street: 'Rua São Jose',
-    uf: 'ES',
+    state: 'ES',
+    neighborhood:"Bairro A"
   },
 };
 
@@ -187,7 +190,8 @@ describe('UserService', () => {
           city: 'São Paulo',
           number: 35,
           street: 'Rua são João',
-          uf: 'RJ',
+          state: 'RJ',
+          neighborhood:"Bairro A"
         },
       };
 
