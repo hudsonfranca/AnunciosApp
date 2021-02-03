@@ -5,8 +5,9 @@ import { Form, Button, Container, Row, Col, Alert } from 'react-bootstrap'
 import axios from 'axios'
 import Link from 'next/link'
 import { toast, ToastContainer } from 'react-toastify'
-
 import { useRouter } from 'next/router'
+import { PasswordRecoveryModal } from '../components/PasswordRecoveryModal'
+
 const validationSchema = Yup.object({
   email: Yup.string().email('email invalido').required('campo obrigatório'),
   password: Yup.string()
@@ -31,7 +32,8 @@ const Signin: React.FC = () => {
     handleSubmit,
     values,
     touched,
-    errors
+    errors,
+    isSubmitting
   } = useFormik({
     initialValues: {
       email: '',
@@ -54,10 +56,11 @@ const Signin: React.FC = () => {
       }
     }
   })
-
+  const [show, setShow] = useState(false)
   return (
     <Container fluid className="vh-100">
       <ToastContainer />
+      <PasswordRecoveryModal show={show} onHide={() => setShow(false)} />
       <Row className="justify-content-center h-100 align-items-center ">
         <Col lg={5} md={8} sm={11}>
           <Form
@@ -108,7 +111,12 @@ const Signin: React.FC = () => {
             </Row>
             <Row>
               <Col className="pt-4 mb-3">
-                <Button variant="primary" type="submit" block>
+                <Button
+                  variant="primary"
+                  type="submit"
+                  block
+                  disabled={isSubmitting}
+                >
                   Login
                 </Button>
               </Col>
@@ -117,9 +125,13 @@ const Signin: React.FC = () => {
               <Col>
                 <div className="w-100 d-flex justify-content-center align-items-center text-secondary">
                   <strong>
-                    <Link href="/signup">
-                      <a> Esqueceu sua Senha?</a>
-                    </Link>
+                    <a
+                      href="#"
+                      onClick={() => setShow(true)}
+                      className="pe-auto "
+                    >
+                      Esqueceu sua Senha?
+                    </a>
                   </strong>
                 </div>
               </Col>
@@ -127,7 +139,7 @@ const Signin: React.FC = () => {
             <Row>
               <Col>
                 <div className="w-100 d-flex justify-content-center align-items-center ">
-                  <strong className="mr-1">não tem cadastro?</strong>
+                  <strong className="mr-1">Não tem cadastro?</strong>
                   <strong>
                     <Link href="/signup">
                       <a> cadastre-se</a>
