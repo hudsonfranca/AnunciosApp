@@ -12,9 +12,10 @@ import {
 } from '../styles/pages/signup'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
-import { Form, Button, Col } from 'react-bootstrap'
+import { Form, Button, Col, Spinner } from 'react-bootstrap'
 import Link from 'next/link'
 import axios from 'axios'
+import { toast, ToastContainer } from 'react-toastify'
 
 const validationSchema = Yup.object({
   first_name: Yup.string().required('*campo obrigatório'),
@@ -52,6 +53,9 @@ interface ViaCepProps {
 }
 
 const Signup: React.FC = () => {
+  const notifyError = () => {
+    toast.error('Não foi possível criar a sua conta.')
+  }
   const router = useRouter()
   const {
     handleBlur,
@@ -61,7 +65,8 @@ const Signup: React.FC = () => {
     touched,
     errors,
     setFieldValue,
-    isSubmitting
+    isSubmitting,
+    submitForm
   } = useFormik({
     initialValues: {
       first_name: '',
@@ -98,8 +103,15 @@ const Signup: React.FC = () => {
           }
         })
         router.push('/')
-      } catch (error) {
-        console.log(error)
+      } catch ({ response: { data } }) {
+        const notifyEmailError = () => {
+          toast.error(`${values.email} já está em uso.`)
+        }
+        if (data.statusCode === 409) {
+          return notifyEmailError()
+        }
+
+        return notifyError()
       }
     }
   })
@@ -147,7 +159,7 @@ const Signup: React.FC = () => {
         </Ul>
       </Image>
       <Card>
-        <Title>Preencha os seus dados</Title>
+        <Title className="mb-4">Informe os seus dados</Title>
         <Form noValidate onSubmit={handleSubmit}>
           <Form.Row>
             <Form.Group sm md as={Col}>
@@ -351,9 +363,26 @@ const Signup: React.FC = () => {
               </Form.Control.Feedback>
             </Form.Group>
           </Form.Row>
-          <Button type="submit" size="lg" block disabled={isSubmitting}>
-            Signup
-          </Button>
+          <Form.Row>
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              onClick={submitForm}
+              className="mt-4"
+              block
+            >
+              {isSubmitting && (
+                <Spinner
+                  as="span"
+                  animation="grow"
+                  size="sm"
+                  role="status"
+                  aria-hidden="true"
+                />
+              )}
+              {isSubmitting ? ' Criando...' : 'Criar minha conta'}
+            </Button>
+          </Form.Row>
         </Form>
         <Login>
           <strong>Ja é cadastrado? </strong>

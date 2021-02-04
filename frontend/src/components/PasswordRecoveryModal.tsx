@@ -1,16 +1,20 @@
 import React from 'react'
-import { Button, Modal, Form, Spinner, ModalProps } from 'react-bootstrap'
+import { Button, Modal, Form, Spinner } from 'react-bootstrap'
 import axios from 'axios'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
-import { toast, ToastContainer } from 'react-toastify'
 import { useRouter } from 'next/router'
 
 const validationSchema = Yup.object({
   email: Yup.string().email('email invalido').required('campo obrigatório')
 })
 
-export const PasswordRecoveryModal: React.FC<ModalProps> = props => {
+interface Props {
+  onHide(): void
+  show: boolean
+}
+
+export const PasswordRecoveryModal: React.FC<Props> = ({ onHide, show }) => {
   const router = useRouter()
 
   const {
@@ -21,7 +25,8 @@ export const PasswordRecoveryModal: React.FC<ModalProps> = props => {
     touched,
     errors,
     isSubmitting,
-    submitForm
+    submitForm,
+    resetForm
   } = useFormik({
     initialValues: {
       email: ''
@@ -42,10 +47,11 @@ export const PasswordRecoveryModal: React.FC<ModalProps> = props => {
   })
   return (
     <Modal
-      {...props}
+      show={show}
       size="lg"
       aria-labelledby="contained-modal-title-vcenter"
       centered
+      onHide={onHide}
     >
       <Modal.Header closeButton>
         <Modal.Title>Trocar a senha</Modal.Title>
@@ -76,7 +82,15 @@ export const PasswordRecoveryModal: React.FC<ModalProps> = props => {
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <a href="">cancelar</a>
+        <a
+          href="#"
+          onClick={() => {
+            onHide()
+            resetForm()
+          }}
+        >
+          cancelar
+        </a>
         <Button
           type="submit"
           disabled={isSubmitting}
