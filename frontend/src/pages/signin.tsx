@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
-import { Form, Button, Container, Row, Col, Alert } from 'react-bootstrap'
+import { Form, Button, Container, Row, Col } from 'react-bootstrap'
 import axios from 'axios'
 import Link from 'next/link'
 import { toast, ToastContainer } from 'react-toastify'

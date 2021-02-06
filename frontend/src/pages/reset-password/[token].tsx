@@ -5,7 +5,7 @@ import * as Yup from 'yup'
 import axios from 'axios'
 import { Form, Button, Container, Row, Col, Spinner } from 'react-bootstrap'
 import { useRouter } from 'next/router'
-import { toast, ToastContainer } from 'react-toastify'
+import { ToastContainer } from 'react-toastify'
 
 const validationSchema = Yup.object({
   password: Yup.string()
@@ -34,8 +34,7 @@ const ResetPassword: React.FC<Props> = ({ token }) => {
     touched,
     errors,
     isSubmitting,
-    submitForm,
-    resetForm
+    submitForm
   } = useFormik({
     initialValues: {
       password: '',
