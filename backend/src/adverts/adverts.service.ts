@@ -130,7 +130,7 @@ export class AdvertsService {
     queryDto.page = queryDto.page < 1 ? 1 : queryDto.page;
     queryDto.limit = queryDto.limit > 100 ? 100 : queryDto.limit;
 
-    const { city, categoryId, uf, price, name } = queryDto;
+    const { city, categoryId, state, price, name ,neighborhood} = queryDto;
 
     const query = await this.advertsRepository.createQueryBuilder('adverts');
 
@@ -151,8 +151,12 @@ export class AdvertsService {
       query.andWhere('address.city ILIKE :city', { city: `%${city}%` });
     }
 
-    if (uf) {
-      query.andWhere('address.uf ILIKE :uf', { uf: `%${uf}%` });
+    if (neighborhood) {
+      query.andWhere('address.neighborhood ILIKE :neighborhood', { neighborhood: `%${neighborhood}%` });
+    }
+
+    if (state) {
+      query.andWhere('address.state ILIKE :state', {state: `%${state}%` });
     }
 
     if (categoryId) {

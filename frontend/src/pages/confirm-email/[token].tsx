@@ -1,15 +1,17 @@
 import React, { useEffect } from 'react'
 import { Container } from 'react-bootstrap'
 import { VerifiedEmail } from '../../components/VerifiedEmail'
-import { GetServerSideProps } from 'next'
+import { InferGetServerSidePropsType } from 'next'
 import buildClient from '../../services/buildClient'
 import { useRouter } from 'next/router'
 
-interface Props {
+type Props = {
   isAuthenticated: boolean
 }
 
-const ConfirmEmail: React.FC<Props> = ({ isAuthenticated }) => {
+const ConfirmEmail: React.FC<Props> = ({
+  isAuthenticated
+}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter()
   useEffect(() => {
     if (!isAuthenticated) {
@@ -26,7 +28,7 @@ const ConfirmEmail: React.FC<Props> = ({ isAuthenticated }) => {
   )
 }
 
-export const getServerSideProps: GetServerSideProps = async context => {
+export const getServerSideProps = async context => {
   let isAuthenticated: boolean
 
   try {
