@@ -8,14 +8,14 @@ export default createGlobalStyle`
   }
 
   body {
-    background: ${props => props.theme.colors.background};
-    /* color: ${props => props.theme.colors.text}; */
+
+
     font: 400 16px Roboto, sans-serif;
   padding-top:56px;
   text-rendering: optimizeSpeed;
   line-height: 1.5;
-  /* overflow-x:hidden; */
-
+  overflow-x:hidden;
+background-color:#EDF5E1;
   }
 /*
 

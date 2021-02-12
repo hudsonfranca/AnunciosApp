@@ -1,28 +1,18 @@
 import React, { useState } from 'react'
 import Head from 'next/head'
 import { Container, Form, Col, InputGroup, Button } from 'react-bootstrap'
-import { Image, SearchIcon } from '../styles/pages/Home'
-import Link from 'next/link'
-
-import axios from 'axios'
+import { Image } from '../styles/pages/Home'
 import { useRouter } from 'next/router'
-import { InferGetStaticPropsType } from 'next'
+import estadosCidades from '../shared/estados-cidades.json'
 
-type State = {
-  id: number
-  sigla: string
-  nome: string
-  regiao: {
-    id: number
-    sigla: string
-    nome: string
-  }
-}
-
-const Home = ({ states }: InferGetStaticPropsType<typeof getStaticProps>) => {
+const Home = () => {
   const router = useRouter()
   const [name, setName] = useState('')
   const [state, setState] = useState('')
+
+  const states = estadosCidades.estados.map(state => {
+    return { nome: state.nome, sigla: state.sigla }
+  })
 
   const handleSubmit = e => {
     e.preventDefault()
@@ -64,7 +54,7 @@ const Home = ({ states }: InferGetStaticPropsType<typeof getStaticProps>) => {
                   onChange={e => setState(e.target.value)}
                 >
                   {states.map(state => (
-                    <option key={state.id} value={state.sigla}>
+                    <option key={state.nome} value={state.sigla}>
                       {state.nome}
                     </option>
                   ))}
@@ -84,17 +74,4 @@ const Home = ({ states }: InferGetStaticPropsType<typeof getStaticProps>) => {
     </Container>
   )
 }
-
-export const getStaticProps = async context => {
-  const { data } = await axios.get<State[]>(
-    'https://servicodados.ibge.gov.br/api/v1/localidades/estados?orderBy=nome'
-  )
-
-  return {
-    props: {
-      states: data
-    }
-  }
-}
-
 export default Home

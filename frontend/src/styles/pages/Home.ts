@@ -16,15 +16,15 @@ export const Image = styled.div`
   justify-content: center;
   align-items: center;
 
-  ::after {
+  /* ::after {
     content: '';
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
+    background-color: rgba(58, 175, 169, 0.5);
     position: absolute;
     top: 0;
     z-index: -1;
-  }
+  } */
 `
 export const SearchIcon = styled(Search)`
   color: #f5f5f5;

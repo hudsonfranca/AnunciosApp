@@ -1,9 +1,9 @@
 import useSWR from 'swr'
-import api from '../services/api'
+import buildClient from '../services/buildClient'
 
-export function useFetch<Data = any, Error = any>(url: string) {
+export function useFetch<Data = any, Error = any>(url: string, req: any) {
   const { data, error, mutate } = useSWR<Data, Error>(url, async url => {
-    const { data } = await api.get(url)
+    const { data } = await buildClient(req).get(url)
     return data
   })
 

@@ -2,7 +2,7 @@ import React from 'react'
 import { AppProps } from 'next/app'
 import { ThemeProvider } from 'styled-components'
 import { toast } from 'react-toastify'
-import 'bootstrap/dist/css/bootstrap.min.css'
+import '../scss/custom.css';
 import 'react-toastify/dist/ReactToastify.css'
 import GlobalStyle from '../styles/global'
 import theme from '../styles/theme'
