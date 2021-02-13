@@ -1,14 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import {
-  Row,
-  Col,
-  Form,
-  Button,
-  Card,
-  CardColumns,
-  ListGroup,
-  ListGroupItem
-} from 'react-bootstrap'
+import { Card, ListGroup, ListGroupItem } from 'react-bootstrap'
 import buildClient from '../services/buildClient'
 import { InferGetServerSidePropsType } from 'next'
 import estadosCidades from '../shared/estados-cidades.json'
@@ -19,24 +10,28 @@ import {
   Content,
   Filter,
   PaginationContainer,
-  OptionsContainer,
-  TitleOne,
-  TitleTwo
+  CardContainer,
+  FilterBar,
+  FilterIcon,
+  NotFound
 } from '../styles/pages/search-adverts'
 import { AdvertsType, CategoryProps, AdvertsQueryParams } from '../shared/Types'
+import { SideBar } from '../components/SideBar'
+import { FilterForm } from '../components/FilterForm'
 
 const SearchAdverts = ({
   categories,
   adverts,
   query
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-  console.log(adverts)
   const [queryState, setQueryState] = useState('')
   const [queryCity, setQueryCity] = useState('')
   const [queryName, setQueryName] = useState('')
   const [queryCategory, setQueryCategory] = useState('')
   const [queryPrice, setQueryPrice] = useState('')
   const [queryNeighborhood, setQueryNeighborhood] = useState('')
+  const [pageNumber, setPageNumber] = useState(1)
+  const advertsPerPage = 10
 
   useEffect(() => {
     setQueryState(query?.state ? query.state : '')
@@ -47,17 +42,18 @@ const SearchAdverts = ({
   }, [])
 
   useEffect(() => {
-    search()
-  }, [queryState, queryCategory, queryCity])
+    search({})
+  }, [queryState, queryCategory, queryCity, pageNumber])
 
   const router = useRouter()
 
-  const search = () => {
+  const search = (params: { page?: number }) => {
+    const { page } = params
     return router.push({
       pathname: 'search-adverts/',
       query: {
-        limit: 10,
-        page: pageNumber,
+        limit: advertsPerPage,
+        page: page || pageNumber,
         name: queryName,
         state: queryState,
         city: queryCity,
@@ -80,10 +76,8 @@ const SearchAdverts = ({
   }
 
   const [cities, setCities] = useState<string[]>()
-  const [pageNumber, setPageNumber] = useState(1)
 
-  const advertsPerPage = 10
-  const pageCount = Math.ceil(adverts?.count || 1 / advertsPerPage)
+  const pageCount = Math.ceil(adverts?.count / advertsPerPage)
 
   const handleRadioStateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setQueryState(e.target.value)
@@ -101,126 +95,82 @@ const SearchAdverts = ({
   }
 
   const handleChangePage = (selectedItem: { selected: number }) => {
-    setPageNumber(selectedItem.selected)
+    setPageNumber(selectedItem.selected + 1)
   }
+
+  const handleChangeName = e => {
+    setQueryName(e.target.value)
+  }
+
+  const [sidebar, setSidebar] = useState(false)
+
+  const showSidebar = () => {
+    setSidebar(!sidebar)
+  }
+
+  const filterForm = () => (
+    <FilterForm
+      categories={categories}
+      cities={cities}
+      handleChangeName={handleChangeName}
+      handleRadioCategoryChange={handleRadioCategoryChange}
+      handleRadioCityChange={handleRadioCityChange}
+      handleRadioStateChange={handleRadioStateChange}
+      queryCategory={queryCategory}
+      queryCity={queryCity}
+      queryName={queryName}
+      search={search}
+      queryState={queryState}
+      states={states}
+    />
+  )
+
   return (
-    <Container>
-      <Filter>
-        <Form.Group className="d-flex flex-column justify-content-between align-items-center">
-          <TitleTwo>Palavra-Chave</TitleTwo>
-          <Form.Control
-            className="mt-3"
-            value={queryName}
-            onChange={e => setQueryName(e.target.value)}
-            name="name"
-          />
-          <Button className="mt-2" onClick={() => search()} type="button">
-            Filtrar
-          </Button>
-        </Form.Group>
-        <Form.Group as={Row} className="">
-          <Col>
-            <TitleTwo>Estados</TitleTwo>
-            <OptionsContainer>
-              {states.map(state => (
-                <Form.Check
-                  custom
-                  type="radio"
-                  id={state.sigla}
-                  label={state.nome}
-                  key={state.sigla}
-                  name="state"
-                  value={state.sigla}
-                  onChange={handleRadioStateChange}
-                  checked={queryState === state.sigla}
-                />
-              ))}
-            </OptionsContainer>
-          </Col>
-        </Form.Group>
+    <>
+      <SideBar showSidebar={showSidebar} sidebar={sidebar}>
+        {filterForm()}
+      </SideBar>
+      <Container>
+        <FilterBar onClick={() => showSidebar()}>
+          <FilterIcon /> Filtrar
+        </FilterBar>
+        <Filter>{filterForm()}</Filter>
+        <Content>
+          <CardContainer>
+            {!adverts && (
+              <NotFound>
+                <h1>Não ha anuncios</h1>
+              </NotFound>
+            )}
 
-        {cities && (
-          <Form.Group as={Row}>
-            <Col>
-              <Form.Label as="legend" className="text-primary">
-                <TitleTwo>Cidades</TitleTwo>
-              </Form.Label>
-              <OptionsContainer>
-                {cities.map(city => (
-                  <Form.Check
-                    custom
-                    type="radio"
-                    id={city}
-                    label={city}
-                    key={city}
-                    name="city"
-                    value={city}
-                    onChange={handleRadioCityChange}
-                    checked={queryCity === city}
+            {adverts?.adverts &&
+              adverts.adverts.map(add => (
+                <Card key={add.id}>
+                  <Card.Img
+                    variant="top"
+                    src="https://midias.agazeta.com.br/2020/11/18/carro-foi-roubado-em-linhares--363189-article.jpeg "
                   />
-                ))}
-              </OptionsContainer>
-            </Col>
-          </Form.Group>
-        )}
-
-        <Form.Group as={Row}>
-          <Col>
-            <Form.Label as="legend" className="text-primary">
-              <TitleTwo>Categorias</TitleTwo>
-            </Form.Label>
-            <OptionsContainer>
-              {categories.categories.map(category => (
-                <Form.Check
-                  custom
-                  type="radio"
-                  id={category.id}
-                  label={category.name}
-                  value={category.id}
-                  key={category.id}
-                  onChange={handleRadioCategoryChange}
-                  checked={queryCategory === category.id}
-                />
+                  <Card.Body>
+                    <Card.Title>{add.name}</Card.Title>
+                    <Card.Text>{add.description}</Card.Text>
+                  </Card.Body>
+                  <ListGroup className="list-group-flush">
+                    <ListGroupItem>R$ {add.price}</ListGroupItem>
+                    <ListGroupItem>{`${add.address.city} ${add.address.state}`}</ListGroupItem>
+                  </ListGroup>
+                  <Card.Body>
+                    <Card.Link href="#">Card Link</Card.Link>
+                    <Card.Link href="#">Another Link</Card.Link>
+                  </Card.Body>
+                </Card>
               ))}
-            </OptionsContainer>
-          </Col>
-        </Form.Group>
-      </Filter>
-      <Content>
-        <CardColumns xs>
-          {!adverts && <h1>Não a anuncios</h1>}
-
-          {adverts.adverts &&
-            adverts.adverts.map(add => (
-              <Card key={add.id}>
-                <Card.Img
-                  variant="top"
-                  src="https://midias.agazeta.com.br/2020/11/18/carro-foi-roubado-em-linhares--363189-article.jpeg "
-                />
-                <Card.Body>
-                  <Card.Title>{add.name}</Card.Title>
-                  <Card.Text>{add.description}</Card.Text>
-                </Card.Body>
-                <ListGroup className="list-group-flush">
-                  <ListGroupItem>R$ {add.price}</ListGroupItem>
-                  <ListGroupItem>{`${add.address.city} ${add.address.state}`}</ListGroupItem>
-                </ListGroup>
-                <Card.Body>
-                  <Card.Link href="#">Card Link</Card.Link>
-                  <Card.Link href="#">Another Link</Card.Link>
-                </Card.Body>
-              </Card>
-            ))}
-        </CardColumns>
-      </Content>
-      <PaginationContainer>
-        <Pagination
-          advertsPerPage={advertsPerPage}
-          changePage={handleChangePage}
-          pageCount={pageCount}
-        />
-      </PaginationContainer>
-    </Container>
+          </CardContainer>
+        </Content>
+        <PaginationContainer>
+          <Pagination changePage={handleChangePage} pageCount={pageCount} />
+        </PaginationContainer>
+      </Container>
+    </>
   )
 }
 

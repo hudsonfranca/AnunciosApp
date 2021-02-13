@@ -4,15 +4,10 @@ import '../styles/components/pagination.css'
 
 interface Props {
   pageCount: number
-  advertsPerPage: number
   changePage(selectedItem: { selected: number }): void
 }
 
-export const Pagination: React.FC<Props> = ({
-  advertsPerPage,
-  pageCount,
-  changePage
-}) => {
+export const Pagination: React.FC<Props> = ({ pageCount, changePage }) => {
   return (
     <>
       <ReactPaginate
@@ -23,8 +18,8 @@ export const Pagination: React.FC<Props> = ({
         breakLabel={'...'}
         containerClassName={'pagination'}
         activeClassName={'active'}
-        subContainerClassName={"pages pagination"}
-         breakClassName={"break-me"}
+        subContainerClassName={'pages pagination'}
+        breakClassName={'break-me'}
         pageRangeDisplayed={5}
         marginPagesDisplayed={2}
       />

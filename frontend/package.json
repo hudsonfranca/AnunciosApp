@@ -9,6 +9,8 @@
   },
   "dependencies": {
     "@styled-icons/boxicons-regular": "^10.23.0",
+    "@styled-icons/evaicons-solid": "^10.18.0",
+    "@styled-icons/fa-solid": "^10.26.0",
     "@zeit/next-css": "^1.0.1",
     "@zeit/next-less": "^1.0.1",
     "@zeit/next-sass": "^1.0.1",
