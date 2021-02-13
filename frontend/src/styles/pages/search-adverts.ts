@@ -1,10 +1,22 @@
 import styled from 'styled-components'
-import { Filter as fIcon } from '@styled-icons/boxicons-regular'
+import { Filter as fIcon, Map, Money } from '@styled-icons/boxicons-regular'
 
 export const FilterIcon = styled(fIcon)`
   color: ${props => props.theme.colors.primary};
   width: 30px;
   height: 30px;
+`
+
+export const MapIcon = styled(Map)`
+  color: ${props => props.theme.colors.primary};
+  width: 20px;
+  height: 20px;
+`
+
+export const MoneyIcon = styled(Money)`
+  color: ${props => props.theme.colors.primary};
+  width: 20px;
+  height: 20px;
 `
 
 export const Container = styled.div`
@@ -43,7 +55,7 @@ export const FilterBar = styled.div`
 
 export const Filter = styled.div`
   grid-area: filter;
-  background-color: ${props => props.theme.colors.white};
+  background-color: ${props => props.theme.colors.text};
   display: none;
   width: 100%;
   height: 100%;
@@ -92,5 +104,8 @@ export const NotFound = styled.div`
   height: 100vh;
   display: flex;
   justify-content: center;
-  align-items: flex-start;
+  align-items: center;
+  background-color: ${props => props.theme.colors.secondary};
+  border-radius: 5px;
+  color: ${props => props.theme.colors.text};
 `

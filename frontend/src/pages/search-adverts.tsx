@@ -13,7 +13,9 @@ import {
   CardContainer,
   FilterBar,
   FilterIcon,
-  NotFound
+  NotFound,
+  MapIcon,
+  MoneyIcon
 } from '../styles/pages/search-adverts'
 import { AdvertsType, CategoryProps, AdvertsQueryParams } from '../shared/Types'
 import { SideBar } from '../components/SideBar'
@@ -31,6 +33,7 @@ const SearchAdverts = ({
   const [queryPrice, setQueryPrice] = useState('')
   const [queryNeighborhood, setQueryNeighborhood] = useState('')
   const [pageNumber, setPageNumber] = useState(1)
+
   const advertsPerPage = 10
 
   useEffect(() => {
@@ -43,7 +46,13 @@ const SearchAdverts = ({
 
   useEffect(() => {
     search({ page: 1 })
-  }, [queryState, queryCategory, queryCity])
+  }, [queryCategory, queryCity])
+
+  useEffect(() => {
+    setQueryCity('')
+
+    search({ page: 1 })
+  }, [queryState])
 
   useEffect(() => {
     search({})
@@ -140,15 +149,9 @@ const SearchAdverts = ({
         )}
         <Filter>{filterForm()}</Filter>
         <Content>
-          <CardContainer>
-            {!adverts && (
-              <NotFound>
-                <h1>Não ha anuncios</h1>
-              </NotFound>
-            )}
-
-            {adverts?.adverts &&
-              adverts.adverts.map(add => (
+          {adverts?.adverts ? (
+            <CardContainer>
+              {adverts.adverts.map(add => (
                 <Card key={add.id}>
                   <Card.Img
                     variant="top"
@@ -156,19 +159,25 @@ const SearchAdverts = ({
                   />
                   <Card.Body>
                     <Card.Title>{add.name}</Card.Title>
-                    <Card.Text>{add.description}</Card.Text>
                   </Card.Body>
                   <ListGroup className="list-group-flush">
-                    <ListGroupItem>R$ {add.price}</ListGroupItem>
-                    <ListGroupItem>{`${add.address.city} ${add.address.state}`}</ListGroupItem>
+                    <ListGroupItem className="d-flex">
+                      <MoneyIcon className="mr-1" />
+                      R$ {add.price}
+                    </ListGroupItem>
+                    <ListGroupItem>
+                      <MapIcon className="mr-1" />
+                      {`${add.address.city} ${add.address.state}`}
+                    </ListGroupItem>
                   </ListGroup>
-                  <Card.Body>
-                    <Card.Link href="#">Card Link</Card.Link>
-                    <Card.Link href="#">Another Link</Card.Link>
-                  </Card.Body>
                 </Card>
               ))}
-          </CardContainer>
+            </CardContainer>
+          ) : (
+            <NotFound>
+              <h4>Não há anúncios que correspondem à sua busca.</h4>
+            </NotFound>
+          )}
         </Content>
         <PaginationContainer>
           <Pagination

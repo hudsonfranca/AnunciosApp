@@ -16,7 +16,7 @@ export const Container = styled.nav<{ active: boolean }>`
   position: fixed;
   top: 0;
   left: ${props => (props.active ? 'left: 0' : '-100%')};
-  transition: ${props => (props.active ? '350ms' : '850ms')};
+  transition: ${props => (props.active ? '.5s' : '.7s')};
   z-index: 2000;
   padding: 0 1.5rem 0 1.5rem;
   overflow-y: scroll;

@@ -26,7 +26,7 @@ export const OptionsContainer = styled.ul`
   border: 1px solid ${props => props.theme.colors.secondary};
   border-radius: 5px;
   list-style: none;
-  margin-bottom: 5px;
+  margin-bottom: 10px;
 `
 
 export const OptionsItems = styled.li<{ selected: boolean }>`
