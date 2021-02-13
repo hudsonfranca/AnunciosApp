@@ -1,7 +1,6 @@
 .pagination {
   margin: 15px auto;
   display: flex;
- 
   list-style: none;
   outline: none;
 }
@@ -9,6 +8,7 @@
   background-color: #05386B ;
   border-color: #05386B ;
   color: #fff;
+  margin: 5px;;
 
 }
 .pagination > li > a{
@@ -23,7 +23,7 @@
   border-color: #05386B;
   outline: none ;
   color:white;
-  
+
 }
 .pagination > li > a, .pagination > li > span{
   color: #05386B

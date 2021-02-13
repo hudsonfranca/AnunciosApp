@@ -18,16 +18,17 @@ export const Container = styled.nav<{ active: boolean }>`
   left: ${props => (props.active ? 'left: 0' : '-100%')};
   transition: ${props => (props.active ? '350ms' : '850ms')};
   z-index: 2000;
-  padding: 1rem;
+  padding: 0 1.5rem 0 1.5rem;
+  overflow-y: scroll;
 `
 
 export const NavMenuItems = styled.ul`
   width: 100%;
+  list-style: none;
 `
 
 export const NavbarToggle = styled.li`
   width: 100%;
-  height: 80px;
   display: flex;
   justify-content: center;
   align-items: center;

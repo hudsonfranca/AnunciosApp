@@ -1,7 +1,11 @@
 import React from 'react'
 import { CategoryProps } from '../shared/Types'
 import { Row, Col, Form, Button } from 'react-bootstrap'
-import { OptionsContainer, TitleTwo } from '../styles/components/filterForm'
+import {
+  OptionsContainer,
+  TitleTwo,
+  OptionsItems
+} from '../styles/components/filterForm'
 
 interface Props {
   queryName: string
@@ -11,22 +15,22 @@ interface Props {
     nome: string
     sigla: string
   }[]
-  handleRadioStateChange(e: any): void
+  handleStateChange(sigle: string): void
   queryState: string
   cities: string[]
-  handleRadioCityChange(e: any): void
+  handleCityChange(city: string): void
   queryCity: string
   categories: CategoryProps
-  handleRadioCategoryChange(e: any): void
+  handleCategoryChange(id: string): void
   queryCategory: string
 }
 export const FilterForm: React.FC<Props> = ({
   categories,
   cities,
   handleChangeName,
-  handleRadioCategoryChange,
-  handleRadioCityChange,
-  handleRadioStateChange,
+  handleCategoryChange,
+  handleCityChange,
+  handleStateChange,
   queryCategory,
   queryCity,
   queryName,
@@ -35,84 +39,77 @@ export const FilterForm: React.FC<Props> = ({
   states
 }) => (
   <>
-    <Form.Group className="d-flex flex-column justify-content-between align-items-center">
-      <TitleTwo>Palavra-Chave</TitleTwo>
-      <Form.Control
-        className="mt-3"
-        value={queryName}
-        onChange={handleChangeName}
-        name="name"
-      />
-      <Button className="mt-2" onClick={() => search({})} type="button">
-        Filtrar
-      </Button>
-    </Form.Group>
-    <Form.Group as={Row} className="">
+    <Row>
+      <Col className="d-flex flex-column justify-content-between align-items-center pb-3">
+        <TitleTwo>Palavra-Chave</TitleTwo>
+        <Form.Control
+          className="mt-3"
+          value={queryName}
+          onChange={handleChangeName}
+          name="name"
+        />
+        <Button
+          className="mt-2"
+          onClick={() => search({ page: 1 })}
+          type="button"
+        >
+          Filtrar
+        </Button>
+      </Col>
+    </Row>
+    <Row className="">
       <Col>
         <TitleTwo>Estados</TitleTwo>
         <OptionsContainer>
           {states.map(state => (
-            <Form.Check
-              custom
-              type="radio"
-              id={state.sigla}
-              label={state.nome}
-              key={state.sigla}
-              name="state"
-              value={state.sigla}
-              onChange={handleRadioStateChange}
-              checked={queryState === state.sigla}
-            />
+            <OptionsItems
+              onClick={() => handleStateChange(state.sigla)}
+              key={state.nome}
+              selected={queryState === state.sigla}
+            >
+              {state.nome}
+            </OptionsItems>
           ))}
         </OptionsContainer>
       </Col>
-    </Form.Group>
+    </Row>
 
     {cities && (
-      <Form.Group as={Row}>
+      <Row>
         <Col>
-          <Form.Label as="legend" className="text-primary">
-            <TitleTwo>Cidades</TitleTwo>
-          </Form.Label>
+          <TitleTwo>Cidades</TitleTwo>
+
           <OptionsContainer>
             {cities.map(city => (
-              <Form.Check
-                custom
-                type="radio"
-                id={city}
-                label={city}
+              <OptionsItems
+                onClick={() => handleCityChange(city)}
                 key={city}
-                name="city"
-                value={city}
-                onChange={handleRadioCityChange}
-                checked={queryCity === city}
-              />
+                selected={queryCity === city}
+              >
+                {city}
+              </OptionsItems>
             ))}
           </OptionsContainer>
         </Col>
-      </Form.Group>
+      </Row>
     )}
 
-    <Form.Group as={Row}>
+    <Row>
       <Col>
-        <Form.Label as="legend" className="text-primary">
-          <TitleTwo>Categorias</TitleTwo>
-        </Form.Label>
+        <TitleTwo>Categorias</TitleTwo>
+
         <OptionsContainer>
           {categories.categories.map(category => (
-            <Form.Check
-              custom
-              type="radio"
-              id={category.id}
-              label={category.name}
-              value={category.id}
+            <OptionsItems
+              onClick={() => handleCategoryChange(category.id)}
               key={category.id}
-              onChange={handleRadioCategoryChange}
-              checked={queryCategory === category.id}
-            />
+              selected={queryCategory === category.id}
+            >
+              {category.name}
+            </OptionsItems>
           ))}
         </OptionsContainer>
       </Col>
-    </Form.Group>
+    </Row>
   </>
 )

@@ -42,8 +42,12 @@ const SearchAdverts = ({
   }, [])
 
   useEffect(() => {
+    search({ page: 1 })
+  }, [queryState, queryCategory, queryCity])
+
+  useEffect(() => {
     search({})
-  }, [queryState, queryCategory, queryCity, pageNumber])
+  }, [pageNumber])
 
   const router = useRouter()
 
@@ -79,19 +83,17 @@ const SearchAdverts = ({
 
   const pageCount = Math.ceil(adverts?.count / advertsPerPage)
 
-  const handleRadioStateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setQueryState(e.target.value)
+  const handleStateChange = (sigla: string) => {
+    setQueryState(sigla)
 
-    setCities(findCities(e.target.value))
+    setCities(findCities(sigla))
   }
-  const handleRadioCityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setQueryCity(e.target.value)
+  const handleCityChange = (city: string) => {
+    setQueryCity(city)
   }
 
-  const handleRadioCategoryChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setQueryCategory(e.target.value)
+  const handleCategoryChange = (id: string) => {
+    setQueryCategory(id)
   }
 
   const handleChangePage = (selectedItem: { selected: number }) => {
@@ -113,9 +115,9 @@ const SearchAdverts = ({
       categories={categories}
       cities={cities}
       handleChangeName={handleChangeName}
-      handleRadioCategoryChange={handleRadioCategoryChange}
-      handleRadioCityChange={handleRadioCityChange}
-      handleRadioStateChange={handleRadioStateChange}
+      handleCategoryChange={handleCategoryChange}
+      handleCityChange={handleCityChange}
+      handleStateChange={handleStateChange}
       queryCategory={queryCategory}
       queryCity={queryCity}
       queryName={queryName}
@@ -131,9 +133,11 @@ const SearchAdverts = ({
         {filterForm()}
       </SideBar>
       <Container>
-        <FilterBar onClick={() => showSidebar()}>
-          <FilterIcon /> Filtrar
-        </FilterBar>
+        {!sidebar && (
+          <FilterBar onClick={() => showSidebar()}>
+            <FilterIcon /> Filtrar
+          </FilterBar>
+        )}
         <Filter>{filterForm()}</Filter>
         <Content>
           <CardContainer>
@@ -167,7 +171,10 @@ const SearchAdverts = ({
           </CardContainer>
         </Content>
         <PaginationContainer>
-          <Pagination changePage={handleChangePage} pageCount={pageCount} />
+          <Pagination
+            changePage={handleChangePage}
+            pageCount={pageCount || 1}
+          />
         </PaginationContainer>
       </Container>
     </>

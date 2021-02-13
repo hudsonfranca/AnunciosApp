@@ -13,8 +13,8 @@ export const Pagination: React.FC<Props> = ({ pageCount, changePage }) => {
       <ReactPaginate
         pageCount={pageCount}
         onPageChange={changePage}
-        previousLabel={'Anterior'}
-        nextLabel={'próxima'}
+        previousLabel={'←'}
+        nextLabel={'→'}
         breakLabel={'...'}
         containerClassName={'pagination'}
         activeClassName={'active'}
