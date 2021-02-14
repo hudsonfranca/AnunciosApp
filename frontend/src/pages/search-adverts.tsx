@@ -135,7 +135,9 @@ const SearchAdverts = ({
       states={states}
     />
   )
-
+  const handleCardClick = (id: string) => {
+    return router.push(`/adverts/${id}`)
+  }
   return (
     <>
       <SideBar showSidebar={showSidebar} sidebar={sidebar}>
@@ -152,7 +154,7 @@ const SearchAdverts = ({
           {adverts?.adverts ? (
             <CardContainer>
               {adverts.adverts.map(add => (
-                <Card key={add.id}>
+                <Card key={add.id} onClick={() => handleCardClick(add.id)}>
                   <Card.Img
                     variant="top"
                     src="https://midias.agazeta.com.br/2020/11/18/carro-foi-roubado-em-linhares--363189-article.jpeg "

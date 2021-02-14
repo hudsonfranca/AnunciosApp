@@ -5,7 +5,7 @@ import { CheckboxChecked } from '@styled-icons/boxicons-regular'
 export const Container = styled.div`
   width: 100%;
   height: 100%;
-  background-color: ${props => props.theme.colors.background};
+  background-color: ${props => props.theme.colors.white};
   background-color: #fff;
   display: flex;
   justify-content: center;

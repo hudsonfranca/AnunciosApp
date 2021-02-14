@@ -39,17 +39,11 @@ export class AdvertsController {
   }
 
   @Get(':id')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.USER, UserRole.VERIFIED_EMAIL)
-  async show(@Param() { id }: FindOneParams, @Request() req) {
+  async show(@Param() { id }: FindOneParams) {
     if (!id) {
       throw new BadRequestException('id is required.');
     }
     const adverts = await this.advertsService.findOneById(id);
-
-    if (adverts.user.id !== req.user.id) {
-      throw new UnauthorizedException();
-    }
 
     return adverts;
   }
