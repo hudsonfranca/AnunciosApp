@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
-import { Form, Button, Container, Row, Col } from 'react-bootstrap'
+import { Form, Button, Container, Row, Col, Spinner } from 'react-bootstrap'
 import axios from 'axios'
 import Link from 'next/link'
 import { toast, ToastContainer } from 'react-toastify'
@@ -117,7 +117,16 @@ const Signin: React.FC = () => {
                   block
                   disabled={isSubmitting}
                 >
-                  Login
+                  {isSubmitting && (
+                    <Spinner
+                      as="span"
+                      animation="grow"
+                      size="sm"
+                      role="status"
+                      aria-hidden="true"
+                    />
+                  )}
+                  {isSubmitting ? '  Login...' : 'Login'}
                 </Button>
               </Col>
             </Row>

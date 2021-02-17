@@ -8,6 +8,8 @@ export const Container = styled.div`
   align-items: center;
   flex-direction: column;
   gap: 1.5rem;
+  width: 100vw;
+  min-height: 100vh;
   @media (min-width: 768px) {
     display: grid;
     grid-template-columns: 3fr 2fr;
@@ -15,8 +17,6 @@ export const Container = styled.div`
     grid-template-areas:
       'images content'
       'desc null';
-    width: 100vw;
-    min-height: 100vh;
   }
 `
 

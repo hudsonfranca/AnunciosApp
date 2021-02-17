@@ -33,6 +33,6 @@ build:
           - src: 'src/**/*.js'
             dest: .
           - src: 'src/**/*.map'
-            dest: .
-            
-        
+            dest: .           
+          - src: 'src/**/*.jsx'
+            dest: .       

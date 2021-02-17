@@ -112,16 +112,16 @@ export class UserService {
     user.address.state = state ? state : user.address.state;
     user.address.neighborhood = neighborhood ? neighborhood : user.address.neighborhood;
 
+  
 
-    const updatedUser = await this.userRepository.update({ id: user.id }, user);
-
-    if (updatedUser.affected > 0) {
-      const userEntity = await this.findOne({ id });
-
-      return deleteUserAtributes(userEntity);
-    } else {
-      throw new NotFoundException(`no users found`);
+    try {
+      const updatedUser = await this.userRepository.save(user);
+      return deleteUserAtributes(updatedUser);
+    } catch (error) {
+      throw new InternalServerErrorException('Unable to update your data');
+      
     }
+    
   }
 
   async findAllUsers(queryDto: FindUserQueryDto) {

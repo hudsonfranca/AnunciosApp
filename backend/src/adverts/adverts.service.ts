@@ -102,7 +102,7 @@ export class AdvertsService {
       throw new NotFoundException('no adverts found');
     }
 
-    return [count, adverts];
+    return { count: count, adverts: adverts };
   }
 
   async findOneById(id: string) {

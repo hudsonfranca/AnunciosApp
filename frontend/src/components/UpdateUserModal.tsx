@@ -1,22 +1,11 @@
-import React, { useCallback } from 'react'
-import { useRouter } from 'next/router'
-import {
-  Container,
-  Card,
-  Image,
-  Title,
-  Ul,
-  Li,
-  CheckboxIcon,
-  Login
-} from '../styles/pages/signup'
+import React, { useCallback, useState } from 'react'
+import { Button, Modal, Form, Spinner, Col } from 'react-bootstrap'
+import axios from 'axios'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
-import { Form, Button, Col, Spinner } from 'react-bootstrap'
-import Link from 'next/link'
-import axios from 'axios'
-import { toast, ToastContainer } from 'react-toastify'
-import { ViaCepProps } from '../shared/Types'
+import { useRouter } from 'next/router'
+import { toast } from 'react-toastify'
+import { UserType, ViaCepProps } from '../shared/Types'
 
 const validationSchema = Yup.object({
   first_name: Yup.string().required('*campo obrigatório'),
@@ -28,23 +17,21 @@ const validationSchema = Yup.object({
   street: Yup.string().required('*campo obrigatório'),
   neighborhood: Yup.string().required('*campo obrigatório'),
   state: Yup.string().required('*campo obrigatório'),
-  email: Yup.string().email('email invalido').required('*campo obrigatório'),
-  password: Yup.string()
-    .required('*campo obrigatório')
-    .min(8, 'a senha deve conter no mínimo 8 caracteres'),
-  passwordConfirmation: Yup.string()
-    .required('*campo obrigatório')
-    .min(8, 'a senha deve conter no mínimo 8 caracteres')
-    .test('passwords-match', 'As senhas devem ser iguais', function (value) {
-      return this.parent.password === value
-    })
+  email: Yup.string().email('email invalido').required('*campo obrigatório')
 })
 
-const Signup: React.FC = () => {
-  const notifyError = () => {
-    toast.error('Não foi possível criar a sua conta.')
-  }
+interface Props {
+  onHide(): void
+  show: boolean
+  user: UserType
+}
+
+export const UpdateUserModal: React.FC<Props> = ({ onHide, show, user }) => {
   const router = useRouter()
+  const notifyError = () => {
+    toast.error('Não foi possível editar os seus dados.')
+  }
+
   const {
     handleBlur,
     handleChange,
@@ -52,45 +39,51 @@ const Signup: React.FC = () => {
     values,
     touched,
     errors,
-    setFieldValue,
     isSubmitting,
-    submitForm
+    submitForm,
+    resetForm,
+    setFieldValue
   } = useFormik({
     initialValues: {
-      first_name: '',
-      last_name: '',
-      phone_number: '',
-      status: '',
-      zip: '',
-      city: '',
-      number: '',
-      street: '',
-      state: '',
-      neighborhood: '',
-      email: '',
-      password: '',
-      passwordConfirmation: ''
+      first_name: user.first_name,
+      last_name: user.last_name,
+      phone_number: user.phone_number,
+      zip: user.address.zip,
+      city: user.address.city,
+      number: user.address.number,
+      street: user.address.street,
+      state: user.address.state,
+      neighborhood: user.address.neighborhood,
+      email: user.email
     },
     validationSchema,
     onSubmit: async values => {
       try {
-        const { data } = await axios.post('/api/auth/signup', {
-          first_name: values.first_name,
-          last_name: values.last_name,
-          email: values.email,
-          password: values.password,
-          passwordConfirmation: values.passwordConfirmation,
-          phone_number: values.phone_number,
-          address: {
-            zip: values.zip,
-            city: values.city,
-            number: values.number,
-            street: values.street,
-            state: values.state,
-            neighborhood: values.neighborhood
+        const { data } = await axios.patch(
+          `/api/user/${user.id}`,
+          {
+            first_name: values.first_name,
+            last_name: values.last_name,
+            email: values.email,
+            phone_number: values.phone_number,
+            status: true,
+            address: {
+              zip: values.zip,
+              city: values.city,
+              number: values.number,
+              street: values.street,
+              state: values.state,
+              neighborhood: values.neighborhood
+            }
+          },
+          {
+            withCredentials: true
           }
-        })
-        router.push('/')
+        )
+
+        onHide()
+        resetForm()
+        router.reload()
       } catch ({ response: { data } }) {
         const notifyEmailError = () => {
           toast.error(`${values.email} já está em uso.`)
@@ -120,34 +113,20 @@ const Signup: React.FC = () => {
     },
     []
   )
+
   return (
-    <Container>
-      <Image>
-        <Title color="#f5f5f5">Lorem ipsum dolor sit amet consectetur.</Title>
-        <Ul>
-          <Li>
-            <CheckboxIcon />
-            Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-          </Li>
+    <Modal
+      show={show}
+      size="lg"
+      aria-labelledby="contained-modal-title-vcenter"
+      centered
+      onHide={onHide}
+    >
+      <Modal.Header closeButton>
+        <Modal.Title>Editar Perfil</Modal.Title>
+      </Modal.Header>
 
-          <Li>
-            <CheckboxIcon />
-            Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-          </Li>
-
-          <Li>
-            <CheckboxIcon />
-            Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-          </Li>
-
-          <Li>
-            <CheckboxIcon />
-            Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-          </Li>
-        </Ul>
-      </Image>
-      <Card>
-        <Title className="mb-4">Informe os seus dados</Title>
+      <Modal.Body>
         <Form noValidate onSubmit={handleSubmit}>
           <Form.Row>
             <Form.Group sm md as={Col}>
@@ -315,74 +294,36 @@ const Signup: React.FC = () => {
               </Form.Control.Feedback>
             </Form.Group>
           </Form.Row>
-          <Form.Row>
-            <Form.Group sm md as={Col}>
-              <Form.Label>Senha</Form.Label>
-              <Form.Control
-                isInvalid={!!errors.password}
-                value={values.password}
-                onChange={handleChange}
-                isValid={touched.password && !errors.password}
-                placeholder="Sua senha"
-                name="password"
-                type="password"
-                onBlur={handleBlur}
-              />
-              <Form.Control.Feedback type="invalid">
-                {errors.password}
-              </Form.Control.Feedback>
-            </Form.Group>
-            <Form.Group sm md as={Col}>
-              <Form.Label>Confirme sua senha</Form.Label>
-              <Form.Control
-                isInvalid={!!errors.passwordConfirmation}
-                value={values.passwordConfirmation}
-                onChange={handleChange}
-                isValid={
-                  touched.passwordConfirmation && !errors.passwordConfirmation
-                }
-                type="password"
-                placeholder="Repita a sua senha"
-                name="passwordConfirmation"
-                onBlur={handleBlur}
-              />
-              <Form.Control.Feedback type="invalid">
-                {errors.passwordConfirmation}
-              </Form.Control.Feedback>
-            </Form.Group>
-          </Form.Row>
-          <Form.Row>
-            <Button
-              type="submit"
-              disabled={isSubmitting}
-              onClick={submitForm}
-              className="mt-4"
-              block
-            >
-              {isSubmitting && (
-                <Spinner
-                  as="span"
-                  animation="grow"
-                  size="sm"
-                  role="status"
-                  aria-hidden="true"
-                />
-              )}
-              {isSubmitting ? ' Criando...' : 'Criar minha conta'}
-            </Button>
-          </Form.Row>
         </Form>
-        <Login>
-          <strong>Ja é cadastrado? </strong>
-          <strong>
-            <Link href="/signin">
-              <a> Login</a>
-            </Link>
-          </strong>
-        </Login>
-      </Card>
-    </Container>
+      </Modal.Body>
+      <Modal.Footer>
+        <a
+          href="#"
+          onClick={() => {
+            onHide()
+            resetForm()
+          }}
+        >
+          cancelar
+        </a>
+        <Button
+          type="submit"
+          disabled={isSubmitting}
+          onClick={submitForm}
+          className="ml-4"
+        >
+          {isSubmitting && (
+            <Spinner
+              as="span"
+              animation="grow"
+              size="sm"
+              role="status"
+              aria-hidden="true"
+            />
+          )}
+          {isSubmitting ? ' enviando...' : 'enviar'}
+        </Button>
+      </Modal.Footer>
+    </Modal>
   )
 }
-
-export default Signup

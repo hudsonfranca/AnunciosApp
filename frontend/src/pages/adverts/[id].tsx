@@ -16,8 +16,6 @@ import {
 import ImageGallery from 'react-image-gallery'
 import 'react-image-gallery/styles/css/image-gallery.css'
 import '../../styles/pages/imageGallery.css'
-import { Card } from 'react-bootstrap'
-
 interface Props {
   adverts: AdvertsById
 }
@@ -41,7 +39,7 @@ const Adverts: React.FC<Props> = ({ adverts }) => {
   return (
     <Container>
       <Images>
-        <ImageGallery items={images} originalClass="orifinalC" />
+        <ImageGallery items={images} />
       </Images>
       <Content>
         <ContentItem> {adverts.name}</ContentItem>

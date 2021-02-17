@@ -16,6 +16,7 @@ import { LocalAuthGuard } from './guards/local-auth.guard';
 import { CreateUserDto } from '../user/dto/create-user.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
 
+
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
@@ -35,7 +36,9 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Get('current-user')
   async currentUser(@Request() req){
-      return req.user;
+    delete req.user.confirmationToken;
+    delete req.user.recoverToken;
+      return  req.user;
   }
 
   @Post('signup')

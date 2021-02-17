@@ -89,3 +89,37 @@ export type AdvertsQueryParams = {
   page: string
   limit: string
 }
+
+export type UserType = {
+  id: string
+  email: string
+  first_name: string
+  last_name: string
+  roles: string[]
+  status: boolean
+  confirmationToken: string
+  recoverToken: string
+  phone_number: string
+  address: {
+    id: string
+    zip: string
+    street: string
+    number: number
+    city: string
+    state: string
+    neighborhood: string
+  }
+}
+
+export type ViaCepProps = {
+  cep: string
+  logradouro: string
+  complemento: string
+  bairro: string
+  localidade: string
+  uf: string
+  ibge: string
+  gia: string
+  ddd: string
+  siafi: string
+}

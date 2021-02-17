@@ -54,12 +54,14 @@ export class UserController {
   }
 
   @Patch(':id')
-  @Roles(UserRole.ADMIN, UserRole.VERIFIED_EMAIL)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles( UserRole.VERIFIED_EMAIL)
   async update(
     @Request() req,
     @Param() { id }: FindOneParams,
     @Body() updateUserDto: UpdateUserDto,
   ) {
+  
     if (id !== req.user.id) {
       throw new UnauthorizedException();
     }
