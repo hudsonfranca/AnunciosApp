@@ -1,35 +1,42 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Button, Modal, Form, Spinner, Col } from 'react-bootstrap'
 import axios from 'axios'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import { useRouter } from 'next/router'
 import { toast } from 'react-toastify'
-import { UserType, ViaCepProps } from '../shared/Types'
+import { AdvertsById, CategoryProps, ViaCepProps } from '../shared/Types'
 
 const validationSchema = Yup.object({
-  first_name: Yup.string().required('*campo obrigatório'),
-  last_name: Yup.string().required('*campo obrigatório'),
-  phone_number: Yup.string().required('*campo obrigatório'),
+  name: Yup.string().required('*campo obrigatório'),
+  price: Yup.string().required('*campo obrigatório'),
+  description: Yup.string().required('*campo obrigatório'),
+  categoryIds: Yup.string().required('*campo obrigatório'),
   zip: Yup.string().required('*campo obrigatório'),
   city: Yup.string().required('*campo obrigatório'),
   number: Yup.number().required('*campo obrigatório'),
   street: Yup.string().required('*campo obrigatório'),
   neighborhood: Yup.string().required('*campo obrigatório'),
-  state: Yup.string().required('*campo obrigatório'),
-  email: Yup.string().email('email invalido').required('*campo obrigatório')
+  state: Yup.string().required('*campo obrigatório')
 })
 
 interface Props {
   onHide(): void
   show: boolean
-  user: UserType
+  categories: CategoryProps
+  adverts: AdvertsById
 }
 
-export const UpdateUserModal: React.FC<Props> = ({ onHide, show, user }) => {
+export const UpdateAdvertsModal: React.FC<Props> = ({
+  onHide,
+  show,
+  categories,
+  adverts
+}) => {
   const router = useRouter()
+
   const notifyError = () => {
-    toast.error('Não foi possível editar os seus dados.')
+    toast.error('Não foi possível atulizar o anúncio')
   }
 
   const {
@@ -45,28 +52,27 @@ export const UpdateUserModal: React.FC<Props> = ({ onHide, show, user }) => {
     setFieldValue
   } = useFormik({
     initialValues: {
-      first_name: user.first_name,
-      last_name: user.last_name,
-      phone_number: user.phone_number,
-      zip: user.address.zip,
-      city: user.address.city,
-      number: user.address.number,
-      street: user.address.street,
-      state: user.address.state,
-      neighborhood: user.address.neighborhood,
-      email: user.email
+      name: adverts?.name,
+      price: adverts?.price,
+      description: adverts?.description,
+      categoryIds: adverts?.categories[0].id,
+      zip: adverts?.address.zip,
+      city: adverts?.address.city,
+      number: adverts?.address.number,
+      street: adverts?.address.street,
+      state: adverts?.address.state,
+      neighborhood: adverts?.address.neighborhood
     },
     validationSchema,
     onSubmit: async values => {
       try {
         await axios.patch(
-          `/api/user/${user.id}`,
+          `/api/adverts/${adverts.id}`,
           {
-            first_name: values.first_name,
-            last_name: values.last_name,
-            email: values.email,
-            phone_number: values.phone_number,
-            status: true,
+            name: values.name,
+            price: values.price,
+            description: values.description,
+            categoryIds: [values.categoryIds],
             address: {
               zip: values.zip,
               city: values.city,
@@ -85,13 +91,6 @@ export const UpdateUserModal: React.FC<Props> = ({ onHide, show, user }) => {
         resetForm()
         router.reload()
       } catch ({ response: { data } }) {
-        const notifyEmailError = () => {
-          toast.error(`${values.email} já está em uso.`)
-        }
-        if (data.statusCode === 409) {
-          return notifyEmailError()
-        }
-
         return notifyError()
       }
     }
@@ -123,7 +122,7 @@ export const UpdateUserModal: React.FC<Props> = ({ onHide, show, user }) => {
       onHide={onHide}
     >
       <Modal.Header closeButton>
-        <Modal.Title>Editar Perfil</Modal.Title>
+        <Modal.Title>Criar anúncio</Modal.Title>
       </Modal.Header>
 
       <Modal.Body>
@@ -132,67 +131,69 @@ export const UpdateUserModal: React.FC<Props> = ({ onHide, show, user }) => {
             <Form.Group sm md as={Col}>
               <Form.Label>Nome</Form.Label>
               <Form.Control
-                isInvalid={!!errors.first_name}
-                value={values.first_name}
+                isInvalid={!!errors.name}
+                value={values.name}
                 onChange={handleChange}
-                isValid={touched.first_name && !errors.first_name}
-                placeholder="Seu nome"
-                name="first_name"
+                isValid={touched.name && !errors.name}
+                placeholder="Nome"
+                name="name"
                 onBlur={handleBlur}
               />
               <Form.Control.Feedback type="invalid">
-                {errors.first_name}
+                {errors.name}
               </Form.Control.Feedback>
             </Form.Group>
 
             <Form.Group sm md as={Col}>
-              <Form.Label>Sobrenome</Form.Label>
+              <Form.Label>Preço</Form.Label>
               <Form.Control
-                isInvalid={!!errors.last_name}
-                value={values.last_name}
+                isInvalid={!!errors.price}
+                value={values.price}
                 onChange={handleChange}
-                isValid={touched.last_name && !errors.last_name}
-                placeholder="Seu sobrenome"
-                name="last_name"
+                isValid={touched.price && !errors.price}
+                placeholder="Preço"
+                name="price"
                 onBlur={handleBlur}
               />
               <Form.Control.Feedback type="invalid">
-                {errors.last_name}
+                {errors.price}
               </Form.Control.Feedback>
             </Form.Group>
           </Form.Row>
           <Form.Row>
             <Form.Group sm md as={Col}>
-              <Form.Label>Email</Form.Label>
+              <Form.Label>Categoria</Form.Label>
               <Form.Control
-                isInvalid={!!errors.email}
-                value={values.email}
+                as="select"
+                custom
                 onChange={handleChange}
-                isValid={touched.email && !errors.email}
-                placeholder="Email"
-                name="email"
+                name="categoryIds"
                 onBlur={handleBlur}
-              />
+                isValid={touched.categoryIds && !errors.categoryIds}
+                isInvalid={!!errors.categoryIds}
+              >
+                <option>...</option>
+                {categories?.categories.map(category => (
+                  <option key={category.id} value={category.id}>
+                    {category.name}
+                  </option>
+                ))}
+              </Form.Control>
               <Form.Control.Feedback type="invalid">
-                {errors.email}
+                {errors.categoryIds}
               </Form.Control.Feedback>
             </Form.Group>
 
             <Form.Group sm md as={Col}>
-              <Form.Label>Telefone</Form.Label>
-
-              <Form.Control
-                isInvalid={!!errors.phone_number}
-                value={values.phone_number}
+              <Form.Label>Descrição</Form.Label>
+              <textarea
+                className="form-control"
+                name="description"
                 onChange={handleChange}
-                isValid={touched.phone_number && !errors.phone_number}
-                placeholder="Número de telefone"
-                name="phone_number"
                 onBlur={handleBlur}
               />
-
               <Form.Control.Feedback type="invalid">
-                {errors.phone_number}
+                {errors.description}
               </Form.Control.Feedback>
             </Form.Group>
           </Form.Row>
@@ -321,7 +322,7 @@ export const UpdateUserModal: React.FC<Props> = ({ onHide, show, user }) => {
               aria-hidden="true"
             />
           )}
-          {isSubmitting ? ' enviando...' : 'enviar'}
+          {isSubmitting ? ' criando...' : 'criar'}
         </Button>
       </Modal.Footer>
     </Modal>

@@ -68,7 +68,7 @@ const Adverts: React.FC<Props> = ({ adverts }) => {
 
 export const getServerSideProps = async context => {
   const adverts = await buildClient(context)
-    .get<AdvertsById>(`adverts/${context.params.id}`)
+    .get<AdvertsById>(`adverts/show/${context.params.id}`)
     .then(({ data }) => data)
     .catch(err => console.log(err))
 

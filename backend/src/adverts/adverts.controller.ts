@@ -38,7 +38,7 @@ export class AdvertsController {
     return adverts;
   }
 
-  @Get(':id')
+  @Get('show/:id')
   async show(@Param() { id }: FindOneParams) {
     if (!id) {
       throw new BadRequestException('id is required.');

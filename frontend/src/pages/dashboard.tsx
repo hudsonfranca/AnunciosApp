@@ -14,11 +14,16 @@ import {
   PaginationContainer,
   Title
 } from '../styles/pages/dashboard'
-import { UserType, AdvertsType, AdvertsQueryParams } from '../shared/Types'
+import {
+  UserType,
+  AdvertsType,
+  AdvertsQueryParams,
+  CategoryProps,
+  AdvertsById
+} from '../shared/Types'
 import buildClient from '../services/buildClient'
 import { useRouter } from 'next/router'
-import { ToastContainer } from 'react-toastify'
-
+import { ToastContainer, toast } from 'react-toastify'
 import {
   Row,
   Col,
@@ -26,15 +31,22 @@ import {
   Button,
   Card,
   ListGroup,
-  ListGroupItem
+  ListGroupItem,
+  DropdownButton,
+  Dropdown
 } from 'react-bootstrap'
 import { Pagination } from '../components/Pagination'
 import { UpdateUserModal } from '../components/UpdateUserModal'
+import { CreateAdvertsModal } from '../components/CreateAdvertsModal'
+import { UpdateAdvertsModal } from '../components/UpdateAdvertsModal'
+
+import axios from 'axios'
 
 const Dashboard = ({
   adverts,
   user,
-  query
+  query,
+  categories
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter()
 
@@ -49,9 +61,24 @@ const Dashboard = ({
   const [queryName, setQueryName] = useState('')
   const [pageNumber, setPageNumber] = useState(1)
 
+  const [advertsId, setAdvertsId] = useState('')
+
   useEffect(() => {
     setQueryName(query?.name ? query.name : '')
   }, [])
+
+  const [advertsById, setAdvertsById] = useState<AdvertsById>()
+
+  const getAdvertsById = async () => {
+    const { data } = await axios.get(`/api/adverts/show/${advertsId}`)
+    setAdvertsById(data)
+  }
+
+  useEffect(() => {
+    if (advertsId) {
+      getAdvertsById()
+    }
+  }, [advertsId])
 
   useEffect(() => {
     if (user) {
@@ -79,10 +106,41 @@ const Dashboard = ({
     setPageNumber(selectedItem.selected + 1)
   }
   const [show, setShow] = useState(false)
+  const [showCreateAdverts, setShowCreateAdverts] = useState(false)
+  const [showUpdateAdverts, setShowUpdateAdverts] = useState(false)
+  const notifyDeleteError = () => {
+    toast.error('Não foi possível deletar o anúncio .')
+  }
+
+  const handleDelete = async (id: string) => {
+    try {
+      await axios.delete(`/api/adverts/${id}`, { withCredentials: true })
+
+      router.reload()
+    } catch (error) {
+      notifyDeleteError()
+    }
+  }
+
   return user ? (
     <Container>
       <ToastContainer />
+
       <UpdateUserModal show={show} onHide={() => setShow(false)} user={user} />
+
+      <CreateAdvertsModal
+        show={showCreateAdverts}
+        onHide={() => setShowCreateAdverts(false)}
+        categories={categories}
+      />
+      {advertsById && (
+        <UpdateAdvertsModal
+          show={showUpdateAdverts}
+          onHide={() => setShowUpdateAdverts(false)}
+          adverts={advertsById}
+          categories={categories}
+        />
+      )}
       <Title>Meus anúncios</Title>
       <Options>
         <Row>
@@ -109,7 +167,9 @@ const Dashboard = ({
               <OptionsItems onClick={() => setShow(true)}>
                 Editar meu perfil
               </OptionsItems>
-              <OptionsItems>Criar anúncio</OptionsItems>
+              <OptionsItems onClick={() => setShowCreateAdverts(true)}>
+                Criar anúncio
+              </OptionsItems>
             </OptionsContainer>
           </Col>
         </Row>
@@ -117,8 +177,27 @@ const Dashboard = ({
       <Adverts>
         {adverts?.adverts ? (
           <CardContainer>
-            {adverts.adverts.map(add => (
+            {adverts.adverts.map((add: AdvertsById) => (
               <Card key={add.id}>
+                <Card.Header className="d-flex justify-content-end">
+                  <DropdownButton id="dropdown-basic-button" size="sm" title="">
+                    <Dropdown.Item
+                      href="#"
+                      onClick={() => handleDelete(add.id)}
+                    >
+                      Deletar
+                    </Dropdown.Item>
+                    <Dropdown.Item
+                      href="#"
+                      onClick={() => {
+                        setShowUpdateAdverts(true)
+                        setAdvertsId(add.id)
+                      }}
+                    >
+                      Editar
+                    </Dropdown.Item>
+                  </DropdownButton>
+                </Card.Header>
                 <Card.Img
                   variant="top"
                   src="https://midias.agazeta.com.br/2020/11/18/carro-foi-roubado-em-linhares--363189-article.jpeg "
@@ -166,6 +245,9 @@ export const getServerSideProps = async context => {
   const query: AdvertsQueryParams = context.query
 
   name = name || ''
+  page = page || 1
+  limit = limit || 10
+
   const adverts: AdvertsType = await buildClient(context)
     .get<AdvertsType>(
       `adverts/user/my-adverts?page=${page}&limit=${limit}&name=${name}`
@@ -175,8 +257,12 @@ export const getServerSideProps = async context => {
       return null
     })
 
+  const { data: categories } = await buildClient(context).get<CategoryProps>(
+    'category?page=1&limit=100'
+  )
+
   return {
-    props: { user, adverts }
+    props: { user, adverts, categories, query }
   }
 }
 
