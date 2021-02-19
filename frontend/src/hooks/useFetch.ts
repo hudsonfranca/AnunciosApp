@@ -1,9 +1,10 @@
 import useSWR from 'swr'
-import buildClient from '../services/buildClient'
 
-export function useFetch<Data = any, Error = any>(url: string, req: any) {
+import axios from 'axios'
+
+export function useFetch<Data = any, Error = any>(url: string) {
   const { data, error, mutate } = useSWR<Data, Error>(url, async url => {
-    const { data } = await buildClient(req).get(url)
+    const { data } = await axios.get(url)
     return data
   })
 

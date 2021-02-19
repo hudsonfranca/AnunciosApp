@@ -41,20 +41,21 @@ import { CreateAdvertsModal } from '../components/CreateAdvertsModal'
 import { UpdateAdvertsModal } from '../components/UpdateAdvertsModal'
 
 import axios from 'axios'
+import { useFetch } from '../hooks/useFetch'
 
 const Dashboard = ({
   adverts,
-  user,
   query,
   categories
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter()
 
+  const { data: user, isError } = useFetch<UserType>('/api/auth/current-user')
   useEffect(() => {
-    if (!user) {
+    if (!user || isError) {
       router.push('/signin')
     }
-  }, [])
+  }, [user, isError])
 
   const advertsPerPage = 10
 
@@ -233,13 +234,6 @@ const Dashboard = ({
   )
 }
 export const getServerSideProps = async context => {
-  const user: UserType = await buildClient(context)
-    .get<UserType>('auth/current-user')
-    .then(({ data }) => data)
-    .catch(() => {
-      return null
-    })
-
   let { name, page, limit } = context.query
 
   const query: AdvertsQueryParams = context.query
@@ -262,7 +256,7 @@ export const getServerSideProps = async context => {
   )
 
   return {
-    props: { user, adverts, categories, query }
+    props: { adverts, categories, query }
   }
 }
 
