@@ -13,31 +13,48 @@ spec:
         component: backend
     spec:
       containers:
-        - name: backend
-          image: hudsonfranca/anuncios-backend
-          ports:
-            - containerPort: 3000
-          env:
-            - name: PGUSER
-              value: postgres
-            - name: PGHOST
-              value: postgres-cluster-ip-service
-            - name: PGPORT
-              value: '5432'
-            - name: PGDATABASE
-              value: postgres
-            - name: PGPASSWORD
-              valueFrom:
+      - name: backend
+        image: hudsonfranca/anuncios-backend
+        ports:
+        - containerPort: 3000
+        env:
+          - name: PGUSER
+            valueFrom:
+              configMapKeyRef:
+                name: database-configmap
+                key: db_user
+          - name: PGHOST
+            valueFrom:
+              configMapKeyRef:
+                name: database-configmap
+                key: db_host
+          - name: PGPORT
+            valueFrom:
+              configMapKeyRef:
+                name: database-configmap
+                key: db_port
+          - name: PGDATABASE
+            valueFrom:
+              configMapKeyRef:
+                name: database-configmap
+                key: database
+          - name: PGPASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: database-secret
+                key: db_password
+          - name: JWT_KEY
+            valueFrom:
                 secretKeyRef:
-                  name: pgpassword
-                  key: PGPASSWORD
-            - name: JWT_KEY
-              valueFrom:
-                  secretKeyRef:
-                    name: jwt-secret
-                    key: JWT_KEY
-            - name: EMAIL_PASSWORD
-              valueFrom:
-                  secretKeyRef:
-                    name: email-password
-                    key:  EMAIL_PASSWORD
+                  name: jwt-secret
+                  key: jwt_key
+          - name: EMAIL_PASSWORD
+            valueFrom:
+                secretKeyRef:
+                  name: email-secret
+                  key: password
+          - name: EMAIL_ADDRESS
+            valueFrom:
+              configMapKeyRef:
+                name: email-configmap
+                key: email-address

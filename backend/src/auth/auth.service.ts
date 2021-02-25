@@ -12,6 +12,7 @@ import { UserRole } from '../user/user-role';
 import { SendEmail } from '../utils/SendEmail';
 import { randomBytes } from 'crypto';
 import { ChangePasswordDto } from './dto/change-password.dto';
+import {deleteUserAtributes} from '../utils/utils'
 
 @Injectable()
 export class AuthService {
@@ -43,7 +44,7 @@ export class AuthService {
   }
 
   async signup(createUserDto: CreateUserDto) {
-    const user = await this.userService.createUser({
+    const createdUser = await this.userService.createUser({
       createUserDto,
       roles: [UserRole.USER],
     });
@@ -52,14 +53,18 @@ export class AuthService {
       subject: 'Email de confirmação',
       template: 'email-confirmation',
       context: {
-        token: user.confirmationToken,
+        token: createdUser.confirmationToken,
       },
     };
 
-    await this.sendEmail.send({ ...email, user });
+    await this.sendEmail.send({ ...email, user:createdUser });
 
-    const token = await this.signin(user);
-    return token;
+    const token = await this.signin(createdUser);
+    const user = deleteUserAtributes(createdUser)
+    delete user.confirmationToken;
+    delete user.recoverToken;
+    
+    return {token,user};
   }
 
   async confirmEmail(confirmationToken: string) {

@@ -5,7 +5,7 @@ const keys = {
   pgPassword: process.env.PGPASSWORD,
   pgPort: process.env.PGPORT,
   jwtKey: process.env.JWT_KEY,
-  emailAddress: 'emailparatest25@gmail.com',
+  emailAddress: process.env.EMAIL_ADDRESS,
   emailPassword: process.env.EMAIL_PASSWORD
 };
 

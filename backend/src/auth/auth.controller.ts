@@ -46,14 +46,14 @@ export class AuthController {
     @Body() createUserDto: CreateUserDto,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const token = await this.authService.signup(createUserDto);
+    const {token,user} = await this.authService.signup(createUserDto);
 
     res.cookie('access_token', token, {
       maxAge: 900000,
       httpOnly: true,
       secure: false,
     });
-    return { success: true, token: token };
+    return { user, token };
   }
 
   @UseGuards(JwtAuthGuard)
