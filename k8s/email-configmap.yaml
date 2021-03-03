@@ -3,4 +3,4 @@ kind: ConfigMap
 metadata:
   name: email-configmap
 data:
-  email-address: <your email address>
+  email-address: emailparatest25@gmail.com

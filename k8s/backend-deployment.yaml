@@ -58,3 +58,12 @@ spec:
               configMapKeyRef:
                 name: email-configmap
                 key: email-address
+        volumeMounts:
+          - mountPath: /app/src/uploads
+            name: backend-storage
+            subPath: backend
+            readOnly: false
+      volumes:
+        - name: backend-storage
+          persistentVolumeClaim:
+            claimName: backend-persistent-volume-claim

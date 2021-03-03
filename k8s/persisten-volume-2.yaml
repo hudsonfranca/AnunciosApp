@@ -1,13 +1,13 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: database-persisten-volume
+  name: persisten-volume-2
   labels:
     type: local
 spec:
   storageClassName: manual
   capacity:
-    storage: 1Gi
+    storage: 500M
   accessModes:
     - ReadWriteOnce
   hostPath:

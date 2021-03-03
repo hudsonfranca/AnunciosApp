@@ -1,3 +1,13 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: database-secret
+type: Opaque
+data:
+  db_password: MTIzNDU=
+
+---
+
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
