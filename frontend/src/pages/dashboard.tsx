@@ -42,6 +42,7 @@ import { UpdateAdvertsModal } from '../components/UpdateAdvertsModal'
 
 import axios from 'axios'
 import { useFetch } from '../hooks/useFetch'
+import { useUserAuthentication } from '../context/userAuthentication'
 
 const Dashboard = ({
   adverts,
@@ -49,13 +50,14 @@ const Dashboard = ({
   categories
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter()
-
-  const { data: user, isError } = useFetch<UserType>('/api/auth/current-user')
+  const { isAuthenticated } = useUserAuthentication()
   useEffect(() => {
-    if (!user || isError) {
+    if (!isAuthenticated) {
       router.push('/signin')
     }
-  }, [user, isError])
+  }, [isAuthenticated])
+
+  const { data: user } = useFetch<UserType>('/api/auth/current-user')
 
   const advertsPerPage = 10
 
@@ -82,7 +84,7 @@ const Dashboard = ({
   }, [advertsId])
 
   useEffect(() => {
-    if (user) {
+    if (isAuthenticated) {
       search({})
     }
   }, [pageNumber])
@@ -123,7 +125,7 @@ const Dashboard = ({
     }
   }
 
-  return user ? (
+  return isAuthenticated ? (
     <Container>
       <ToastContainer />
 

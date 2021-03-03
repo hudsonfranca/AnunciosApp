@@ -15,8 +15,9 @@ import * as Yup from 'yup'
 import { Form, Button, Col, Spinner } from 'react-bootstrap'
 import Link from 'next/link'
 import axios from 'axios'
-import { toast, ToastContainer } from 'react-toastify'
+import { toast } from 'react-toastify'
 import { ViaCepProps } from '../shared/Types'
+import { useUserAuthentication } from '../context/userAuthentication'
 
 const validationSchema = Yup.object({
   first_name: Yup.string().required('*campo obrigatório'),
@@ -41,6 +42,8 @@ const validationSchema = Yup.object({
 })
 
 const Signup: React.FC = () => {
+  const { setIsAuthenticated } = useUserAuthentication()
+
   const notifyError = () => {
     toast.error('Não foi possível criar a sua conta.')
   }
@@ -90,8 +93,10 @@ const Signup: React.FC = () => {
             neighborhood: values.neighborhood
           }
         })
+        setIsAuthenticated(true)
         router.push('/')
       } catch ({ response: { data } }) {
+        setIsAuthenticated(false)
         const notifyEmailError = () => {
           toast.error(`${values.email} já está em uso.`)
         }

@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { toast, ToastContainer } from 'react-toastify'
 import { useRouter } from 'next/router'
 import { PasswordRecoveryModal } from '../components/PasswordRecoveryModal'
+import { useUserAuthentication } from '../context/userAuthentication'
 
 const validationSchema = Yup.object({
   email: Yup.string().email('email invalido').required('campo obrigatório'),
@@ -17,6 +18,8 @@ const validationSchema = Yup.object({
 
 const Signin: React.FC = () => {
   const router = useRouter()
+
+  const { setIsAuthenticated } = useUserAuthentication()
 
   const notifyAuthenticationError = () => {
     toast.error('Email ou senha incorretos.')
@@ -46,9 +49,10 @@ const Signin: React.FC = () => {
           email: values.email,
           password: values.password
         })
-
+        setIsAuthenticated(true)
         router.push('/')
       } catch ({ response: { data } }) {
+        setIsAuthenticated(false)
         if (data.statusCode === 401 || data.statusCode === 404) {
           return notifyAuthenticationError()
         }

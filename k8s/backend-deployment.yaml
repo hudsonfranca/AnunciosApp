@@ -1,3 +1,33 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: persisten-volume-2
+  labels:
+    type: local
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 500M
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/data"
+  
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: backend-persistent-volume-claim
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 500M
+
+---
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -67,3 +97,16 @@ spec:
         - name: backend-storage
           persistentVolumeClaim:
             claimName: backend-persistent-volume-claim
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+   name: backend-cluster-ip-service
+spec:
+  selector:
+    component: backend
+  ports:
+  - port: 80
+    targetPort: 3000
+    

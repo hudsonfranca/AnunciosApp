@@ -36,6 +36,7 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Get('current-user')
   async currentUser(@Request() req){
+    
     delete req.user.confirmationToken;
     delete req.user.recoverToken;
       return  req.user;
