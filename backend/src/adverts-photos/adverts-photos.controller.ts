@@ -16,6 +16,9 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { UserRole } from 'src/user/user-role';
 import { AdvertsService } from '../adverts/adverts.service';
+import { diskStorage } from  'multer';
+import { extname,resolve } from  'path';
+import * as crypto from 'crypto';
 
 export interface File {
   fieldname: string;
@@ -37,13 +40,28 @@ export class AdvertsPhotosController {
   ) {}
 
   @Post('adverts/:advertsId')
-  @UseInterceptors(FileInterceptor('file', { dest: './uploads' }))
+  @UseInterceptors(FileInterceptor('file' ,{storage:diskStorage({
+    destination:resolve(__dirname, "..", "..", "uploads"),
+    filename:(req,file,cb)=>{
+     crypto.randomBytes(16,(err,res)=>{
+       if(err){
+         return cb(err,null);
+       }
+       return cb(
+         null,
+         res.toString('hex')+extname(file.originalname)
+       )
+     })
+     
+    }
+  })}))
   @Roles(UserRole.USER, UserRole.VERIFIED_EMAIL)
   async create(
     @Param() { advertsId }: AdvertsId,
     @UploadedFile() file: File,
     @Request() req,
   ) {
+    console.log(file)
     const adverts = await this.advertsService.findOneById(advertsId);
 
     if (adverts.user.id !== req.user.id) {

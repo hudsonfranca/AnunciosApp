@@ -49,15 +49,18 @@ export class AdvertsService {
 
     const advertsEntity = this.advertsRepository.create(adverts);
     advertsEntity.address = addressEntity;
+    
 
     advertsEntity.categories = categories;
     advertsEntity.user = user;
+    
 
     try {
       const savedAdverts = await this.advertsRepository.save(advertsEntity);
 
       return await this.findOneById(savedAdverts.id);
     } catch (error) {
+      console.log(error)
       throw new InternalServerErrorException('adverts could not be saved.');
     }
   }

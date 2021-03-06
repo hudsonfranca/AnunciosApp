@@ -47,17 +47,16 @@ import { useUserAuthentication } from '../context/userAuthentication'
 const Dashboard = ({
   adverts,
   query,
-  categories
+  categories,
+  user
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter()
-  const { isAuthenticated } = useUserAuthentication()
+
   useEffect(() => {
-    if (!isAuthenticated) {
+    if (user) {
       router.push('/signin')
     }
-  }, [isAuthenticated])
-
-  const { data: user } = useFetch<UserType>('/api/auth/current-user')
+  }, [])
 
   const advertsPerPage = 10
 
@@ -84,9 +83,7 @@ const Dashboard = ({
   }, [advertsId])
 
   useEffect(() => {
-    if (isAuthenticated) {
-      search({})
-    }
+    search({})
   }, [pageNumber])
 
   const handleChangeName = e => {
@@ -125,7 +122,7 @@ const Dashboard = ({
     }
   }
 
-  return isAuthenticated ? (
+  return user ? (
     <Container>
       <ToastContainer />
 
@@ -178,7 +175,8 @@ const Dashboard = ({
         </Row>
       </Options>
       <Adverts>
-        {adverts?.adverts ? (
+        {adverts?.adverts
+? (
           <CardContainer>
             {adverts.adverts.map((add: AdvertsById) => (
               <Card key={add.id}>
@@ -221,7 +219,8 @@ const Dashboard = ({
               </Card>
             ))}
           </CardContainer>
-        ) : (
+        )
+: (
           <NotFound>
             <h4>Não há anúncios que correspondem à sua busca.</h4>
           </NotFound>
@@ -231,9 +230,9 @@ const Dashboard = ({
         <Pagination changePage={handleChangePage} pageCount={pageCount || 1} />
       </PaginationContainer>
     </Container>
-  ) : (
+      ) : (
     <Container></Container>
-  )
+      )
 }
 export const getServerSideProps = async context => {
   let { name, page, limit } = context.query
@@ -253,12 +252,19 @@ export const getServerSideProps = async context => {
       return null
     })
 
+  const user: UserType = await buildClient(context)
+    .get<UserType>('/auth/current-user')
+    .then(({ data }) => data)
+    .catch(() => {
+      return null
+    })
+
   const { data: categories } = await buildClient(context).get<CategoryProps>(
     'category?page=1&limit=100'
   )
 
   return {
-    props: { adverts, categories, query }
+    props: { adverts, categories, query, user }
   }
 }
 

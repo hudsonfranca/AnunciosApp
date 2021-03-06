@@ -17,7 +17,7 @@ export const Layout: React.FC = ({ children }) => {
       .catch(() => {
         return null
       })
-    console.log(user)
+
     if (user) {
       setIsAuthenticated(true)
     } else {

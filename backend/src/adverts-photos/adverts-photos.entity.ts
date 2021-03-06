@@ -16,20 +16,12 @@ export class AdvertsPhotos {
   @Column({ nullable: false, type: 'varchar', length: 200 })
   originalname: string;
 
-  @Column({ nullable: false, type: 'varchar', length: 50 })
-  encoding: string;
-
-  @Column({ nullable: false, type: 'varchar', length: 50 })
-  mimetype: string;
-
-  @Column({ nullable: false, type: 'varchar', length: 200 })
-  destination: string;
-
   @Column({ nullable: false, type: 'varchar', length: 200 })
   filename: string;
 
   @Column({ nullable: false, type: 'varchar', length: 200 })
-  path: string;
+  url: string;
+
 
   @ManyToOne(() => Adverts, (adverts) => adverts.advertsPhotos, {
     onDelete: 'CASCADE',

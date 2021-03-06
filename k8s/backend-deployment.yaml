@@ -89,7 +89,7 @@ spec:
                 name: email-configmap
                 key: email-address
         volumeMounts:
-          - mountPath: /app/src/uploads
+          - mountPath: /app/uploads
             name: backend-storage
             subPath: backend
             readOnly: false

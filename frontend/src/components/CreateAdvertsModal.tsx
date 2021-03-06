@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useState } from 'react'
 import { Button, Modal, Form, Spinner, Col } from 'react-bootstrap'
 import axios from 'axios'
 import { useFormik } from 'formik'
@@ -6,7 +6,6 @@ import * as Yup from 'yup'
 import { useRouter } from 'next/router'
 import { toast } from 'react-toastify'
 import { CategoryProps, ViaCepProps } from '../shared/Types'
-
 const validationSchema = Yup.object({
   name: Yup.string().required('*campo obrigatório'),
   price: Yup.string().required('*campo obrigatório'),
@@ -17,7 +16,12 @@ const validationSchema = Yup.object({
   number: Yup.number().required('*campo obrigatório'),
   street: Yup.string().required('*campo obrigatório'),
   neighborhood: Yup.string().required('*campo obrigatório'),
-  state: Yup.string().required('*campo obrigatório')
+  state: Yup.string().required('*campo obrigatório'),
+  image: Yup.mixed().test('fileSize', 'Sua imagem é muito grande :(', value => {
+    console.log(value.size)
+
+    return value && value.size <= 262144000
+  })
 })
 
 interface Props {
@@ -58,7 +62,8 @@ export const CreateAdvertsModal: React.FC<Props> = ({
       number: '',
       street: '',
       state: '',
-      neighborhood: ''
+      neighborhood: '',
+      image: ''
     },
     validationSchema,
     onSubmit: async values => {
@@ -109,7 +114,7 @@ export const CreateAdvertsModal: React.FC<Props> = ({
     },
     []
   )
-
+  const [file, setFile] = useState()
   return (
     <Modal
       show={show}
@@ -292,6 +297,20 @@ export const CreateAdvertsModal: React.FC<Props> = ({
               <Form.Control.Feedback type="invalid">
                 {errors.state}
               </Form.Control.Feedback>
+            </Form.Group>
+          </Form.Row>
+          <Form.Row>
+            <Form.Group sm md as={Col}>
+              <Form.Label>Selecione uma imagem</Form.Label>
+              <Form.File id="formcheck-api-custom" custom name="image">
+                <Form.File.Input isValid />
+                <Form.File.Label data-browse="Button text">
+                  {values.image}
+                </Form.File.Label>
+                <Form.Control.Feedback type="valid">
+                  You did it!
+                </Form.Control.Feedback>
+              </Form.File>
             </Form.Group>
           </Form.Row>
         </Form>

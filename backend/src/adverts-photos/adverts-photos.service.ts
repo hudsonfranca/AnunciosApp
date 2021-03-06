@@ -18,9 +18,11 @@ export class AdvertsPhotosService {
     delete file.size;
     delete file.fieldname;
 
-    const adverts = await this.advertsService.findOneById(advertsId);
 
-    const advertsPhoto = this.advertsPhotosRepository.create(file);
+    const adverts = await this.advertsService.findOneById(advertsId);
+    const hostUrl = "http://minikube/api"
+    const filePath = file.path.split('/app');
+    const advertsPhoto = this.advertsPhotosRepository.create({originalname:file.originalname,url:`${hostUrl}${filePath[1]}`,filename:file.filename});
 
     advertsPhoto.adverts = adverts;
 
