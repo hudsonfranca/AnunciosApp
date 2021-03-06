@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback } from 'react'
 import { Button, Modal, Form, Spinner, Col } from 'react-bootstrap'
 import axios from 'axios'
 import { useFormik } from 'formik'
@@ -6,6 +6,10 @@ import * as Yup from 'yup'
 import { useRouter } from 'next/router'
 import { toast } from 'react-toastify'
 import { CategoryProps, ViaCepProps } from '../shared/Types'
+
+const FILE_SIZE = 160 * 1024
+const SUPPORTED_FORMATS = ['image/jpg', 'image/jpeg', 'image/gif', 'image/png']
+
 const validationSchema = Yup.object({
   name: Yup.string().required('*campo obrigatório'),
   price: Yup.string().required('*campo obrigatório'),
@@ -17,11 +21,18 @@ const validationSchema = Yup.object({
   street: Yup.string().required('*campo obrigatório'),
   neighborhood: Yup.string().required('*campo obrigatório'),
   state: Yup.string().required('*campo obrigatório'),
-  image: Yup.mixed().test('fileSize', 'Sua imagem é muito grande :(', value => {
-    console.log(value.size)
-
-    return value && value.size <= 262144000
-  })
+  image: Yup.mixed()
+    .required('*campo obrigatório')
+    .test(
+      'fileSize',
+      'O arquivo é muito grande',
+      value => value && value.size <= FILE_SIZE
+    )
+    .test(
+      'fileFormat',
+      'Formato inválido',
+      value => value && SUPPORTED_FORMATS.includes(value.type)
+    )
 })
 
 interface Props {
@@ -63,12 +74,12 @@ export const CreateAdvertsModal: React.FC<Props> = ({
       street: '',
       state: '',
       neighborhood: '',
-      image: ''
+      image: null
     },
     validationSchema,
     onSubmit: async values => {
       try {
-        await axios.post(
+        const { data } = await axios.post(
           '/api/adverts',
           {
             name: values.name,
@@ -88,7 +99,13 @@ export const CreateAdvertsModal: React.FC<Props> = ({
             withCredentials: true
           }
         )
-
+        if (data) {
+          const formData = new FormData()
+          formData.append('file', values.image)
+          await axios.post(`/api/adverts-photos/adverts/${data.id}`, formData, {
+            withCredentials: true
+          })
+        }
         onHide()
         resetForm()
         router.reload()
@@ -114,14 +131,17 @@ export const CreateAdvertsModal: React.FC<Props> = ({
     },
     []
   )
-  const [file, setFile] = useState()
+  console.log(values.image)
   return (
     <Modal
       show={show}
       size="lg"
       aria-labelledby="contained-modal-title-vcenter"
       centered
-      onHide={onHide}
+      onHide={() => {
+        setFieldValue('image', '')
+        onHide()
+      }}
     >
       <Modal.Header closeButton>
         <Modal.Title>Criar anúncio</Modal.Title>
@@ -193,8 +213,6 @@ export const CreateAdvertsModal: React.FC<Props> = ({
                 name="description"
                 onChange={handleChange}
                 onBlur={handleBlur}
-                isValid={touched.description && !errors.description}
-                isInvalid={!!errors.description}
               />
               <Form.Control.Feedback type="invalid">
                 {errors.description}
@@ -302,13 +320,23 @@ export const CreateAdvertsModal: React.FC<Props> = ({
           <Form.Row>
             <Form.Group sm md as={Col}>
               <Form.Label>Selecione uma imagem</Form.Label>
-              <Form.File id="formcheck-api-custom" custom name="image">
-                <Form.File.Input isValid />
-                <Form.File.Label data-browse="Button text">
-                  {values.image}
+              <Form.File id="formcheck-api-custom" custom>
+                <Form.File.Input
+                  isInvalid={!!errors.image}
+                  onChange={event => {
+                    setFieldValue('image', event.currentTarget.files[0])
+                  }}
+                  isValid={touched.image && !errors.image}
+                  placeholder="Imagem"
+                  name="image"
+                  onBlur={handleBlur}
+                  accept="image/*"
+                />
+                <Form.File.Label data-browse="Buscar">
+                  {values.image?.name}
                 </Form.File.Label>
-                <Form.Control.Feedback type="valid">
-                  You did it!
+                <Form.Control.Feedback type="invalid">
+                  {errors.image}
                 </Form.Control.Feedback>
               </Form.File>
             </Form.Group>
@@ -321,6 +349,7 @@ export const CreateAdvertsModal: React.FC<Props> = ({
           onClick={() => {
             onHide()
             resetForm()
+            setFieldValue('image', '')
           }}
         >
           cancelar

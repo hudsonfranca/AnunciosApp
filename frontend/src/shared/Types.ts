@@ -26,7 +26,12 @@ export type AdvertsById = {
     roles: string[]
     phone_number: string
   }
-  advertsPhotos: string[]
+  advertsPhotos: {
+    id: string
+    originalname: string
+    filename: string
+    url: string
+  }[]
 }
 
 export type AdvertsType = {
@@ -59,7 +64,12 @@ export type AdvertsType = {
       roles: string[]
       phone_number: string
     }
-    advertsPhotos: string[]
+    advertsPhotos: {
+      id: string
+      originalname: string
+      filename: string
+      url: string
+    }[]
   }[]
 }
 

@@ -175,8 +175,7 @@ const Dashboard = ({
         </Row>
       </Options>
       <Adverts>
-        {adverts?.adverts
-? (
+        {adverts?.adverts ? (
           <CardContainer>
             {adverts.adverts.map((add: AdvertsById) => (
               <Card key={add.id}>
@@ -199,10 +198,7 @@ const Dashboard = ({
                     </Dropdown.Item>
                   </DropdownButton>
                 </Card.Header>
-                <Card.Img
-                  variant="top"
-                  src="https://midias.agazeta.com.br/2020/11/18/carro-foi-roubado-em-linhares--363189-article.jpeg "
-                />
+                <Card.Img variant="top" src={add.advertsPhotos[0].url} />
                 <Card.Body>
                   <Card.Title>{add.name}</Card.Title>
                 </Card.Body>
@@ -219,8 +215,7 @@ const Dashboard = ({
               </Card>
             ))}
           </CardContainer>
-        )
-: (
+        ) : (
           <NotFound>
             <h4>Não há anúncios que correspondem à sua busca.</h4>
           </NotFound>
@@ -230,9 +225,9 @@ const Dashboard = ({
         <Pagination changePage={handleChangePage} pageCount={pageCount || 1} />
       </PaginationContainer>
     </Container>
-      ) : (
+  ) : (
     <Container></Container>
-      )
+  )
 }
 export const getServerSideProps = async context => {
   let { name, page, limit } = context.query
