@@ -20,22 +20,17 @@ interface Props {
   adverts: AdvertsById
 }
 
-const images = [
-  {
-    original: 'https://picsum.photos/id/1018/1000/600/',
-    thumbnail: 'https://picsum.photos/id/1018/250/150/'
-  },
-  {
-    original: 'https://picsum.photos/id/1015/1000/600/',
-    thumbnail: 'https://picsum.photos/id/1015/250/150/'
-  },
-  {
-    original: 'https://picsum.photos/id/1019/1000/600/',
-    thumbnail: 'https://picsum.photos/id/1019/250/150/'
-  }
-]
-
 const Adverts: React.FC<Props> = ({ adverts }) => {
+  const formatter = new Intl.NumberFormat([], {
+    style: 'currency',
+    currency: 'BRL'
+  })
+  const images = adverts.advertsPhotos.map(img => {
+    return {
+      original: img.url,
+      thumbnail: img.url
+    }
+  })
   return (
     <Container>
       <Images>
@@ -53,7 +48,7 @@ const Adverts: React.FC<Props> = ({ adverts }) => {
         </ContentItem>
         <ContentItem>
           <PricetagsIcon className="mr-3" />
-          {`R$ ${adverts.price}`}
+          {formatter.format(parseFloat(adverts.price))}
         </ContentItem>
         <ContentItem>
           <MapIcon className="mr-3" />

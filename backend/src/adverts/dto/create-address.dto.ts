@@ -9,7 +9,6 @@ import {
 export class CreateAddressDto {
   @IsString()
   @IsNotEmpty()
-  @Length(8, 8)
   @IsDefined()
   zip: string;
 

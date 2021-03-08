@@ -18,6 +18,7 @@ import axios from 'axios'
 import { toast } from 'react-toastify'
 import { ViaCepProps } from '../shared/Types'
 import { useUserAuthentication } from '../context/userAuthentication'
+import NumberFormat from 'react-number-format'
 
 const validationSchema = Yup.object({
   first_name: Yup.string().required('*campo obrigatório'),
@@ -94,7 +95,7 @@ const Signup: React.FC = () => {
           }
         })
         setIsAuthenticated(true)
-        router.push('/')
+        router.push('/account-created')
       } catch ({ response: { data } }) {
         setIsAuthenticated(false)
         const notifyEmailError = () => {
@@ -125,6 +126,7 @@ const Signup: React.FC = () => {
     },
     []
   )
+  console.log(values)
   return (
     <Container>
       <Image>
@@ -207,7 +209,9 @@ const Signup: React.FC = () => {
             <Form.Group sm md as={Col}>
               <Form.Label>Telefone</Form.Label>
 
-              <Form.Control
+              <NumberFormat
+                customInput={Form.Control}
+                format="(##) #####-####"
                 isInvalid={!!errors.phone_number}
                 value={values.phone_number}
                 onChange={handleChange}
@@ -225,7 +229,9 @@ const Signup: React.FC = () => {
           <Form.Row>
             <Form.Group sm md={6} as={Col}>
               <Form.Label>CEP</Form.Label>
-              <Form.Control
+              <NumberFormat
+                customInput={Form.Control}
+                format="#####-###"
                 isInvalid={!!errors.zip}
                 value={values.zip}
                 onChange={handleChange}

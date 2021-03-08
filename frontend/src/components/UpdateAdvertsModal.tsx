@@ -6,6 +6,7 @@ import * as Yup from 'yup'
 import { useRouter } from 'next/router'
 import { toast } from 'react-toastify'
 import { AdvertsById, CategoryProps, ViaCepProps } from '../shared/Types'
+import NumberFormat from 'react-number-format'
 
 const validationSchema = Yup.object({
   name: Yup.string().required('*campo obrigatório'),
@@ -38,6 +39,7 @@ export const UpdateAdvertsModal: React.FC<Props> = ({
   const notifyError = () => {
     toast.error('Não foi possível atulizar o anúncio')
   }
+  const [price, setPrice] = useState('')
 
   const {
     handleBlur,
@@ -146,10 +148,17 @@ export const UpdateAdvertsModal: React.FC<Props> = ({
 
             <Form.Group sm md as={Col}>
               <Form.Label>Preço</Form.Label>
-              <Form.Control
+              <NumberFormat
+                customInput={Form.Control}
+                thousandSeparator={'.'}
+                decimalSeparator={','}
+                decimalScale={2}
                 isInvalid={!!errors.price}
                 value={values.price}
-                onChange={handleChange}
+                onValueChange={e => {
+                  setPrice(e.value)
+                  setFieldValue('price', e.formattedValue)
+                }}
                 isValid={touched.price && !errors.price}
                 placeholder="Preço"
                 name="price"
@@ -200,7 +209,9 @@ export const UpdateAdvertsModal: React.FC<Props> = ({
           <Form.Row>
             <Form.Group sm md={6} as={Col}>
               <Form.Label>CEP</Form.Label>
-              <Form.Control
+              <NumberFormat
+                customInput={Form.Control}
+                format="#####-###"
                 isInvalid={!!errors.zip}
                 value={values.zip}
                 onChange={handleChange}

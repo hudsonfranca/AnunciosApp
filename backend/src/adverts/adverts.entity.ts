@@ -24,7 +24,7 @@ export class Adverts {
   @Column({ nullable: false, type: 'varchar', length: 200 })
   name: string;
 
-  @Column('decimal', { nullable: false, precision: 5, scale: 2 })
+  @Column( {type:"numeric", nullable: false, precision: 10, scale: 2 })
   price: number;
 
   @Column({ nullable: false, type: 'varchar' })

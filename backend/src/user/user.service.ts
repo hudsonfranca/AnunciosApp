@@ -175,6 +175,7 @@ export class UserService {
       const savedUser = await this.userRepository.save(user);
       return savedUser;
     } catch (error) {
+      console.log(error)
       if (error.code.toString() === '23505') {
         throw new ConflictException(`email is already in use`);
       } else {

@@ -6,6 +6,7 @@ import {
   IsNotEmptyObject,
   IsObject,
   ValidateNested,
+  IsNumber,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { CreateAddressDto } from './create-address.dto';
@@ -19,6 +20,7 @@ export class CreateAdvertsDto {
 
   @IsNotEmpty()
   @IsDefined()
+  @IsNumber()
   price: number;
 
   @IsNotEmpty()

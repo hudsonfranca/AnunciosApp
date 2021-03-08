@@ -52,20 +52,17 @@ const Dashboard = ({
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter()
 
-  useEffect(() => {
-    if (user) {
-      router.push('/signin')
-    }
-  }, [])
-
   const advertsPerPage = 10
 
   const [queryName, setQueryName] = useState('')
   const [pageNumber, setPageNumber] = useState(1)
-
+  const [userState, setuserState] = useState(user)
   const [advertsId, setAdvertsId] = useState('')
 
   useEffect(() => {
+    if (!userState) {
+      router.push('/signin')
+    }
     setQueryName(query?.name ? query.name : '')
   }, [])
 
@@ -121,6 +118,11 @@ const Dashboard = ({
       notifyDeleteError()
     }
   }
+
+  const formatter = new Intl.NumberFormat([], {
+    style: 'currency',
+    currency: 'BRL'
+  })
 
   return user ? (
     <Container>
@@ -205,7 +207,7 @@ const Dashboard = ({
                 <ListGroup className="list-group-flush">
                   <ListGroupItem className="d-flex">
                     <MoneyIcon className="mr-1" />
-                    R$ {add.price}
+                    {formatter.format(parseFloat(add.price))}
                   </ListGroupItem>
                   <ListGroupItem>
                     <MapIcon className="mr-1" />

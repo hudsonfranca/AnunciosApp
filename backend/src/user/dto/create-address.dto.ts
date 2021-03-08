@@ -3,13 +3,12 @@ import {
   IsNotEmpty,
   Length,
   IsInt,
-  IsDefined,
+  IsDefined
 } from 'class-validator';
 
 export class CreateAddressDto {
   @IsString()
   @IsNotEmpty()
-  @Length(8, 8)
   @IsDefined()
   zip: string;
 

@@ -119,6 +119,11 @@ const SearchAdverts = ({
     setSidebar(!sidebar)
   }
 
+  const formatter = new Intl.NumberFormat([], {
+    style: 'currency',
+    currency: 'BRL'
+  })
+
   const filterForm = () => (
     <FilterForm
       categories={categories}
@@ -155,17 +160,14 @@ const SearchAdverts = ({
             <CardContainer>
               {adverts.adverts.map(add => (
                 <Card key={add.id} onClick={() => handleCardClick(add.id)}>
-                  <Card.Img
-                    variant="top"
-                    src="https://midias.agazeta.com.br/2020/11/18/carro-foi-roubado-em-linhares--363189-article.jpeg "
-                  />
+                  <Card.Img variant="top" src={add.advertsPhotos[0].url} />
                   <Card.Body>
                     <Card.Title>{add.name}</Card.Title>
                   </Card.Body>
                   <ListGroup className="list-group-flush">
                     <ListGroupItem className="d-flex">
                       <MoneyIcon className="mr-1" />
-                      R$ {add.price}
+                      {formatter.format(parseFloat(add.price))}
                     </ListGroupItem>
                     <ListGroupItem>
                       <MapIcon className="mr-1" />

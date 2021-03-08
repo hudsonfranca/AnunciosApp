@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useState } from 'react'
 import { Button, Modal, Form, Spinner, Col } from 'react-bootstrap'
 import axios from 'axios'
 import { useFormik } from 'formik'
@@ -6,6 +6,7 @@ import * as Yup from 'yup'
 import { useRouter } from 'next/router'
 import { toast } from 'react-toastify'
 import { CategoryProps, ViaCepProps } from '../shared/Types'
+import NumberFormat from 'react-number-format'
 
 const FILE_SIZE = 160 * 1024
 const SUPPORTED_FORMATS = ['image/jpg', 'image/jpeg', 'image/gif', 'image/png']
@@ -50,7 +51,7 @@ export const CreateAdvertsModal: React.FC<Props> = ({
   const notifyError = () => {
     toast.error('Não foi possível criar o anúncio')
   }
-
+  const [price, setPrice] = useState('')
   const {
     handleBlur,
     handleChange,
@@ -83,7 +84,7 @@ export const CreateAdvertsModal: React.FC<Props> = ({
           '/api/adverts',
           {
             name: values.name,
-            price: values.price,
+            price: price,
             description: values.description,
             categoryIds: [values.categoryIds],
             address: {
@@ -131,7 +132,7 @@ export const CreateAdvertsModal: React.FC<Props> = ({
     },
     []
   )
-  console.log(values.image)
+  console.log(values.price)
   return (
     <Modal
       show={show}
@@ -168,10 +169,17 @@ export const CreateAdvertsModal: React.FC<Props> = ({
 
             <Form.Group sm md as={Col}>
               <Form.Label>Preço</Form.Label>
-              <Form.Control
+              <NumberFormat
+                customInput={Form.Control}
+                thousandSeparator={'.'}
+                decimalSeparator={','}
                 isInvalid={!!errors.price}
                 value={values.price}
-                onChange={handleChange}
+                decimalScale={2}
+                onValueChange={e => {
+                  setPrice(e.value)
+                  setFieldValue('price', e.formattedValue)
+                }}
                 isValid={touched.price && !errors.price}
                 placeholder="Preço"
                 name="price"
@@ -222,7 +230,9 @@ export const CreateAdvertsModal: React.FC<Props> = ({
           <Form.Row>
             <Form.Group sm md={6} as={Col}>
               <Form.Label>CEP</Form.Label>
-              <Form.Control
+              <NumberFormat
+                customInput={Form.Control}
+                format="#####-###"
                 isInvalid={!!errors.zip}
                 value={values.zip}
                 onChange={handleChange}

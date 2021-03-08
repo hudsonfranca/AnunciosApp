@@ -11,7 +11,7 @@ export class Address {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ nullable: false, type: 'varchar', length: 8 })
+  @Column({ nullable: false, type: 'varchar', length: 9 })
   zip: string;
 
   @Column({ nullable: false, type: 'varchar', length: 200 })

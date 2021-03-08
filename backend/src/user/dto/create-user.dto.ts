@@ -22,7 +22,6 @@ export class CreateUserDto {
   @IsNotEmpty()
   @IsDefined()
   @IsString()
-  @Length(9, 9)
   phone_number: string;
 
   @IsString()

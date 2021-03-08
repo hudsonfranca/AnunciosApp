@@ -1,7 +1,8 @@
 import React from 'react'
-import { Row, Col } from 'react-bootstrap'
+import { Row, Col, Image } from 'react-bootstrap'
 import { CorrectImg } from '../styles/pages/VerifiedEmail'
 import Link from 'next/link'
+import correct from '../assets/correct.png'
 
 export const VerifiedEmail: React.FC = () => {
   return (
@@ -9,12 +10,16 @@ export const VerifiedEmail: React.FC = () => {
       <Col>
         <Row className="h-50">
           <Col className="d-flex justify-content-center align-items-center">
-            <CorrectImg />
+            <Image
+              src={correct}
+              style={{ maxWidth: '200px', maxHeight: '200px' }}
+              fluid
+            />
           </Col>
         </Row>
         <Row className="h-25">
           <Col className="d-flex justify-content-center align-items-center">
-            <h2>Endereço de email confirmado</h2>
+            <h4>Endereço de email confirmado</h4>
           </Col>
         </Row>
         <Row>

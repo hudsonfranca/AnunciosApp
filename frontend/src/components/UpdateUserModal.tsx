@@ -6,6 +6,7 @@ import * as Yup from 'yup'
 import { useRouter } from 'next/router'
 import { toast } from 'react-toastify'
 import { UserType, ViaCepProps } from '../shared/Types'
+import NumberFormat from 'react-number-format'
 
 const validationSchema = Yup.object({
   first_name: Yup.string().required('*campo obrigatório'),
@@ -181,7 +182,9 @@ export const UpdateUserModal: React.FC<Props> = ({ onHide, show, user }) => {
             <Form.Group sm md as={Col}>
               <Form.Label>Telefone</Form.Label>
 
-              <Form.Control
+              <NumberFormat
+                customInput={Form.Control}
+                format="(##) #####-####"
                 isInvalid={!!errors.phone_number}
                 value={values.phone_number}
                 onChange={handleChange}
@@ -190,7 +193,6 @@ export const UpdateUserModal: React.FC<Props> = ({ onHide, show, user }) => {
                 name="phone_number"
                 onBlur={handleBlur}
               />
-
               <Form.Control.Feedback type="invalid">
                 {errors.phone_number}
               </Form.Control.Feedback>

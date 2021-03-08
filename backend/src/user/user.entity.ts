@@ -41,7 +41,7 @@ export class User {
   @Column({ nullable: true, type: 'varchar', length: 64 })
   recoverToken: string;
 
-  @Column({ nullable: false, type: 'varchar', length: 9 })
+  @Column({ nullable: false, type: 'varchar', length: 15 })
   phone_number: string;
 
   @CreateDateColumn()
