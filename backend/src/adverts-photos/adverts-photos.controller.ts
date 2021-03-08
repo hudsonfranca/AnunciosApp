@@ -55,13 +55,13 @@ export class AdvertsPhotosController {
      
     }
   })}))
-  @Roles(UserRole.USER, UserRole.VERIFIED_EMAIL)
+  @Roles(UserRole.USER)
   async create(
     @Param() { advertsId }: AdvertsId,
     @UploadedFile() file: File,
     @Request() req,
   ) {
-    console.log(file)
+   
     const adverts = await this.advertsService.findOneById(advertsId);
 
     if (adverts.user.id !== req.user.id) {

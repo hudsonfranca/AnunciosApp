@@ -25,12 +25,12 @@ import { FindAdvertsQueryDto } from 'src/adverts/dto/find-adverts-query.dto';
 import { deleteUserAtributes } from 'src/utils/utils';
 
 @Controller('user')
-// @UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class UserController {
   constructor(private userService: UserService, private sendEmail: SendEmail) {}
 
   @Post()
-  @Roles(UserRole.ADMIN, UserRole.VERIFIED_EMAIL)
+  @Roles(UserRole.ADMIN )
   async createAdmin(@Body() createUserDto: CreateUserDto) {
     const user = await this.userService.createUser({
       createUserDto,
@@ -54,8 +54,6 @@ export class UserController {
   }
 
   @Patch(':id')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles( UserRole.VERIFIED_EMAIL)
   async update(
     @Request() req,
     @Param() { id }: FindOneParams,
@@ -80,7 +78,6 @@ export class UserController {
   }
 
   @Get(':id')
-  @Roles(UserRole.ADMIN, UserRole.VERIFIED_EMAIL)
   async show(@Param() { id }: FindOneParams) {
     if (!id) {
       throw new BadRequestException('email is required.');
@@ -91,7 +88,6 @@ export class UserController {
   }
 
   @Delete(':id')
-  @Roles(UserRole.ADMIN, UserRole.VERIFIED_EMAIL)
   async delete(@Param() { id }: FindOneParams) {
     if (!id) {
       throw new BadRequestException('id is required.');
@@ -101,7 +97,6 @@ export class UserController {
   }
 
   @Get()
-  @Roles(UserRole.ADMIN, UserRole.VERIFIED_EMAIL)
   async index(@Query() query: FindAdvertsQueryDto) {
     const users = await this.userService.findAllUsers(query);
     return users;

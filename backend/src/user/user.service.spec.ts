@@ -177,45 +177,7 @@ describe('UserService', () => {
     });
   });
 
-  describe('updateUser', () => {
-    it('must update the user', async () => {
-      const updateUserDto: UpdateUserDto = {
-        first_name: 'Admin',
-        last_name:'Adm',
-        email: 'admh@gmail.com',
-        phone_number: '111111111',
-        status: false,
-        address: {
-          zip: '12323454',
-          city: 'São Paulo',
-          number: 35,
-          street: 'Rua são João',
-          state: 'RJ',
-          neighborhood:"Bairro A"
-        },
-      };
-
-      const id = '2e35f06a-f398-4aa9-b6c0-3c26a61cf3de';
-
-      const userServiceFindOneSpy = jest
-        .spyOn(userService, 'findOne')
-        .mockResolvedValue(savedUser);
-
-      const userRepositoryUpdateSpy = jest
-        .spyOn(userRepository, 'update')
-        .mockResolvedValue({ raw: '', affected: 1, generatedMaps: [] });
-
-      await userService.updateUser({ id, updateUserDto });
-
-      expect(userServiceFindOneSpy).toHaveBeenLastCalledWith({
-        id: savedUser.id,
-      });
-      expect(userRepositoryUpdateSpy).toHaveBeenLastCalledWith(
-        { id },
-        savedUser,
-      );
-    });
-  });
+ 
 
   describe('findAllUsers', () => {
     it('', async () => {

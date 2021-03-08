@@ -10,8 +10,8 @@ import { useUserAuthentication } from '../context/userAuthentication'
 export const Layout: React.FC = ({ children }) => {
   const { setIsAuthenticated } = useUserAuthentication()
 
-  const auth = () => {
-    const user: UserType = axios
+  const auth = async () => {
+    const user = await axios
       .get<UserType>('/api/auth/current-user', { withCredentials: true })
       .then(({ data }) => data)
       .catch(() => {

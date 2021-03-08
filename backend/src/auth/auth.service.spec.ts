@@ -132,40 +132,6 @@ describe('AuthService', () => {
       });
     });
   });
-  describe('signup', () => {
-    it('must create a user and send an email', async () => {
-      const createUserDto: CreateUserDto = {
-        first_name: 'Hudson',
-        last_name:'hu',
-        email: 'hudsonsilvares@gmail.com',
-        password: '12345678',
-        passwordConfirmation: '12345678',
-        phone_number: '123456789',
-        status: false,
-        address: {
-          zip: '29905540',
-          city: 'Sao Paulo',
-          number: 28,
-          street: 'Rua do são João',
-          uf: 'SP',
-        },
-      };
-      const sendEmailSendSpy = jest
-        .spyOn(sendEmail, 'send')
-        .mockResolvedValue('Sent');
-
-      const authServiceSigninSpy = jest
-        .spyOn(authService, 'signin')
-        .mockResolvedValue('token');
-
-      const result = await authService.signup(createUserDto);
-
-      expect(result).toBe('token');
-      expect(sendEmailSendSpy).toHaveBeenCalled();
-      expect(authServiceSigninSpy).toHaveBeenCalled();
-    });
-  });
-
   describe('confirmEmail', () => {
     it('must call the confirmEmail method of userService', async () => {
       const confirmationToken = '66565656556565';

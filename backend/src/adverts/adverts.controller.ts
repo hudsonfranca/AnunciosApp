@@ -29,7 +29,7 @@ export class AdvertsController {
 
   @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.VERIFIED_EMAIL)
+  @Roles()
   async create(@Body() createAdvertsDto: CreateAdvertsDto, @Request() req) {
    
     const adverts = await this.advertsService.createAdverts({
@@ -51,7 +51,7 @@ export class AdvertsController {
 
   @Get('user/my-adverts')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.USER, UserRole.VERIFIED_EMAIL)
+  @Roles(UserRole.USER, )
   async advertsByUser(
     @Query() query: FindAdvertsByUserQueryDto,
     @Request() req,
@@ -69,7 +69,7 @@ export class AdvertsController {
 
   @Patch(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles( UserRole.VERIFIED_EMAIL)
+  @Roles( )
   async update(
     @Request() req,
     @Param() { id }: FindOneParams,
@@ -98,7 +98,7 @@ export class AdvertsController {
 
   @Delete(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.USER, UserRole.VERIFIED_EMAIL)
+  @Roles(UserRole.USER )
   async delete(@Param() { id }: FindOneParams, @Request() req) {
     const adverts = await this.advertsService.findOneById(id);
 

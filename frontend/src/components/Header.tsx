@@ -7,9 +7,10 @@ import { useUserAuthentication } from '../context/userAuthentication'
 const Header = () => {
   const { isAuthenticated } = useUserAuthentication()
   const links = [
-    !isAuthenticated && { label: 'Sign Up', href: '/signup' },
-    !isAuthenticated && { label: 'Sign In', href: '/signin' },
-    isAuthenticated && { label: 'Sign Out', href: '/signout' }
+    !isAuthenticated && { label: 'Criar conta', href: '/signup' },
+    !isAuthenticated && { label: 'Login', href: '/signin' },
+    isAuthenticated && { label: 'Sair', href: '/signout' },
+    isAuthenticated && { label: 'Minha conta', href: '/dashboard' }
   ]
     .filter(linkConfig => linkConfig)
     .map(({ label, href }) => {

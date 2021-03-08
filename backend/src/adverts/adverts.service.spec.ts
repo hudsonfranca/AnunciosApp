@@ -200,20 +200,7 @@ describe('AdvertsService', () => {
     expect(advertsRepository.save).toHaveBeenCalledWith(adverts);
   });
 
-  it('findOneByUser', async () => {
-    const queryDto: FindAdvertsByUserQueryDto = {
-      categoryId: '86c0bb3b-76cb-4e3d-9230-602fa07397f6',
-      limit: 10,
-      name: 'car',
-      page: 2,
-      price: 200.9,
-    };
 
-    const userId = '2e35f06a-f398-4aa9-b6c0-3c26a61cf3de';
-
-    const result = await advertsService.findOneByUser(queryDto, userId);
-    expect(result).toEqual([1, savedAdverts]);
-  });
 
   describe('findOneById', () => {
     it('should throw an error if the id is not provided', async () => {
@@ -241,79 +228,13 @@ describe('AdvertsService', () => {
       page: 2,
       price: 200.9,
       city: 'Sao Paulo',
-      uf: 'SP',
+      state: 'SP',
     };
 
     const result = await advertsService.findAdverts(queryDto);
     expect(result).toEqual({ count: 1, adverts: savedAdverts });
   });
 
-  describe('updateAdverts', () => {
-    it('should throw an error if no advertisement was found', async () => {
-      const updateAdvertsDto: UpdateAdvertsDto = {
-        address: {
-          zip: '11905000',
-          city: 'Sao Paulo',
-          number: 28,
-          street: 'Rua A',
-          state: 'SP',
-          neighborhood: 'Rua A',
-        },
-        description: 'gfgfgfgfg',
-        price: 300.9,
-        name: 'car',
-      };
-
-      const id = '2864775c-08d5-4743-9485-7d586d84e906';
-
-      const advertsRepositoryFindOneSpy = jest
-        .spyOn(advertsRepository, 'findOne')
-        .mockResolvedValue(undefined);
-
-      try {
-        await advertsService.updateAdverts({ id, updateAdvertsDto });
-      } catch (error) {
-        expect(error).toBeInstanceOf(NotFoundException);
-        expect(error.message).toBe('no adverts found');
-      }
-    });
-
-    it('must update the ad', async () => {
-      const updateAdvertsDto: UpdateAdvertsDto = {
-        address: {
-          zip: '11905000',
-          city: 'Sao Paulo',
-          number: 28,
-          street: 'Rua A',
-          state: 'SP',
-          neighborhood: 'Rua A',
-        },
-        description: 'gfgfgfgfg',
-        price: 300.9,
-        name: 'car',
-      };
-
-      const id = '2864775c-08d5-4743-9485-7d586d84e906';
-
-      const advertsRepositoryFindOneSpy = jest
-        .spyOn(advertsRepository, 'findOne')
-        .mockResolvedValue(savedAdverts);
-
-      const advertsServiceSaveAdvertsSpy = jest
-        .spyOn(advertsService, 'saveAdverts')
-        .mockResolvedValue(savedAdverts);
-
-      const advertsServiceFindOneByIdsSpy = jest
-        .spyOn(advertsService, 'findOneById')
-        .mockResolvedValue(savedAdverts);
-
-      expect(await advertsService.updateAdverts({ updateAdvertsDto, id })).toBe(
-        savedAdverts,
-      );
-
-      expect(advertsRepositoryFindOneSpy).toBeCalledWith(id);
-    });
-  });
 
   describe('saveAdverts', () => {
     it('', async () => {
