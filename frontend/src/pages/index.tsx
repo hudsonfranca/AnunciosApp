@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import Head from 'next/head'
 import { Container, Form, Col, InputGroup, Button } from 'react-bootstrap'
-import { Image } from '../styles/pages/Home'
+import { Image, Title } from '../styles/pages/Home'
 import { useRouter } from 'next/router'
 import estadosCidades from '../shared/estados-cidades.json'
 
@@ -26,6 +26,9 @@ const Home = () => {
     <Container fluid className="p-0 vh-100">
       <Image>
         <Form onSubmit={handleSubmit} className="p-3">
+          <Form.Row className="d-flex justify-content-center mb-3">
+            <Title>Estou procurando por...</Title>
+          </Form.Row>
           <Form.Row>
             <Form.Group sm md as={Col}>
               <InputGroup>

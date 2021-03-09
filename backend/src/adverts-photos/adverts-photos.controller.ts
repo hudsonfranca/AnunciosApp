@@ -32,7 +32,7 @@ export interface File {
 }
 
 @Controller('adverts-photos')
-@UseGuards(JwtAuthGuard, RolesGuard)
+// @UseGuards(JwtAuthGuard)
 export class AdvertsPhotosController {
   constructor(
     private advertsPhotosService: AdvertsPhotosService,
@@ -55,18 +55,17 @@ export class AdvertsPhotosController {
      
     }
   })}))
-  @Roles(UserRole.USER)
   async create(
     @Param() { advertsId }: AdvertsId,
     @UploadedFile() file: File,
     @Request() req,
   ) {
-   
+   console.log(advertsId)
     const adverts = await this.advertsService.findOneById(advertsId);
 
-    if (adverts.user.id !== req.user.id) {
-      throw new UnauthorizedException();
-    }
+    // if (adverts.user.id !== req.user.id) {
+    //   throw new UnauthorizedException();
+    // }
     const photo = await this.advertsPhotosService.createAdvertsPhoto({
       file,
       advertsId,

@@ -21,12 +21,11 @@ import { Roles } from '../auth/decorators/roles.decorator';
 import { FindCategoryQueryDto } from './dto/find-category-query.dto';
 
 @Controller('category')
-@UseGuards(JwtAuthGuard, RolesGuard)
+
 export class CategoryController {
   constructor(private categoryService: CategoryService) {}
 
   @Post()
-  @Roles(UserRole.ADMIN )
   async create(@Body() createCategoryDto: CreateCategoryDto) {
     const category = await this.categoryService.createCategory(
       createCategoryDto,
@@ -36,21 +35,18 @@ export class CategoryController {
   }
 
   @Get()
-  @Roles(UserRole.ADMIN )
   async index(@Query() query: FindCategoryQueryDto) {
     const categories = await this.categoryService.findManyCategories(query);
     return categories;
   }
 
   @Get(':id')
-  @Roles(UserRole.ADMIN )
   async show(@Param() { id }: FindOneParams) {
     const categories = await this.categoryService.findOneById(id);
     return categories;
   }
 
   @Patch(':id')
-  @Roles(UserRole.ADMIN )
   async update(
     @Request() req,
     @Param() { id }: FindOneParams,
@@ -64,7 +60,6 @@ export class CategoryController {
   }
 
   @Delete(':id')
-  @Roles(UserRole.ADMIN )
   async delete(@Param() { id }: FindOneParams) {
     const result = await this.categoryService.deleteCategory(id);
     return result;

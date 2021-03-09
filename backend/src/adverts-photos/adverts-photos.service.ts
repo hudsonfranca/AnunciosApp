@@ -20,7 +20,7 @@ export class AdvertsPhotosService {
 
 
     const adverts = await this.advertsService.findOneById(advertsId);
-    const hostUrl = "http://minikube/api"
+    const hostUrl = "http://anunciosapp/api"
     const filePath = file.path.split('/app');
     const advertsPhoto = this.advertsPhotosRepository.create({originalname:file.originalname,url:`${hostUrl}${filePath[1]}`,filename:file.filename});
 
@@ -32,6 +32,7 @@ export class AdvertsPhotosService {
       );
       return savedAdvertsPhoto;
     } catch (error) {
+      console.log(error)
       throw new InternalServerErrorException('The photo was not saved.');
     }
   }

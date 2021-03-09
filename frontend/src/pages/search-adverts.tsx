@@ -85,7 +85,7 @@ const SearchAdverts = ({
     const stateCities = estadosCidades.estados.filter(state => {
       return state.sigla === uf
     })
-    return stateCities[0].cidades
+    return stateCities[0]?.cidades
   }
 
   const [cities, setCities] = useState<string[]>()

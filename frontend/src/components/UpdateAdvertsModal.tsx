@@ -72,7 +72,7 @@ export const UpdateAdvertsModal: React.FC<Props> = ({
           `/api/adverts/${adverts.id}`,
           {
             name: values.name,
-            price: values.price,
+            price: price,
             description: values.description,
             categoryIds: [values.categoryIds],
             address: {
@@ -124,7 +124,7 @@ export const UpdateAdvertsModal: React.FC<Props> = ({
       onHide={onHide}
     >
       <Modal.Header closeButton>
-        <Modal.Title>Criar anúncio</Modal.Title>
+        <Modal.Title>Editar anúncio</Modal.Title>
       </Modal.Header>
 
       <Modal.Body>
@@ -333,7 +333,7 @@ export const UpdateAdvertsModal: React.FC<Props> = ({
               aria-hidden="true"
             />
           )}
-          {isSubmitting ? ' criando...' : 'criar'}
+          {isSubmitting ? 'Editando...' : 'Editar'}
         </Button>
       </Modal.Footer>
     </Modal>

@@ -41,8 +41,6 @@ import { CreateAdvertsModal } from '../components/CreateAdvertsModal'
 import { UpdateAdvertsModal } from '../components/UpdateAdvertsModal'
 
 import axios from 'axios'
-import { useFetch } from '../hooks/useFetch'
-import { useUserAuthentication } from '../context/userAuthentication'
 
 const Dashboard = ({
   adverts,
@@ -61,7 +59,7 @@ const Dashboard = ({
 
   useEffect(() => {
     if (!userState) {
-      router.push('/signin')
+      window.location.href = '/signin'
     }
     setQueryName(query?.name ? query.name : '')
   }, [])
@@ -200,7 +198,7 @@ const Dashboard = ({
                     </Dropdown.Item>
                   </DropdownButton>
                 </Card.Header>
-                <Card.Img variant="top" src={add.advertsPhotos[0].url} />
+                <Card.Img variant="top" src={add.advertsPhotos[0]?.url} />
                 <Card.Body>
                   <Card.Title>{add.name}</Card.Title>
                 </Card.Body>

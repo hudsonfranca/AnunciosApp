@@ -10,6 +10,8 @@ import { AdvertsPhotosModule } from './adverts-photos/adverts-photos.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { mailerConfig } from './config/meiler.config';
 
+
+
 @Module({
   imports: [
     TypeOrmModule.forRoot(typeOrmConfig),
@@ -20,6 +22,8 @@ import { mailerConfig } from './config/meiler.config';
     CategoryModule,
     AdvertsPhotosModule,
     MailerModule.forRoot(mailerConfig),
+   
+   
   ],
   controllers: [],
   providers: [],

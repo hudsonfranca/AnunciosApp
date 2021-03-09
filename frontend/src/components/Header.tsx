@@ -22,7 +22,10 @@ const Header = () => {
     })
   return (
     <Navbar bg="light" expand="lg" fixed="top" className="mb-4 ">
-      <Navbar.Brand href="#home">Anuncios-App</Navbar.Brand>
+      <Navbar.Brand>
+        <a>Anuncios-App</a>
+      </Navbar.Brand>
+
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="mr-auto">

@@ -101,16 +101,23 @@ export const CreateAdvertsModal: React.FC<Props> = ({
           }
         )
         if (data) {
+          console.log(values.image)
+          console.log(data.id)
           const formData = new FormData()
           formData.append('file', values.image)
-          await axios.post(`/api/adverts-photos/adverts/${data.id}`, formData, {
-            withCredentials: true
-          })
+          const { data: image } = await axios.post(
+            `/api/adverts-photos/adverts/${data.id}`,
+            formData,
+            {
+              withCredentials: true
+            }
+          )
+
+          onHide()
+          resetForm()
+          router.reload()
         }
-        onHide()
-        resetForm()
-        router.reload()
-      } catch ({ response: { data } }) {
+      } catch (err) {
         return notifyError()
       }
     }
@@ -132,7 +139,7 @@ export const CreateAdvertsModal: React.FC<Props> = ({
     },
     []
   )
-  console.log(values.price)
+
   return (
     <Modal
       show={show}
