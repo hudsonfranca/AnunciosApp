@@ -11,8 +11,7 @@ module.exports = withImages({
 module.exports = {
   sassOptions: {
     includePaths: [path.join(__dirname, 'src', 'scss')]
-  },
-
+  }
 }
 
 module.exports = withCSS(
@@ -26,4 +25,3 @@ module.exports = withCSS(
     )
   )
 )
-

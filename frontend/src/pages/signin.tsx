@@ -8,6 +8,7 @@ import { toast, ToastContainer } from 'react-toastify'
 import { useRouter } from 'next/router'
 import { PasswordRecoveryModal } from '../components/PasswordRecoveryModal'
 import { useUserAuthentication } from '../context/userAuthentication'
+import Head from 'next/head'
 
 const validationSchema = Yup.object({
   email: Yup.string().email('email invalido').required('campo obrigatório'),
@@ -62,109 +63,114 @@ const Signin: React.FC = () => {
   })
   const [show, setShow] = useState(false)
   return (
-    <Container fluid className="vh-100">
-      <ToastContainer />
-      <PasswordRecoveryModal show={show} onHide={() => setShow(false)} />
-      <Row className="justify-content-center h-100 align-items-center ">
-        <Col lg={5} md={8} sm={11}>
-          <Form
-            noValidate
-            onSubmit={handleSubmit}
-            className="shadow-lg p-5 rounded-3 "
-          >
-            <Row className="m-4">
-              <Col className="d-flex justify-content-center h-100 align-items-center mb-4">
-                <h2>Login</h2>
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                <Form.Group>
-                  <Form.Label>Email</Form.Label>
-                  <Form.Control
-                    isInvalid={!!errors.email}
-                    value={values.email}
-                    onChange={handleChange}
-                    isValid={touched.email && !errors.email}
-                    type="email"
-                    placeholder="Digite o seu email"
-                    name="email"
-                    onBlur={handleBlur}
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {errors.email}
-                  </Form.Control.Feedback>
-                </Form.Group>
-                <Form.Group>
-                  <Form.Label>Senha</Form.Label>
-                  <Form.Control
-                    isInvalid={!!errors.password}
-                    value={values.password}
-                    onChange={handleChange}
-                    isValid={touched.password && !errors.password}
-                    type="password"
-                    placeholder="Digite a sua senha"
-                    name="password"
-                    onBlur={handleBlur}
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {errors.password}
-                  </Form.Control.Feedback>
-                </Form.Group>
-              </Col>
-            </Row>
-            <Row>
-              <Col className="pt-4 mb-3">
-                <Button
-                  variant="primary"
-                  type="submit"
-                  block
-                  disabled={isSubmitting}
-                >
-                  {isSubmitting && (
-                    <Spinner
-                      as="span"
-                      animation="grow"
-                      size="sm"
-                      role="status"
-                      aria-hidden="true"
+    <>
+      <Head>
+        <title>Login</title>
+      </Head>
+      <Container fluid className="vh-100">
+        <ToastContainer />
+        <PasswordRecoveryModal show={show} onHide={() => setShow(false)} />
+        <Row className="justify-content-center h-100 align-items-center ">
+          <Col lg={5} md={8} sm={11}>
+            <Form
+              noValidate
+              onSubmit={handleSubmit}
+              className="shadow-lg p-5 rounded-3 "
+            >
+              <Row className="m-4">
+                <Col className="d-flex justify-content-center h-100 align-items-center mb-4">
+                  <h2>Login</h2>
+                </Col>
+              </Row>
+              <Row>
+                <Col>
+                  <Form.Group>
+                    <Form.Label>Email</Form.Label>
+                    <Form.Control
+                      isInvalid={!!errors.email}
+                      value={values.email}
+                      onChange={handleChange}
+                      isValid={touched.email && !errors.email}
+                      type="email"
+                      placeholder="Digite o seu email"
+                      name="email"
+                      onBlur={handleBlur}
                     />
-                  )}
-                  {isSubmitting ? '  Login...' : 'Login'}
-                </Button>
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                <div className="w-100 d-flex justify-content-center align-items-center text-secondary">
-                  <strong>
-                    <a
-                      href="#"
-                      onClick={() => setShow(true)}
-                      className="pe-auto "
-                    >
-                      Esqueceu sua Senha?
-                    </a>
-                  </strong>
-                </div>
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                <div className="w-100 d-flex justify-content-center align-items-center ">
-                  <strong className="mr-1">Não tem cadastro?</strong>
-                  <strong>
-                    <Link href="/signup">
-                      <a> cadastre-se</a>
-                    </Link>
-                  </strong>
-                </div>
-              </Col>
-            </Row>
-          </Form>
-        </Col>
-      </Row>
-    </Container>
+                    <Form.Control.Feedback type="invalid">
+                      {errors.email}
+                    </Form.Control.Feedback>
+                  </Form.Group>
+                  <Form.Group>
+                    <Form.Label>Senha</Form.Label>
+                    <Form.Control
+                      isInvalid={!!errors.password}
+                      value={values.password}
+                      onChange={handleChange}
+                      isValid={touched.password && !errors.password}
+                      type="password"
+                      placeholder="Digite a sua senha"
+                      name="password"
+                      onBlur={handleBlur}
+                    />
+                    <Form.Control.Feedback type="invalid">
+                      {errors.password}
+                    </Form.Control.Feedback>
+                  </Form.Group>
+                </Col>
+              </Row>
+              <Row>
+                <Col className="pt-4 mb-3">
+                  <Button
+                    variant="primary"
+                    type="submit"
+                    block
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting && (
+                      <Spinner
+                        as="span"
+                        animation="grow"
+                        size="sm"
+                        role="status"
+                        aria-hidden="true"
+                      />
+                    )}
+                    {isSubmitting ? '  Login...' : 'Login'}
+                  </Button>
+                </Col>
+              </Row>
+              <Row>
+                <Col>
+                  <div className="w-100 d-flex justify-content-center align-items-center text-secondary">
+                    <strong>
+                      <a
+                        href="#"
+                        onClick={() => setShow(true)}
+                        className="pe-auto "
+                      >
+                        Esqueceu sua Senha?
+                      </a>
+                    </strong>
+                  </div>
+                </Col>
+              </Row>
+              <Row>
+                <Col>
+                  <div className="w-100 d-flex justify-content-center align-items-center ">
+                    <strong className="mr-1">Não tem cadastro?</strong>
+                    <strong>
+                      <Link href="/signup">
+                        <a> cadastre-se</a>
+                      </Link>
+                    </strong>
+                  </div>
+                </Col>
+              </Row>
+            </Form>
+          </Col>
+        </Row>
+      </Container>
+    </>
   )
 }
 

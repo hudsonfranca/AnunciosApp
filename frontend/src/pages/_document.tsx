@@ -8,7 +8,10 @@ import Document, {
   NextScript
 } from 'next/document'
 import { ServerStyleSheet } from 'styled-components'
-
+import favicon from '../assets/favicon.ico'
+import favicon16 from '../assets/favicon-16x16.png'
+import favicon32 from '../assets/favicon-32x32.png'
+import faviconApple from '../assets/apple-touch-icon.png'
 export default class MyDocument extends Document {
   static async getInitialProps(
     ctx: DocumentContext
@@ -48,7 +51,15 @@ export default class MyDocument extends Document {
             rel="stylesheet"
           />
 
-          <link rel="icon" href="https://rocketseat.com.br/favicon.ico" />
+          <link rel="icon" href={favicon} />
+
+          <link rel="icon" type="image/png" sizes="32x32" href={favicon32} />
+
+          <link rel="icon" type="image/png" sizes="16x16" href={favicon16} />
+
+          <link rel="apple-touch-icon" sizes="180x180" href={faviconApple} />
+
+          <meta name="theme-color" content="#ffffff" />
         </Head>
         <body>
           <Main />

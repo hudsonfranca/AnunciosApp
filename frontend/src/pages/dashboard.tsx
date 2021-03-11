@@ -41,6 +41,7 @@ import { CreateAdvertsModal } from '../components/CreateAdvertsModal'
 import { UpdateAdvertsModal } from '../components/UpdateAdvertsModal'
 
 import axios from 'axios'
+import Head from 'next/head'
 
 const Dashboard = ({
   adverts,
@@ -123,110 +124,131 @@ const Dashboard = ({
   })
 
   return user ? (
-    <Container>
-      <ToastContainer />
+    <>
+      <Head>
+        <title>Dashboard</title>
+      </Head>
+      <Container>
+        <ToastContainer />
 
-      <UpdateUserModal show={show} onHide={() => setShow(false)} user={user} />
+        <UpdateUserModal
+          show={show}
+          onHide={() => setShow(false)}
+          user={user}
+        />
 
-      <CreateAdvertsModal
-        show={showCreateAdverts}
-        onHide={() => setShowCreateAdverts(false)}
-        categories={categories}
-      />
-      {advertsById && (
-        <UpdateAdvertsModal
-          show={showUpdateAdverts}
-          onHide={() => setShowUpdateAdverts(false)}
-          adverts={advertsById}
+        <CreateAdvertsModal
+          show={showCreateAdverts}
+          onHide={() => setShowCreateAdverts(false)}
           categories={categories}
         />
-      )}
-      <Title>Meus anúncios</Title>
-      <Options>
-        <Row>
-          <Col className="d-flex flex-column justify-content-between align-items-center pb-4">
-            <TitleTwo>Palavra-Chave</TitleTwo>
-            <Form.Control
-              className="mt-3"
-              value={queryName}
-              onChange={handleChangeName}
-              name="name"
-            />
-            <Button
-              className="mt-2"
-              onClick={() => search({ page: 1 })}
-              type="button"
-            >
-              Filtrar
-            </Button>
-          </Col>
-        </Row>
-        <Row>
-          <Col className="d-flex flex-column justify-content-between align-items-center w-100 h-100">
-            <OptionsContainer>
-              <OptionsItems onClick={() => setShow(true)}>
-                Editar meu perfil
-              </OptionsItems>
-              <OptionsItems onClick={() => setShowCreateAdverts(true)}>
-                Criar anúncio
-              </OptionsItems>
-            </OptionsContainer>
-          </Col>
-        </Row>
-      </Options>
-      <Adverts>
-        {adverts?.adverts ? (
-          <CardContainer>
-            {adverts.adverts.map((add: AdvertsById) => (
-              <Card key={add.id}>
-                <Card.Header className="d-flex justify-content-end">
-                  <DropdownButton id="dropdown-basic-button" size="sm" title="">
-                    <Dropdown.Item
-                      href="#"
-                      onClick={() => handleDelete(add.id)}
-                    >
-                      Deletar
-                    </Dropdown.Item>
-                    <Dropdown.Item
-                      href="#"
-                      onClick={() => {
-                        setShowUpdateAdverts(true)
-                        setAdvertsId(add.id)
-                      }}
-                    >
-                      Editar
-                    </Dropdown.Item>
-                  </DropdownButton>
-                </Card.Header>
-                <Card.Img variant="top" src={add.advertsPhotos[0]?.url} />
-                <Card.Body>
-                  <Card.Title>{add.name}</Card.Title>
-                </Card.Body>
-                <ListGroup className="list-group-flush">
-                  <ListGroupItem className="d-flex">
-                    <MoneyIcon className="mr-1" />
-                    {formatter.format(parseFloat(add.price))}
-                  </ListGroupItem>
-                  <ListGroupItem>
-                    <MapIcon className="mr-1" />
-                    {`${add.address.city} ${add.address.state}`}
-                  </ListGroupItem>
-                </ListGroup>
-              </Card>
-            ))}
-          </CardContainer>
-        ) : (
-          <NotFound>
-            <h4>Não há anúncios que correspondem à sua busca.</h4>
-          </NotFound>
+        {advertsById && (
+          <UpdateAdvertsModal
+            show={showUpdateAdverts}
+            onHide={() => setShowUpdateAdverts(false)}
+            adverts={advertsById}
+            categories={categories}
+          />
         )}
-      </Adverts>
-      <PaginationContainer>
-        <Pagination changePage={handleChangePage} pageCount={pageCount || 1} />
-      </PaginationContainer>
-    </Container>
+        <Title>Meus anúncios</Title>
+        <Options>
+          <Row>
+            <Col className="d-flex flex-column justify-content-between align-items-center pb-4">
+              <TitleTwo>Palavra-Chave</TitleTwo>
+              <Form.Control
+                className="mt-3"
+                value={queryName}
+                onChange={handleChangeName}
+                name="name"
+              />
+              <Button
+                className="mt-2"
+                onClick={() => search({ page: 1 })}
+                type="button"
+              >
+                Filtrar
+              </Button>
+            </Col>
+          </Row>
+          <Row>
+            <Col className="d-flex flex-column justify-content-between align-items-center w-100 h-100">
+              <OptionsContainer>
+                <OptionsItems onClick={() => setShow(true)}>
+                  Editar meu perfil
+                </OptionsItems>
+                <OptionsItems onClick={() => setShowCreateAdverts(true)}>
+                  Criar anúncio
+                </OptionsItems>
+              </OptionsContainer>
+            </Col>
+          </Row>
+        </Options>
+        <Adverts>
+          {adverts?.adverts ? (
+            <CardContainer>
+              {adverts.adverts.map((add: AdvertsById) => (
+                <Card key={add.id}>
+                  <Card.Header className="d-flex justify-content-end">
+                    <DropdownButton
+                      id="dropdown-basic-button"
+                      size="sm"
+                      title=""
+                    >
+                      <Dropdown.Item
+                        href="#"
+                        onClick={() => handleDelete(add.id)}
+                      >
+                        Deletar
+                      </Dropdown.Item>
+                      <Dropdown.Item
+                        href="#"
+                        onClick={() => {
+                          setShowUpdateAdverts(true)
+                          setAdvertsId(add.id)
+                        }}
+                      >
+                        Editar
+                      </Dropdown.Item>
+                    </DropdownButton>
+                  </Card.Header>
+                  <Card.Img variant="top" src={add.advertsPhotos[0]?.url} />
+                  <Card.Body>
+                    <Card.Title>{add.name}</Card.Title>
+                  </Card.Body>
+                  <ListGroup className="list-group-flush">
+                    <ListGroupItem className="d-flex">
+                      <MoneyIcon className="mr-1" />
+                      {formatter.format(parseFloat(add.price))}
+                    </ListGroupItem>
+                    <ListGroupItem>
+                      <MapIcon className="mr-1" />
+                      {`${add.address.city} ${add.address.state}`}
+                    </ListGroupItem>
+                  </ListGroup>
+                </Card>
+              ))}
+            </CardContainer>
+          ) : (
+            <NotFound>
+              <h4>Não há anúncios que correspondem à sua busca.</h4>
+            </NotFound>
+          )}
+        </Adverts>
+        <PaginationContainer>
+          <Pagination
+            changePage={handleChangePage}
+            pageCount={pageCount || 1}
+          />
+        </PaginationContainer>
+      </Container>
+    </>
   ) : (
-    <Container></Container>
+    <>
+      <Head>
+        <title>Dashboard</title>
+      </Head>
+      <Container></Container>
+    </>
   )
 }
 export const getServerSideProps = async context => {

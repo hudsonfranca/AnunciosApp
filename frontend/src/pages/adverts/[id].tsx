@@ -16,6 +16,7 @@ import {
 import ImageGallery from 'react-image-gallery'
 import 'react-image-gallery/styles/css/image-gallery.css'
 import '../../styles/pages/imageGallery.css'
+import Head from 'next/head'
 interface Props {
   adverts: AdvertsById
 }
@@ -32,32 +33,37 @@ const Adverts: React.FC<Props> = ({ adverts }) => {
     }
   })
   return (
-    <Container>
-      <Images>
-        <ImageGallery items={images} />
-      </Images>
-      <Content>
-        <ContentItem> {adverts.name}</ContentItem>
-        <ContentItem>
-          <PersonIcon className="mr-3" />
-          {`${adverts.user.first_name} ${adverts.user.last_name}`}
-        </ContentItem>
-        <ContentItem>
-          <PhoneIcon className="mr-3" />
-          {adverts.user.phone_number}
-        </ContentItem>
-        <ContentItem>
-          <PricetagsIcon className="mr-3" />
-          {formatter.format(parseFloat(adverts.price))}
-        </ContentItem>
-        <ContentItem>
-          <MapIcon className="mr-3" />
-          {`${adverts.address.city}, ${adverts.address.state}, ${adverts.address.neighborhood}`}
-        </ContentItem>
-      </Content>
-      <Description>{adverts.description}</Description>
-      <Cards></Cards>
-    </Container>
+    <>
+      <Head>
+        <title>Anúncios</title>
+      </Head>
+      <Container>
+        <Images>
+          <ImageGallery items={images} />
+        </Images>
+        <Content>
+          <ContentItem> {adverts.name}</ContentItem>
+          <ContentItem>
+            <PersonIcon className="mr-3" />
+            {`${adverts.user.first_name} ${adverts.user.last_name}`}
+          </ContentItem>
+          <ContentItem>
+            <PhoneIcon className="mr-3" />
+            {adverts.user.phone_number}
+          </ContentItem>
+          <ContentItem>
+            <PricetagsIcon className="mr-3" />
+            {formatter.format(parseFloat(adverts.price))}
+          </ContentItem>
+          <ContentItem>
+            <MapIcon className="mr-3" />
+            {`${adverts.address.city}, ${adverts.address.state}, ${adverts.address.neighborhood}`}
+          </ContentItem>
+        </Content>
+        <Description>{adverts.description}</Description>
+        <Cards></Cards>
+      </Container>
+    </>
   )
 }
 

@@ -4,6 +4,7 @@ import { VerifiedEmail } from '../../components/VerifiedEmail'
 import { InferGetServerSidePropsType } from 'next'
 import buildClient from '../../services/buildClient'
 import { useRouter } from 'next/router'
+import Head from 'next/head'
 
 type Props = {
   isAuthenticated: boolean
@@ -19,12 +20,17 @@ const ConfirmEmail: React.FC<Props> = ({
     }
   }, [])
   return (
-    <Container
-      fluid
-      className="vh-100 d-flex justify-content-center align-items-center"
-    >
-      {isAuthenticated && <VerifiedEmail />}
-    </Container>
+    <>
+      <Head>
+        <title>Confirmar email</title>
+      </Head>
+      <Container
+        fluid
+        className="vh-100 d-flex justify-content-center align-items-center"
+      >
+        {isAuthenticated && <VerifiedEmail />}
+      </Container>
+    </>
   )
 }
 

@@ -23,58 +23,63 @@ const Home = () => {
     })
   }
   return (
-    <Container fluid className="p-0 vh-100">
-      <Image>
-        <Form onSubmit={handleSubmit} className="p-3">
-          <Form.Row className="d-flex justify-content-center mb-3">
-            <Title>Estou procurando por...</Title>
-          </Form.Row>
-          <Form.Row>
-            <Form.Group sm md as={Col}>
-              <InputGroup>
-                <InputGroup.Prepend>
-                  <InputGroup.Text>O quê</InputGroup.Text>
-                </InputGroup.Prepend>
-                <Form.Control
-                  type="text"
-                  name="search"
-                  size="lg"
-                  value={name}
-                  onChange={e => setName(e.target.value)}
-                />
-              </InputGroup>
-            </Form.Group>
-            <Form.Group sm md as={Col}>
-              <InputGroup>
-                <InputGroup.Prepend>
-                  <InputGroup.Text>Onde</InputGroup.Text>
-                </InputGroup.Prepend>
-                <Form.Control
-                  as="select"
-                  custom
-                  size="lg"
-                  value={state}
-                  onChange={e => setState(e.target.value)}
-                >
-                  {states.map(state => (
-                    <option key={state.nome} value={state.sigla}>
-                      {state.nome}
-                    </option>
-                  ))}
-                </Form.Control>
-              </InputGroup>
-            </Form.Group>
-          </Form.Row>
-          <Form.Row>
-            <Form.Group sm md as={Col}>
-              <Button variant="primary" block type="submit">
-                Buscar
-              </Button>
-            </Form.Group>
-          </Form.Row>
-        </Form>
-      </Image>
-    </Container>
+    <>
+      <Head>
+        <title>AnunciosApp</title>
+      </Head>
+      <Container fluid className="p-0 vh-100">
+        <Image>
+          <Form onSubmit={handleSubmit} className="p-3">
+            <Form.Row className="d-flex justify-content-center mb-3">
+              <Title>Estou procurando por...</Title>
+            </Form.Row>
+            <Form.Row>
+              <Form.Group sm md as={Col}>
+                <InputGroup>
+                  <InputGroup.Prepend>
+                    <InputGroup.Text>O quê</InputGroup.Text>
+                  </InputGroup.Prepend>
+                  <Form.Control
+                    type="text"
+                    name="search"
+                    size="lg"
+                    value={name}
+                    onChange={e => setName(e.target.value)}
+                  />
+                </InputGroup>
+              </Form.Group>
+              <Form.Group sm md as={Col}>
+                <InputGroup>
+                  <InputGroup.Prepend>
+                    <InputGroup.Text>Onde</InputGroup.Text>
+                  </InputGroup.Prepend>
+                  <Form.Control
+                    as="select"
+                    custom
+                    size="lg"
+                    value={state}
+                    onChange={e => setState(e.target.value)}
+                  >
+                    {states.map(state => (
+                      <option key={state.nome} value={state.sigla}>
+                        {state.nome}
+                      </option>
+                    ))}
+                  </Form.Control>
+                </InputGroup>
+              </Form.Group>
+            </Form.Row>
+            <Form.Row>
+              <Form.Group sm md as={Col}>
+                <Button variant="primary" block type="submit">
+                  Buscar
+                </Button>
+              </Form.Group>
+            </Form.Row>
+          </Form>
+        </Image>
+      </Container>
+    </>
   )
 }
 export default Home

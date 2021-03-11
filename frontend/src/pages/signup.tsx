@@ -19,6 +19,7 @@ import { toast } from 'react-toastify'
 import { ViaCepProps } from '../shared/Types'
 import { useUserAuthentication } from '../context/userAuthentication'
 import NumberFormat from 'react-number-format'
+import Head from 'next/head'
 
 const validationSchema = Yup.object({
   first_name: Yup.string().required('*campo obrigatório'),
@@ -128,271 +129,276 @@ const Signup: React.FC = () => {
   )
   console.log(values)
   return (
-    <Container>
-      <Image>
-        <Title color="#f5f5f5">Lorem ipsum dolor sit amet consectetur.</Title>
-        <Ul>
-          <Li>
-            <CheckboxIcon />
-            Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-          </Li>
+    <>
+      <Head>
+        <title>Criar conta</title>
+      </Head>
+      <Container>
+        <Image>
+          <Title color="#f5f5f5">Lorem ipsum dolor sit amet consectetur.</Title>
+          <Ul>
+            <Li>
+              <CheckboxIcon />
+              Lorem ipsum dolor sit, amet consectetur adipisicing elit.
+            </Li>
 
-          <Li>
-            <CheckboxIcon />
-            Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-          </Li>
+            <Li>
+              <CheckboxIcon />
+              Lorem ipsum dolor sit, amet consectetur adipisicing elit.
+            </Li>
 
-          <Li>
-            <CheckboxIcon />
-            Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-          </Li>
+            <Li>
+              <CheckboxIcon />
+              Lorem ipsum dolor sit, amet consectetur adipisicing elit.
+            </Li>
 
-          <Li>
-            <CheckboxIcon />
-            Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-          </Li>
-        </Ul>
-      </Image>
-      <Card>
-        <Title className="mb-4">Informe os seus dados</Title>
-        <Form noValidate onSubmit={handleSubmit}>
-          <Form.Row>
-            <Form.Group sm md as={Col}>
-              <Form.Label>Nome</Form.Label>
-              <Form.Control
-                isInvalid={!!errors.first_name}
-                value={values.first_name}
-                onChange={handleChange}
-                isValid={touched.first_name && !errors.first_name}
-                placeholder="Seu nome"
-                name="first_name"
-                onBlur={handleBlur}
-              />
-              <Form.Control.Feedback type="invalid">
-                {errors.first_name}
-              </Form.Control.Feedback>
-            </Form.Group>
-
-            <Form.Group sm md as={Col}>
-              <Form.Label>Sobrenome</Form.Label>
-              <Form.Control
-                isInvalid={!!errors.last_name}
-                value={values.last_name}
-                onChange={handleChange}
-                isValid={touched.last_name && !errors.last_name}
-                placeholder="Seu sobrenome"
-                name="last_name"
-                onBlur={handleBlur}
-              />
-              <Form.Control.Feedback type="invalid">
-                {errors.last_name}
-              </Form.Control.Feedback>
-            </Form.Group>
-          </Form.Row>
-          <Form.Row>
-            <Form.Group sm md as={Col}>
-              <Form.Label>Email</Form.Label>
-              <Form.Control
-                isInvalid={!!errors.email}
-                value={values.email}
-                onChange={handleChange}
-                isValid={touched.email && !errors.email}
-                placeholder="Email"
-                name="email"
-                onBlur={handleBlur}
-              />
-              <Form.Control.Feedback type="invalid">
-                {errors.email}
-              </Form.Control.Feedback>
-            </Form.Group>
-
-            <Form.Group sm md as={Col}>
-              <Form.Label>Telefone</Form.Label>
-
-              <NumberFormat
-                customInput={Form.Control}
-                format="(##) #####-####"
-                isInvalid={!!errors.phone_number}
-                value={values.phone_number}
-                onChange={handleChange}
-                isValid={touched.phone_number && !errors.phone_number}
-                placeholder="Número de telefone"
-                name="phone_number"
-                onBlur={handleBlur}
-              />
-
-              <Form.Control.Feedback type="invalid">
-                {errors.phone_number}
-              </Form.Control.Feedback>
-            </Form.Group>
-          </Form.Row>
-          <Form.Row>
-            <Form.Group sm md={6} as={Col}>
-              <Form.Label>CEP</Form.Label>
-              <NumberFormat
-                customInput={Form.Control}
-                format="#####-###"
-                isInvalid={!!errors.zip}
-                value={values.zip}
-                onChange={handleChange}
-                isValid={touched.zip && !errors.zip}
-                placeholder="CEP"
-                name="zip"
-                onBlur={onBlur}
-              />
-              <Form.Control.Feedback type="invalid">
-                {errors.zip}
-              </Form.Control.Feedback>
-            </Form.Group>
-            <Form.Group sm md={6} as={Col}>
-              <Form.Label>Cidade</Form.Label>
-              <Form.Control
-                isInvalid={!!errors.city}
-                value={values.city}
-                onChange={handleChange}
-                isValid={touched.city && !errors.city}
-                placeholder="Nome da sua cidade"
-                name="city"
-                onBlur={handleBlur}
-              />
-              <Form.Control.Feedback type="invalid">
-                {errors.city}
-              </Form.Control.Feedback>
-            </Form.Group>
-          </Form.Row>
-          <Form.Row>
-            <Form.Group sm md as={Col}>
-              <Form.Label>Logradouro</Form.Label>
-              <Form.Control
-                isInvalid={!!errors.street}
-                value={values.street}
-                onChange={handleChange}
-                isValid={touched.street && !errors.street}
-                placeholder="Logradouro"
-                name="street"
-                onBlur={handleBlur}
-              />
-              <Form.Control.Feedback type="invalid">
-                {errors.street}
-              </Form.Control.Feedback>
-            </Form.Group>
-          </Form.Row>
-          <Form.Row>
-            <Form.Group sm md as={Col}>
-              <Form.Label>Número</Form.Label>
-              <Form.Control
-                isInvalid={!!errors.number}
-                value={values.number}
-                onChange={handleChange}
-                isValid={touched.number && !errors.number}
-                placeholder="Número"
-                name="number"
-                onBlur={handleBlur}
-                type="number"
-              />
-              <Form.Control.Feedback type="invalid">
-                {errors.number}
-              </Form.Control.Feedback>
-            </Form.Group>
-            <Form.Group sm md as={Col}>
-              <Form.Label>Bairro</Form.Label>
-              <Form.Control
-                isInvalid={!!errors.neighborhood}
-                value={values.neighborhood}
-                onChange={handleChange}
-                isValid={touched.neighborhood && !errors.neighborhood}
-                placeholder="Seu bairro"
-                name="neighborhood"
-                onBlur={handleBlur}
-              />
-              <Form.Control.Feedback type="invalid">
-                {errors.neighborhood}
-              </Form.Control.Feedback>
-            </Form.Group>
-
-            <Form.Group sm md as={Col}>
-              <Form.Label>UF</Form.Label>
-              <Form.Control
-                isInvalid={!!errors.state}
-                value={values.state}
-                onChange={handleChange}
-                isValid={touched.state && !errors.state}
-                placeholder="Seu estado"
-                name="state"
-                onBlur={handleBlur}
-              />
-              <Form.Control.Feedback type="invalid">
-                {errors.state}
-              </Form.Control.Feedback>
-            </Form.Group>
-          </Form.Row>
-          <Form.Row>
-            <Form.Group sm md as={Col}>
-              <Form.Label>Senha</Form.Label>
-              <Form.Control
-                isInvalid={!!errors.password}
-                value={values.password}
-                onChange={handleChange}
-                isValid={touched.password && !errors.password}
-                placeholder="Sua senha"
-                name="password"
-                type="password"
-                onBlur={handleBlur}
-              />
-              <Form.Control.Feedback type="invalid">
-                {errors.password}
-              </Form.Control.Feedback>
-            </Form.Group>
-            <Form.Group sm md as={Col}>
-              <Form.Label>Confirme sua senha</Form.Label>
-              <Form.Control
-                isInvalid={!!errors.passwordConfirmation}
-                value={values.passwordConfirmation}
-                onChange={handleChange}
-                isValid={
-                  touched.passwordConfirmation && !errors.passwordConfirmation
-                }
-                type="password"
-                placeholder="Repita a sua senha"
-                name="passwordConfirmation"
-                onBlur={handleBlur}
-              />
-              <Form.Control.Feedback type="invalid">
-                {errors.passwordConfirmation}
-              </Form.Control.Feedback>
-            </Form.Group>
-          </Form.Row>
-          <Form.Row>
-            <Button
-              type="submit"
-              disabled={isSubmitting}
-              onClick={submitForm}
-              className="mt-4"
-              block
-            >
-              {isSubmitting && (
-                <Spinner
-                  as="span"
-                  animation="grow"
-                  size="sm"
-                  role="status"
-                  aria-hidden="true"
+            <Li>
+              <CheckboxIcon />
+              Lorem ipsum dolor sit, amet consectetur adipisicing elit.
+            </Li>
+          </Ul>
+        </Image>
+        <Card>
+          <Title className="mb-4">Informe os seus dados</Title>
+          <Form noValidate onSubmit={handleSubmit}>
+            <Form.Row>
+              <Form.Group sm md as={Col}>
+                <Form.Label>Nome</Form.Label>
+                <Form.Control
+                  isInvalid={!!errors.first_name}
+                  value={values.first_name}
+                  onChange={handleChange}
+                  isValid={touched.first_name && !errors.first_name}
+                  placeholder="Seu nome"
+                  name="first_name"
+                  onBlur={handleBlur}
                 />
-              )}
-              {isSubmitting ? ' Criando...' : 'Criar minha conta'}
-            </Button>
-          </Form.Row>
-        </Form>
-        <Login>
-          <strong>Ja é cadastrado? </strong>
-          <strong>
-            <Link href="/signin">
-              <a> Login</a>
-            </Link>
-          </strong>
-        </Login>
-      </Card>
-    </Container>
+                <Form.Control.Feedback type="invalid">
+                  {errors.first_name}
+                </Form.Control.Feedback>
+              </Form.Group>
+
+              <Form.Group sm md as={Col}>
+                <Form.Label>Sobrenome</Form.Label>
+                <Form.Control
+                  isInvalid={!!errors.last_name}
+                  value={values.last_name}
+                  onChange={handleChange}
+                  isValid={touched.last_name && !errors.last_name}
+                  placeholder="Seu sobrenome"
+                  name="last_name"
+                  onBlur={handleBlur}
+                />
+                <Form.Control.Feedback type="invalid">
+                  {errors.last_name}
+                </Form.Control.Feedback>
+              </Form.Group>
+            </Form.Row>
+            <Form.Row>
+              <Form.Group sm md as={Col}>
+                <Form.Label>Email</Form.Label>
+                <Form.Control
+                  isInvalid={!!errors.email}
+                  value={values.email}
+                  onChange={handleChange}
+                  isValid={touched.email && !errors.email}
+                  placeholder="Email"
+                  name="email"
+                  onBlur={handleBlur}
+                />
+                <Form.Control.Feedback type="invalid">
+                  {errors.email}
+                </Form.Control.Feedback>
+              </Form.Group>
+
+              <Form.Group sm md as={Col}>
+                <Form.Label>Telefone</Form.Label>
+
+                <NumberFormat
+                  customInput={Form.Control}
+                  format="(##) #####-####"
+                  isInvalid={!!errors.phone_number}
+                  value={values.phone_number}
+                  onChange={handleChange}
+                  isValid={touched.phone_number && !errors.phone_number}
+                  placeholder="Número de telefone"
+                  name="phone_number"
+                  onBlur={handleBlur}
+                />
+
+                <Form.Control.Feedback type="invalid">
+                  {errors.phone_number}
+                </Form.Control.Feedback>
+              </Form.Group>
+            </Form.Row>
+            <Form.Row>
+              <Form.Group sm md={6} as={Col}>
+                <Form.Label>CEP</Form.Label>
+                <NumberFormat
+                  customInput={Form.Control}
+                  format="#####-###"
+                  isInvalid={!!errors.zip}
+                  value={values.zip}
+                  onChange={handleChange}
+                  isValid={touched.zip && !errors.zip}
+                  placeholder="CEP"
+                  name="zip"
+                  onBlur={onBlur}
+                />
+                <Form.Control.Feedback type="invalid">
+                  {errors.zip}
+                </Form.Control.Feedback>
+              </Form.Group>
+              <Form.Group sm md={6} as={Col}>
+                <Form.Label>Cidade</Form.Label>
+                <Form.Control
+                  isInvalid={!!errors.city}
+                  value={values.city}
+                  onChange={handleChange}
+                  isValid={touched.city && !errors.city}
+                  placeholder="Nome da sua cidade"
+                  name="city"
+                  onBlur={handleBlur}
+                />
+                <Form.Control.Feedback type="invalid">
+                  {errors.city}
+                </Form.Control.Feedback>
+              </Form.Group>
+            </Form.Row>
+            <Form.Row>
+              <Form.Group sm md as={Col}>
+                <Form.Label>Logradouro</Form.Label>
+                <Form.Control
+                  isInvalid={!!errors.street}
+                  value={values.street}
+                  onChange={handleChange}
+                  isValid={touched.street && !errors.street}
+                  placeholder="Logradouro"
+                  name="street"
+                  onBlur={handleBlur}
+                />
+                <Form.Control.Feedback type="invalid">
+                  {errors.street}
+                </Form.Control.Feedback>
+              </Form.Group>
+            </Form.Row>
+            <Form.Row>
+              <Form.Group sm md as={Col}>
+                <Form.Label>Número</Form.Label>
+                <Form.Control
+                  isInvalid={!!errors.number}
+                  value={values.number}
+                  onChange={handleChange}
+                  isValid={touched.number && !errors.number}
+                  placeholder="Número"
+                  name="number"
+                  onBlur={handleBlur}
+                  type="number"
+                />
+                <Form.Control.Feedback type="invalid">
+                  {errors.number}
+                </Form.Control.Feedback>
+              </Form.Group>
+              <Form.Group sm md as={Col}>
+                <Form.Label>Bairro</Form.Label>
+                <Form.Control
+                  isInvalid={!!errors.neighborhood}
+                  value={values.neighborhood}
+                  onChange={handleChange}
+                  isValid={touched.neighborhood && !errors.neighborhood}
+                  placeholder="Seu bairro"
+                  name="neighborhood"
+                  onBlur={handleBlur}
+                />
+                <Form.Control.Feedback type="invalid">
+                  {errors.neighborhood}
+                </Form.Control.Feedback>
+              </Form.Group>
+
+              <Form.Group sm md as={Col}>
+                <Form.Label>UF</Form.Label>
+                <Form.Control
+                  isInvalid={!!errors.state}
+                  value={values.state}
+                  onChange={handleChange}
+                  isValid={touched.state && !errors.state}
+                  placeholder="Seu estado"
+                  name="state"
+                  onBlur={handleBlur}
+                />
+                <Form.Control.Feedback type="invalid">
+                  {errors.state}
+                </Form.Control.Feedback>
+              </Form.Group>
+            </Form.Row>
+            <Form.Row>
+              <Form.Group sm md as={Col}>
+                <Form.Label>Senha</Form.Label>
+                <Form.Control
+                  isInvalid={!!errors.password}
+                  value={values.password}
+                  onChange={handleChange}
+                  isValid={touched.password && !errors.password}
+                  placeholder="Sua senha"
+                  name="password"
+                  type="password"
+                  onBlur={handleBlur}
+                />
+                <Form.Control.Feedback type="invalid">
+                  {errors.password}
+                </Form.Control.Feedback>
+              </Form.Group>
+              <Form.Group sm md as={Col}>
+                <Form.Label>Confirme sua senha</Form.Label>
+                <Form.Control
+                  isInvalid={!!errors.passwordConfirmation}
+                  value={values.passwordConfirmation}
+                  onChange={handleChange}
+                  isValid={
+                    touched.passwordConfirmation && !errors.passwordConfirmation
+                  }
+                  type="password"
+                  placeholder="Repita a sua senha"
+                  name="passwordConfirmation"
+                  onBlur={handleBlur}
+                />
+                <Form.Control.Feedback type="invalid">
+                  {errors.passwordConfirmation}
+                </Form.Control.Feedback>
+              </Form.Group>
+            </Form.Row>
+            <Form.Row>
+              <Button
+                type="submit"
+                disabled={isSubmitting}
+                onClick={submitForm}
+                className="mt-4"
+                block
+              >
+                {isSubmitting && (
+                  <Spinner
+                    as="span"
+                    animation="grow"
+                    size="sm"
+                    role="status"
+                    aria-hidden="true"
+                  />
+                )}
+                {isSubmitting ? ' Criando...' : 'Criar minha conta'}
+              </Button>
+            </Form.Row>
+          </Form>
+          <Login>
+            <strong>Ja é cadastrado? </strong>
+            <strong>
+              <Link href="/signin">
+                <a> Login</a>
+              </Link>
+            </strong>
+          </Login>
+        </Card>
+      </Container>
+    </>
   )
 }
 

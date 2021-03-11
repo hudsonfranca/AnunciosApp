@@ -20,6 +20,7 @@ import {
 import { AdvertsType, CategoryProps, AdvertsQueryParams } from '../shared/Types'
 import { SideBar } from '../components/SideBar'
 import { FilterForm } from '../components/FilterForm'
+import Head from 'next/head'
 
 const SearchAdverts = ({
   categories,
@@ -145,6 +146,9 @@ const SearchAdverts = ({
   }
   return (
     <>
+      <Head>
+        <title>Buscar anúncios</title>
+      </Head>
       <SideBar showSidebar={showSidebar} sidebar={sidebar}>
         {filterForm()}
       </SideBar>
