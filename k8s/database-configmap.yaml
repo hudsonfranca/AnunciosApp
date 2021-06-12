@@ -3,7 +3,7 @@ kind: ConfigMap
 metadata:
   name: database-configmap
 data:
-  db_user: postgres
+  db_user: admin
   db_host: database-service
   db_port: '5432'
   database: postgres

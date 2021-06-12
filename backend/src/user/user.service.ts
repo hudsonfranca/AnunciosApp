@@ -14,8 +14,6 @@ import { Address } from '../address/address.entity';
 import { UserRole } from './user-role';
 import * as argon2 from 'argon2';
 import { deleteUserAtributes, userSelectAtributes } from '../utils/utils';
-import * as crypto from 'crypto';
-import { SendEmail } from '../utils/SendEmail';
 import { FindUserQueryDto } from './dto/find-user-query.dto';
 
 interface createUserParams {
@@ -32,8 +30,7 @@ interface updateUserParams {
 export class UserService {
   constructor(
     @InjectRepository(User) private userRepository: Repository<User>,
-    @InjectRepository(Address) private addressRepository: Repository<Address>,
-    private sendEmail: SendEmail,
+    @InjectRepository(Address) private addressRepository: Repository<Address>
   ) {}
 
   async createUser(params: createUserParams): Promise<User> {
@@ -54,7 +51,6 @@ export class UserService {
     });
 
     const hashPassword = await argon2.hash(password);
-    const confirmationToken = crypto.randomBytes(32).toString('hex');
 
     const userEntity = this.userRepository.create({
       first_name,
@@ -63,7 +59,6 @@ export class UserService {
       phone_number,
       roles,
       status: true,
-      confirmationToken,
       password: hashPassword,
       address: addressEntity,
     });
@@ -159,17 +154,6 @@ export class UserService {
     }
   }
 
-  async confirmEmail(confirmationToken: string): Promise<void> {
-
-    const user = await this.findOne({ confirmationToken });
-    user.roles = [...user.roles, UserRole.VERIFIED_EMAIL];
-
-    user.confirmationToken = null;
-
-    await this.saveUser(user);
-    return;
-  }
-
   async saveUser(user: User) {
     try {
       const savedUser = await this.userRepository.save(user);
@@ -184,15 +168,5 @@ export class UserService {
     }
   }
 
-  async changePassword(params: { id: string; password: string }) {
-    const { id, password } = params;
-    const user = await this.findOne({ id });
 
-    const hashPassword = await argon2.hash(password);
-
-    user.password = hashPassword;
-    user.recoverToken = null;
-
-    await this.saveUser(user);
-  }
 }

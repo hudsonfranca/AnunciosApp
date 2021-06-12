@@ -46,10 +46,14 @@ const Signin: React.FC = () => {
     validationSchema,
     onSubmit: async values => {
       try {
-        await axios.post('/api/auth/signin', {
-          email: values.email,
-          password: values.password
-        })
+        await axios.post(
+          '/api/auth/signin',
+          {
+            email: values.email,
+            password: values.password
+          },
+          { withCredentials: true }
+        )
         setIsAuthenticated(true)
         router.push('/')
       } catch ({ response: { data } }) {
@@ -137,21 +141,6 @@ const Signin: React.FC = () => {
                     )}
                     {isSubmitting ? '  Login...' : 'Login'}
                   </Button>
-                </Col>
-              </Row>
-              <Row>
-                <Col>
-                  <div className="w-100 d-flex justify-content-center align-items-center text-secondary">
-                    <strong>
-                      <a
-                        href="#"
-                        onClick={() => setShow(true)}
-                        className="pe-auto "
-                      >
-                        Esqueceu sua Senha?
-                      </a>
-                    </strong>
-                  </div>
                 </Col>
               </Row>
               <Row>

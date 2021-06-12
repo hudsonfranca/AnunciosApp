@@ -42,13 +42,6 @@ export class CreateUserDto {
   @IsDefined()
   password: string;
 
-
-  @IsString()
-  @IsNotEmpty()
-  @Length(8)
-  @IsDefined()
-  passwordConfirmation: string;
-
   @IsDefined()
   @IsNotEmptyObject()
   @IsObject()

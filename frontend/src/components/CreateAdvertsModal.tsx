@@ -101,8 +101,6 @@ export const CreateAdvertsModal: React.FC<Props> = ({
           }
         )
         if (data) {
-          console.log(values.image)
-          console.log(data.id)
           const formData = new FormData()
           formData.append('file', values.image)
           const { data: image } = await axios.post(
@@ -223,11 +221,15 @@ export const CreateAdvertsModal: React.FC<Props> = ({
 
             <Form.Group sm md as={Col}>
               <Form.Label>Descrição</Form.Label>
-              <textarea
-                className="form-control"
-                name="description"
+              <Form.Control
+                isInvalid={!!errors.description}
+                value={values.description}
                 onChange={handleChange}
+                isValid={touched.description && !errors.description}
+                placeholder="Descrição"
+                name="description"
                 onBlur={handleBlur}
+                as="textarea"
               />
               <Form.Control.Feedback type="invalid">
                 {errors.description}

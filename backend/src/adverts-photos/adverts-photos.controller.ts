@@ -3,18 +3,14 @@ import {
   Param,
   Post,
   Request,
-  UnauthorizedException,
+ 
   UploadedFile,
-  UseGuards,
+
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AdvertsId } from './dto/adverts-id.dto';
 import { AdvertsPhotosService } from './adverts-photos.service';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { RolesGuard } from '../auth/guards/roles.guard';
-import { Roles } from 'src/auth/decorators/roles.decorator';
-import { UserRole } from 'src/user/user-role';
 import { AdvertsService } from '../adverts/adverts.service';
 import { diskStorage } from  'multer';
 import { extname,resolve } from  'path';

@@ -195,11 +195,15 @@ export const UpdateAdvertsModal: React.FC<Props> = ({
 
             <Form.Group sm md as={Col}>
               <Form.Label>Descrição</Form.Label>
-              <textarea
-                className="form-control"
-                name="description"
+              <Form.Control
+                isInvalid={!!errors.description}
+                value={values.description}
                 onChange={handleChange}
+                isValid={touched.description && !errors.description}
+                placeholder="Descrição"
+                name="description"
                 onBlur={handleBlur}
+                as="textarea"
               />
               <Form.Control.Feedback type="invalid">
                 {errors.description}

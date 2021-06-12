@@ -16,9 +16,7 @@ export const deleteAdvertsAtributes = (adverts: Adverts) => {
   const newAdverts = adverts;
   delete newAdverts.updatedAt;
   delete newAdverts.createdAt;
-  delete newAdverts.user.confirmationToken;
   delete newAdverts.user.password;
-  delete newAdverts.user.recoverToken;
   delete newAdverts.user.updatedAt;
   delete newAdverts.user.createdAt;
   delete newAdverts.user.address.createdAt;

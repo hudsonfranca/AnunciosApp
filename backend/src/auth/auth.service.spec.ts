@@ -4,12 +4,6 @@ import { UserService } from '../user/user.service';
 import { AuthService } from './auth.service';
 import * as argon2 from 'argon2';
 import { JwtService } from '@nestjs/jwt';
-import { SendEmail } from '../utils/SendEmail';
-import { MailerService } from '@nestjs-modules/mailer';
-import * as crypto from 'crypto';
-import { CreateUserDto } from '../user/dto/create-user.dto';
-import { ChangePasswordDto } from './dto/change-password.dto';
-import { UnprocessableEntityException } from '@nestjs/common';
 
 const userEntity = async () => {
   return User.of({
@@ -19,7 +13,6 @@ const userEntity = async () => {
     email: 'admin@gmail.com',
     password: await argon2.hash('12345678'),
     phone_number: '123456789',
-    confirmationToken: crypto.randomBytes(32).toString('hex'),
     status: false,
     createdAt: new Date('2021-01-23T21:15:16.629Z'),
     updatedAt: new Date('2021-01-23T21:15:16.629Z'),
@@ -29,14 +22,6 @@ const userEntity = async () => {
 class fakeJwtService {
   sign(): void {}
   verify(): void {}
-}
-
-class fakeSendEmail {
-  async send(): Promise<void> {}
-}
-
-class fakeMailerService {
-  async sendMail(): Promise<void> {}
 }
 
 const FakeUserService = async () => ({
@@ -51,8 +36,6 @@ describe('AuthService', () => {
   let authService: AuthService;
   let userService: UserService;
   let jwtService: JwtService;
-  let sendEmail: SendEmail;
-  let mailerService: MailerService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -66,22 +49,12 @@ describe('AuthService', () => {
           provide: JwtService,
           useClass: fakeJwtService,
         },
-        {
-          provide: SendEmail,
-          useClass: fakeSendEmail,
-        },
-        {
-          provide: MailerService,
-          useClass: fakeMailerService,
-        },
       ],
     }).compile();
 
     authService = module.get<AuthService>(AuthService);
     userService = module.get<UserService>(UserService);
     jwtService = module.get<JwtService>(JwtService);
-    sendEmail = module.get<SendEmail>(SendEmail);
-    mailerService = module.get<MailerService>(MailerService);
   });
 
   afterEach(async () => {
@@ -132,78 +105,5 @@ describe('AuthService', () => {
       });
     });
   });
-  describe('confirmEmail', () => {
-    it('must call the confirmEmail method of userService', async () => {
-      const confirmationToken = '66565656556565';
-
-      await authService.confirmEmail(confirmationToken);
-      expect(userService.confirmEmail).toHaveBeenCalled();
-    });
-  });
-
-  describe('sendPasswordRecoveryEmail', () => {
-    it('must send password recovery email', async () => {
-      const user = await userEntity();
-
-      const email = 'admin@gmail.com';
-
-      const userServiceFindOneSpy = jest
-        .spyOn(userService, 'findOne')
-        .mockResolvedValue(user);
-
-      const sendEmailSendSpy = jest
-        .spyOn(sendEmail, 'send')
-        .mockResolvedValue('Sent');
-
-      const userServiceSaveUserSpy = jest
-        .spyOn(userService, 'saveUser')
-        .mockResolvedValue(user);
-
-      await authService.sendPasswordRecoveryEmail(email);
-
-      expect(sendEmailSendSpy).toHaveBeenCalled();
-      expect(userServiceFindOneSpy).toHaveBeenCalledWith({ email });
-      expect(userServiceSaveUserSpy).toHaveBeenLastCalledWith(user);
-    });
-  });
-
-  describe('resetPassword', () => {
-    it('must reset password', async () => {
-      const recoverToken = '77474748387483847';
-      const user = await userEntity();
-      const password = '12345678';
-
-      const userServiceFindOneSpy = jest
-        .spyOn(userService, 'findOne')
-        .mockResolvedValue(user);
-
-      const changePasswordDto: ChangePasswordDto = {
-        password,
-        passwordConfirmation: password,
-      };
-
-      await authService.resetPassword({ recoverToken, changePasswordDto });
-
-      expect(userServiceFindOneSpy).toHaveBeenCalledWith({ recoverToken });
-      expect(userService.changePassword).toHaveBeenCalledWith({
-        id: user.id,
-        password,
-      });
-    });
-
-    it('should throw an error if the password and the confirmation password are not the same', async () => {
-      const changePasswordDto: ChangePasswordDto = {
-        password: '23456789',
-        passwordConfirmation: '12345678',
-      };
-      const recoverToken = '77474748387483847';
-
-      try {
-        await authService.resetPassword({ recoverToken, changePasswordDto });
-      } catch (error) {
-        expect(error).toBeInstanceOf(UnprocessableEntityException);
-        expect(error.message).toBe('Password must match');
-      }
-    });
-  });
+ 
 });

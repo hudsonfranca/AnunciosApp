@@ -144,8 +144,10 @@ export class AdvertsService {
       .leftJoin('adverts.user', 'user')
       .leftJoin('adverts.advertsPhotos', 'adverts_photos');
 
-    query.where('adverts.name ILIKE :name', { name: `%${name}%` });
-
+      if(name){
+        query.andWhere('adverts.name ILIKE :name', { name: `%${name}%` });
+      }
+   
     if (price) {
       query.andWhere('adverts.price = :price', { price });
     }

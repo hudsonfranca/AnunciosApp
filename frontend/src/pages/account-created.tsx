@@ -1,9 +1,11 @@
 import React from 'react'
-import { Container, Row, Col, Image } from 'react-bootstrap'
+import { Container, Row, Col, Image, Button } from 'react-bootstrap'
 import correct from '../assets/correct.png'
 import Head from 'next/head'
-
+import { useRouter } from 'next/router'
 const AccountCreated: React.FC = () => {
+  const router = useRouter()
+
   return (
     <>
       <Head>
@@ -29,13 +31,11 @@ const AccountCreated: React.FC = () => {
                 <h4>A sua conta foi criada com sucesso</h4>
               </Col>
             </Row>
-
             <Row>
-              <Col className="d-flex justify-content-center align-items-center">
-                <p>
-                  Acesse o link de confirmação que foi enviado para o endereço
-                  de email que você usou para criar a sua conta.
-                </p>
+              <Col className="d-flex justify-content-center align-items-center w-100">
+                <Button onClick={() => router.push('/')}>
+                  Ir para a página inicial
+                </Button>
               </Col>
             </Row>
           </Col>

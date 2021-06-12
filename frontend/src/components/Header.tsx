@@ -1,10 +1,13 @@
 import React from 'react'
 import { Navbar, Nav } from 'react-bootstrap'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 
 import { useUserAuthentication } from '../context/userAuthentication'
 
 const Header = () => {
+  const router = useRouter()
+
   const { isAuthenticated } = useUserAuthentication()
   const links = [
     !isAuthenticated && { label: 'Criar conta', href: '/signup' },
@@ -22,8 +25,11 @@ const Header = () => {
     })
   return (
     <Navbar bg="light" expand="lg" fixed="top" className="mb-4 ">
-      <Navbar.Brand>
-        <a>Anuncios-App</a>
+      <Navbar.Brand
+        onClick={() => router.push('/')}
+        style={{ cursor: 'pointer' }}
+      >
+        Anuncios-App
       </Navbar.Brand>
 
       <Navbar.Toggle aria-controls="basic-navbar-nav" />

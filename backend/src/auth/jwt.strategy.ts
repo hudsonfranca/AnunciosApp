@@ -9,9 +9,8 @@ import { deleteUserAtributes } from '../utils/utils';
 const cookieExtractor = function (req: Request) {
   let token = null;
 
-  if (req && req.headers.cookie) {
-    const cookie = req.headers.cookie.split('=');
-    token = cookie[1];
+  if (req && req.cookies['authorization']) {
+    token = req.cookies['authorization'];
   }
   
   return token;

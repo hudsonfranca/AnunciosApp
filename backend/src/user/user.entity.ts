@@ -35,12 +35,6 @@ export class User {
   @Column({ nullable: false})
   password: string;
 
-  @Column({ nullable: true, type: 'varchar', length: 64 })
-  confirmationToken: string;
-
-  @Column({ nullable: true, type: 'varchar', length: 64 })
-  recoverToken: string;
-
   @Column({ nullable: false, type: 'varchar', length: 15 })
   phone_number: string;
 

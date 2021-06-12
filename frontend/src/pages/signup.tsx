@@ -1,5 +1,8 @@
 import React, { useCallback } from 'react'
 import { useRouter } from 'next/router'
+import { useFormik } from 'formik'
+import * as Yup from 'yup'
+import { Form, Button, Col, Spinner } from 'react-bootstrap'
 import {
   Container,
   Card,
@@ -10,9 +13,6 @@ import {
   CheckboxIcon,
   Login
 } from '../styles/pages/signup'
-import { useFormik } from 'formik'
-import * as Yup from 'yup'
-import { Form, Button, Col, Spinner } from 'react-bootstrap'
 import Link from 'next/link'
 import axios from 'axios'
 import { toast } from 'react-toastify'
@@ -84,7 +84,6 @@ const Signup: React.FC = () => {
           last_name: values.last_name,
           email: values.email,
           password: values.password,
-          passwordConfirmation: values.passwordConfirmation,
           phone_number: values.phone_number,
           address: {
             zip: values.zip,
@@ -99,9 +98,11 @@ const Signup: React.FC = () => {
         router.push('/account-created')
       } catch ({ response: { data } }) {
         setIsAuthenticated(false)
+
         const notifyEmailError = () => {
           toast.error(`${values.email} já está em uso.`)
         }
+
         if (data.statusCode === 409) {
           return notifyEmailError()
         }

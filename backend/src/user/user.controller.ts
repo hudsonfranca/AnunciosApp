@@ -20,14 +20,13 @@ import { Roles } from '../auth/decorators/roles.decorator';
 import { UserRole } from './user-role';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
-import { SendEmail } from '../utils/SendEmail';
 import { FindAdvertsQueryDto } from 'src/adverts/dto/find-adverts-query.dto';
 import { deleteUserAtributes } from 'src/utils/utils';
 
 @Controller('user')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class UserController {
-  constructor(private userService: UserService, private sendEmail: SendEmail) {}
+  constructor(private userService: UserService) {}
 
   @Post()
   @Roles(UserRole.ADMIN )
@@ -36,19 +35,6 @@ export class UserController {
       createUserDto,
       roles: [UserRole.ADMIN],
     });
-
-    const email = {
-      subject: 'Email de confirmação',
-      template: 'email-confirmation',
-      context: {
-        token: user.confirmationToken,
-      },
-    };
-
-    await this.sendEmail.send({ ...email, user });
-
-    delete user.recoverToken;
-    delete user.confirmationToken;
 
     return user;
   }

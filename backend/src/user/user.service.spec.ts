@@ -6,11 +6,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { UserRole } from './user-role';
 import { BadRequestException } from '@nestjs/common';
-import * as crypto from 'crypto';
 import { CreateUserDto } from './dto/create-user.dto';
-import { SendEmail } from '../utils/SendEmail';
-import { MailerService } from '@nestjs-modules/mailer';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { FindUserQueryDto } from './dto/find-user-query.dto';
 
 const mockAddressRepository = () => ({
@@ -44,7 +40,6 @@ const createdUser = User.of({
   password: '12345678',
   phone_number: '123456789',
   status: false,
-  confirmationToken: crypto.randomBytes(32).toString('hex'),
 });
 
 const savedUser = User.of({
@@ -57,7 +52,6 @@ const savedUser = User.of({
   roles: [UserRole.ADMIN],
   status: false,
   address: savedAddress,
-  recoverToken: crypto.randomBytes(32).toString('hex'),
   createdAt: new Date(),
   updatedAt: new Date(),
 });
@@ -91,7 +85,6 @@ const createUserDto: CreateUserDto = {
   last_name:'Adm',
   email: 'blade.hudson.email@gmail.com',
   password: '12345678',
-  passwordConfirmation: '12345678',
   phone_number: '123456789',
  
   address: {
@@ -104,20 +97,10 @@ const createUserDto: CreateUserDto = {
   },
 };
 
-class fakeSendEmail {
-  async send(): Promise<void> {}
-}
-
-class fakeMailerService {
-  async sendMail(): Promise<void> {}
-}
-
 describe('UserService', () => {
   let userService: UserService;
   let userRepository: Repository<User>;
   let addressRepository: Repository<Address>;
-  let sendEmail: SendEmail;
-  let mailerService: MailerService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -131,21 +114,11 @@ describe('UserService', () => {
           provide: getRepositoryToken(Address),
           useFactory: mockAddressRepository,
         },
-        {
-          provide: SendEmail,
-          useClass: fakeSendEmail,
-        },
-        {
-          provide: MailerService,
-          useClass: fakeMailerService,
-        },
       ],
     }).compile();
     userService = module.get<UserService>(UserService);
     userRepository = module.get(getRepositoryToken(User));
     addressRepository = module.get(getRepositoryToken(Address));
-    sendEmail = module.get<SendEmail>(SendEmail);
-    mailerService = module.get<MailerService>(MailerService);
   });
 
   afterEach(async () => {
@@ -222,24 +195,6 @@ describe('UserService', () => {
     });
   });
 
-  describe('confirmEmail', () => {
-    it('must call userRepository methods', async () => {
-      const userServiceFindOneSpy = jest
-        .spyOn(userService, 'findOne')
-        .mockResolvedValue(savedUser);
-
-      const userServiceSaveUserSpy = jest
-        .spyOn(userService, 'saveUser')
-        .mockResolvedValue(savedUser);
-
-      const confirmationToken = 'cee67c14acb1c3520dcc11a29';
-
-      await userService.confirmEmail(confirmationToken);
-
-      expect(userServiceFindOneSpy).toHaveBeenCalledWith({ confirmationToken });
-      expect(userServiceSaveUserSpy).toHaveBeenCalledWith(savedUser);
-    });
-  });
 
   describe('saveUser', () => {
     it('must save a user', async () => {
@@ -254,23 +209,5 @@ describe('UserService', () => {
     });
   });
 
-  describe('changePassword', () => {
-    it('must change the user password', async () => {
-      const userServiceFindOneSpy = jest
-        .spyOn(userService, 'findOne')
-        .mockResolvedValue(savedUser);
 
-      const userServiceSaveUserSpy = jest
-        .spyOn(userService, 'saveUser')
-        .mockResolvedValue(savedUser);
-
-      const id = '2e35f06a-f398-4aa9-b6c0-3c26a61cf3de';
-      const password = '12345678';
-
-      await userService.changePassword({ id, password });
-
-      expect(userServiceFindOneSpy).toHaveBeenCalledWith({ id });
-      expect(userServiceSaveUserSpy).toHaveBeenCalledWith(savedUser);
-    });
-  });
 });

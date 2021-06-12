@@ -33,7 +33,7 @@ metadata:
   name: database-secret
 type: Opaque
 data:
-  db_password: MTIzNDU=
+  db_password: YWRtaW4=
 
 ---
 

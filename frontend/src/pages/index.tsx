@@ -1,11 +1,32 @@
 import React, { useState } from 'react'
 import Head from 'next/head'
-import { Container, Form, Col, InputGroup, Button } from 'react-bootstrap'
-import { Image, Title } from '../styles/pages/Home'
+import {
+  Container,
+  Form,
+  Col,
+  InputGroup,
+  Button,
+  Row,
+  Card,
+  ListGroup,
+  ListGroupItem
+} from 'react-bootstrap'
+import {
+  Image,
+  Title,
+  CardContainer,
+  MapIcon,
+  MoneyIcon
+} from '../styles/pages/Home'
 import { useRouter } from 'next/router'
 import estadosCidades from '../shared/estados-cidades.json'
+import { InferGetServerSidePropsType } from 'next'
+import { AdvertsType } from '../shared/Types'
+import buildClient from '../services/buildClient'
 
-const Home = () => {
+const Home = ({
+  adverts
+}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter()
   const [name, setName] = useState('')
   const [state, setState] = useState('')
@@ -16,18 +37,29 @@ const Home = () => {
 
   const handleSubmit = e => {
     e.preventDefault()
-
-    router.push({
-      pathname: 'search-adverts/',
-      query: { limit: 10, page: 1, name, state }
-    })
+    if (state !== '' && name !== '') {
+      router.push({
+        pathname: 'search-adverts/',
+        query: { limit: 10, page: 1, name, state }
+      })
+    }
   }
+
+  const formatter = new Intl.NumberFormat([], {
+    style: 'currency',
+    currency: 'BRL'
+  })
+
+  const handleCardClick = (id: string) => {
+    return router.push(`/adverts/${id}`)
+  }
+
   return (
     <>
       <Head>
         <title>AnunciosApp</title>
       </Head>
-      <Container fluid className="p-0 vh-100">
+      <Container fluid className="p-0 min-vh-100">
         <Image>
           <Form onSubmit={handleSubmit} className="p-3">
             <Form.Row className="d-flex justify-content-center mb-3">
@@ -60,6 +92,7 @@ const Home = () => {
                     value={state}
                     onChange={e => setState(e.target.value)}
                   >
+                    <option value={''}>Escolha um estado</option>
                     {states.map(state => (
                       <option key={state.nome} value={state.sigla}>
                         {state.nome}
@@ -78,8 +111,43 @@ const Home = () => {
             </Form.Row>
           </Form>
         </Image>
+        {adverts?.adverts && (
+          <CardContainer>
+            {adverts.adverts.map(add => (
+              <Card key={add.id} onClick={() => handleCardClick(add.id)}>
+                <Card.Img variant="top" src={add.advertsPhotos[0].url} />
+                <Card.Body>
+                  <Card.Title>{add.name}</Card.Title>
+                </Card.Body>
+                <ListGroup className="list-group-flush">
+                  <ListGroupItem className="d-flex">
+                    <MoneyIcon className="mr-1" />
+                    {formatter.format(parseFloat(add.price))}
+                  </ListGroupItem>
+                  <ListGroupItem>
+                    <MapIcon className="mr-1" />
+                    {`${add.address.city} ${add.address.state}`}
+                  </ListGroupItem>
+                </ListGroup>
+              </Card>
+            ))}
+          </CardContainer>
+        )}
       </Container>
     </>
   )
 }
+
+export const getServerSideProps = async context => {
+  const adverts: AdvertsType = await buildClient(context)
+    .get<AdvertsType>('adverts?page=1&limit=8')
+    .then(({ data }) => data)
+    .catch(() => {
+      return null
+    })
+  return {
+    props: { adverts }
+  }
+}
+
 export default Home
