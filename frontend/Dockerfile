@@ -1,8 +1,22 @@
-FROM node
+FROM node:12
 
-WORKDIR /app
-COPY package.json .
+ENV PORT 3000
+
+# Create app directory
+RUN mkdir -p /usr/src/app
+WORKDIR /usr/src/app
+
+# Installing dependencies
+COPY package*.json ./
+COPY yarn.lock ./
 RUN yarn install
-COPY . .
 
-CMD [ "yarn","dev" ]
+# Copying source files
+COPY . /usr/src/app
+
+# Building app
+RUN yarn build
+EXPOSE 3000
+
+# Running the app
+CMD "yarn" "dev"

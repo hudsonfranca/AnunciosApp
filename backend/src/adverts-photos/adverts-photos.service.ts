@@ -20,9 +20,11 @@ export class AdvertsPhotosService {
 
 
     const adverts = await this.advertsService.findOneById(advertsId);
-    const hostUrl = "http://anunciosapp/api"
-    const filePath = file.path.split('/app');
-    const advertsPhoto = this.advertsPhotosRepository.create({originalname:file.originalname,url:`${hostUrl}${filePath[1]}`,filename:file.filename});
+    const advertsPhoto = this.advertsPhotosRepository.create({
+      originalname:file.originalname,
+      url:`/uploads/${file.filename}`,
+      filename:file.filename
+    });
 
     advertsPhoto.adverts = adverts;
 

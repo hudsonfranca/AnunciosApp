@@ -10,6 +10,7 @@ async function bootstrap() {
 
   const app = await NestFactory.create(AppModule);
   app.use(cookieParser());
+ 
   app.use('/uploads',express.static(path.resolve(__dirname,'..','uploads')));
 
   app.useGlobalPipes(
@@ -18,7 +19,8 @@ async function bootstrap() {
       transformOptions: { enableImplicitConversion: true },
     }),
   );
-  app.enableCors();
-  await app.listen(3000);
+  app.enableCors({ credentials: true, origin: true});
+
+  await app.listen(process.env.PORT);
 }
 bootstrap();

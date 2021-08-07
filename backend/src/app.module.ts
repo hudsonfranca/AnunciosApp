@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { typeOrmConfig } from './config/typeorm.config';
+import { DatabaseConnectionService } from './config/typeorm.config';
 import { AddressModule } from './address/address.module';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
@@ -11,7 +11,7 @@ import { AdvertsPhotosModule } from './adverts-photos/adverts-photos.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot(typeOrmConfig),
+    TypeOrmModule.forRootAsync({ useClass: DatabaseConnectionService }),
     AddressModule,
     UserModule,
     AuthModule,

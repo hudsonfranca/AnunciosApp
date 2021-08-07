@@ -56,8 +56,8 @@ export class AdvertsPhotosController {
     @UploadedFile() file: File,
     @Request() req,
   ) {
-   console.log(advertsId)
-    const adverts = await this.advertsService.findOneById(advertsId);
+  
+    await this.advertsService.findOneById(advertsId);
 
     // if (adverts.user.id !== req.user.id) {
     //   throw new UnauthorizedException();
